@@ -80,6 +80,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<finalName>Goblins</finalName>
 				</configuration>
 				<executions>
 					<execution>
