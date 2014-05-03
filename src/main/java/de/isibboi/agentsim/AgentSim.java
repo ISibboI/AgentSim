@@ -31,6 +31,9 @@ public class AgentSim implements Runnable {
 
 	@Override
 	public void run() {
+		// Spawn initial entities
+		_frame.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
+		
 		while (true) {
 			_frame.update();
 			_frame.render();

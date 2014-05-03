@@ -6,16 +6,29 @@ package de.isibboi.agentsim.game.map;
  * @since 0.0.0
  */
 public class Material {
+	private final String _name;
 	private final int _color;
+
+	private final boolean _solid;
 	private final GenerationParameters _generationParameters;
 
-	Material(final int color, final GenerationParameters generationParameters) {
+	Material(final String name, final int color, final boolean solid, final GenerationParameters generationParameters) {
+		_name = name;
 		_color = color;
+		_solid = solid;
 		_generationParameters = generationParameters;
+	}
+
+	public String getName() {
+		return _name;
 	}
 
 	public int getColor() {
 		return _color;
+	}
+
+	public boolean isSolid() {
+		return _solid;
 	}
 
 	public GenerationParameters getGenerationParameters() {

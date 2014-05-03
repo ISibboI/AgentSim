@@ -1,4 +1,5 @@
-package de.isibboi.agentsim.game;
+package de.isibboi.agentsim.game.entities;
+
 
 /**
  * A game entity.

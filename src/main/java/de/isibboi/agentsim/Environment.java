@@ -32,8 +32,8 @@ public final class Environment {
 		
 		// Create materials
 		MATERIAL_FACTORY = new MaterialFactory();
-		MATERIAL_FACTORY.addMaterial(0xffffff, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
-		MATERIAL_FACTORY.addMaterial(0xaa5555, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 270));
-		MATERIAL_FACTORY.addMaterial(0x555555, new GenerationParameters(GenerationType.DENSITY_MAP, 270, 1e100));
+		MATERIAL_FACTORY.addMaterial("Air", 0xffffff, false, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
+		MATERIAL_FACTORY.addMaterial("Dirt", 0xaa5555, true, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 270));
+		MATERIAL_FACTORY.addMaterial("Stone", 0x555555, true, new GenerationParameters(GenerationType.DENSITY_MAP, 270, 1e100));
 	}
 }

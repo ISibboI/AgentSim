@@ -3,6 +3,7 @@ package de.isibboi.agentsim.ui;
 import java.awt.BufferCapabilities;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -23,6 +24,7 @@ public class DrawFrame extends JFrame {
 
 	private boolean _isRendering = false;
 	private Graphics2D _renderGraphics;
+	private final AffineTransform _transformation;
 
 	private final BufferStrategy _bufferStrategy;
 
@@ -32,8 +34,9 @@ public class DrawFrame extends JFrame {
 	 * @param title The window title.
 	 * @param width The width of the pane.
 	 * @param height The height of the pane.
+	 * @param scale 
 	 */
-	public DrawFrame(final String title, final int width, final int height) {
+	public DrawFrame(final String title, final int width, final int height, final int scale) {
 		super(title);
 
 		JPanel contentPane = new JPanel();
@@ -47,6 +50,8 @@ public class DrawFrame extends JFrame {
 		createBufferStrategy(2);
 		_bufferStrategy = getBufferStrategy();
 		logBufferInfo();
+		
+		_transformation = new AffineTransform(scale, 0, 0, scale, getInsets().left, getInsets().top);
 		
 		setVisible(true);
 	}
@@ -62,6 +67,7 @@ public class DrawFrame extends JFrame {
 
 		_isRendering = true;
 		_renderGraphics = (Graphics2D) _bufferStrategy.getDrawGraphics();
+		_renderGraphics.setTransform(_transformation);
 
 		return getRenderGraphics();
 	}

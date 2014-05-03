@@ -16,6 +16,9 @@ import org.apache.logging.log4j.Logger;
 public class Settings {
 	public static final String UI_WIDTH = "ui.width";
 	public static final String UI_HEIGHT = "ui.height";
+	public static final String GAME_INITIAL_GOBLIN_COUNT = "game.initialGoblinCount";
+	public static final String GAME_SPAWN_RADIUS = "game.spawnRadius";
+	public static final String GAME_SCALE = "game.scale";
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
@@ -50,8 +53,11 @@ public class Settings {
 	 * Fills the default settings.
 	 */
 	private void createDefaults() {
-		_defaults.setProperty("ui.width", "1920");
-		_defaults.setProperty("ui.height", "1080");
+		_defaults.setProperty(UI_WIDTH, "1920");
+		_defaults.setProperty(UI_HEIGHT, "1080");
+		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
+		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
+		_defaults.setProperty(GAME_SCALE, "4");
 	}
 
 	/**

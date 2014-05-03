@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.game;
+package de.isibboi.agentsim.game.entities;
 
 import java.awt.Graphics2D;
 
