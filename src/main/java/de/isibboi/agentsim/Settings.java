@@ -46,11 +46,19 @@ public class Settings {
 		createDefaults();
 	}
 
+	/**
+	 * Fills the default settings.
+	 */
 	private void createDefaults() {
 		_defaults.setProperty("ui.width", "1920");
 		_defaults.setProperty("ui.height", "1080");
 	}
 
+	/**
+	 * Sets a setting to the given value.
+	 * @param key The name of the setting.
+	 * @param value The new value of the setting.
+	 */
 	public void set(final String key, final String value) {
 		if (_isClosed) {
 			throw new IllegalStateException("Settings are already closed!");
@@ -61,10 +69,20 @@ public class Settings {
 		_log.info("Changed setting " + key + " from " + oldValue + " to " + value);
 	}
 
+	/**
+	 * Sets a setting to the given long.
+	 * @param key The name of the setting.
+	 * @param value The new value of the setting.
+	 */
 	public void set(final String key, final long value) {
 		set(key, Long.toString(value));
 	}
 
+	/**
+	 * Returns the value of a setting.
+	 * @param key The name of the setting.
+	 * @return The value of the setting.
+	 */
 	public String get(final String key) {
 		String result = _properties.getProperty(key);
 
@@ -75,6 +93,11 @@ public class Settings {
 		return result;
 	}
 
+	/**
+	 * Returns the value of a given setting as integer.
+	 * @param key The name of the setting.
+	 * @return The value of the setting.
+	 */
 	public int getInt(final String key) {
 		String value = get(key);
 
