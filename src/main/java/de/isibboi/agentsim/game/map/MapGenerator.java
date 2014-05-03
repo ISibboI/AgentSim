@@ -46,8 +46,8 @@ public class MapGenerator {
 	 */
 	private Point generateDensityMap(final BufferedImage image) {
 		CombinedNoise noise = new CombinedNoise(new Noise[] {
-				new NoiseMap(200 * _width / 1920, 200 * _height / 1080, 0, 256),
-				new NoiseMap(110 * _width / 1920, 110 * _height / 1080, 30, 100),
+				new NoiseMap(200 * _width / 1920, 200 * _height / 1080, 20, 256),
+				new NoiseMap(110 * _width / 1920, 110 * _height / 1080, 110, 190),
 				new BorderFunction(_width, _height, -1500 * (_width + _height) / 4000, 3) });
 
 		Collection<Material> materials = new ArrayList<>();
