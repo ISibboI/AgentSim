@@ -3,11 +3,12 @@ package de.isibboi.agentsim.noise;
 public class CombinedNoise implements Noise {
 	private Noise[] noises;
 
-	public CombinedNoise(Noise[] noises) {
+	public CombinedNoise(final Noise[] noises) {
 		this.noises = noises;
 	}
 
-	public double noise(double x, double y) {
+	@Override
+	public double noise(final double x, final double y) {
 		double result = 0;
 
 		for (Noise noise : noises) {

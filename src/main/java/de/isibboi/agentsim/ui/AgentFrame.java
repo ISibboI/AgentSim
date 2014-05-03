@@ -11,7 +11,7 @@ public class AgentFrame extends JFrame {
 	private final DrawPane drawPane;
 	private final Settings settings;
 
-	public AgentFrame(Settings settings) {
+	public AgentFrame(final Settings settings) {
 		super("Agent Sim version " + Environment.VERSION);
 		this.settings = settings;
 

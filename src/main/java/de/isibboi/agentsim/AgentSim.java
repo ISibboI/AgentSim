@@ -1,11 +1,9 @@
 package de.isibboi.agentsim;
 
-import javax.swing.JFrame;
-
 import de.isibboi.agentsim.ui.AgentFrame;
 
 public class AgentSim {
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		AgentSim sim = new AgentSim();
 	}
 

@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.noise;
 
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class RangeTest {
@@ -29,11 +30,11 @@ public class RangeTest {
 		}
 	}
 
-	private void assertRange(double[] range, double sample) {
+	private void assertRange(final double[] range, final double sample) {
 		assertRange(range[0], range[1], sample);
 	}
 
-	private void assertRange(double min, double max, double sample) {
+	private void assertRange(final double min, final double max, final double sample) {
 		assertTrue("Sample out of range [" + min + ", " + max + "]: " + sample, sample >= min && sample <= max);
 	}
 }

@@ -40,7 +40,7 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	private short perm[] = new short[512];
 	private short permMod12[] = new short[512];
 
-	public SimplexNoise(long seed) {
+	public SimplexNoise(final long seed) {
 		p = new short[256];
 		boolean[] used = new boolean[256];
 		int count = 0;
@@ -70,25 +70,25 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
 	// This method is a *lot* faster than using (int)Math.floor(x)
-	private int fastfloor(double x) {
+	private int fastfloor(final double x) {
 		int xi = (int) x;
 		return x < xi ? xi - 1 : xi;
 	}
 
-	private double dot(Grad g, double x, double y) {
+	private double dot(final Grad g, final double x, final double y) {
 		return g.x * x + g.y * y;
 	}
 
-	private double dot(Grad g, double x, double y, double z) {
+	private double dot(final Grad g, final double x, final double y, final double z) {
 		return g.x * x + g.y * y + g.z * z;
 	}
 
-	private double dot(Grad g, double x, double y, double z, double w) {
+	private double dot(final Grad g, final double x, final double y, final double z, final double w) {
 		return g.x * x + g.y * y + g.z * z + g.w * w;
 	}
 
 	// 2D simplex noise
-	public double noise(double xin, double yin) {
+	public double noise(final double xin, final double yin) {
 		double n0, n1, n2; // Noise contributions from the three corners
 		// Skew the input space to determine which simplex cell we're in
 		double s = (xin + yin) * F2; // Hairy factor for 2D
@@ -155,7 +155,7 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	}
 
 	// 3D simplex noise
-	public double noise(double xin, double yin, double zin) {
+	public double noise(final double xin, final double yin, final double zin) {
 		double n0, n1, n2, n3; // Noise contributions from the four corners
 		// Skew the input space to determine which simplex cell we're in
 		double s = (xin + yin + zin) * F3; // Very nice and simple skew factor
@@ -287,7 +287,7 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	}
 
 	// 4D simplex noise, better simplex rank ordering method 2012-03-09
-	public double noise(double x, double y, double z, double w) {
+	public double noise(final double x, final double y, final double z, final double w) {
 
 		double n0, n1, n2, n3, n4; // Noise contributions from the five corners
 		// Skew the (x,y,z,w) space to determine which cell of 24 simplices
@@ -444,13 +444,13 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	private static class Grad {
 		double x, y, z, w;
 
-		Grad(double x, double y, double z) {
+		Grad(final double x, final double y, final double z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
 		}
 
-		Grad(double x, double y, double z, double w) {
+		Grad(final double x, final double y, final double z, final double w) {
 			this.x = x;
 			this.y = y;
 			this.z = z;

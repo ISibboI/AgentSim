@@ -7,56 +7,66 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Manages the applications settings.
+ * 
+ * @author Sebastian Schmidt
+ * @since 0.0.0
+ */
 public class Settings {
 	public static final String UI_WIDTH = "ui.width";
 	public static final String UI_HEIGHT = "ui.height";
 
-	private final Logger log = LogManager.getLogger(getClass());
+	private final Logger _log = LogManager.getLogger(getClass());
 
-	private final Properties defaults;
-	private final Properties properties;
+	private final Properties _defaults;
+	private final Properties _properties;
 	private boolean _isClosed;
 
-	public Settings(String resource) {
-		defaults = new Properties();
-		properties = new Properties(defaults);
+	/**
+	 * Reads settings from the given resource path.
+	 * @param resource The resource path.
+	 */
+	public Settings(final String resource) {
+		_defaults = new Properties();
+		_properties = new Properties(_defaults);
 
 		try {
 			InputStream in = getClass().getResourceAsStream(resource);
 
 			if (in != null) {
-				properties.load(in);
+				_properties.load(in);
 			} else {
-				log.warn("Settings file not found: " + resource);
+				_log.warn("Settings file not found: " + resource);
 			}
 		} catch (IOException e) {
-			log.error("Error reading settings!", e);
+			_log.error("Error reading settings!", e);
 		}
 
 		createDefaults();
 	}
 
 	private void createDefaults() {
-		defaults.setProperty("ui.width", "1920");
-		defaults.setProperty("ui.height", "1080");
+		_defaults.setProperty("ui.width", "1920");
+		_defaults.setProperty("ui.height", "1080");
 	}
 
-	public void set(String key, String value) {
+	public void set(final String key, final String value) {
 		if (_isClosed) {
 			throw new IllegalStateException("Settings are already closed!");
 		}
 
-		String oldValue = (String) properties.setProperty(key, value);
+		String oldValue = (String) _properties.setProperty(key, value);
 
-		log.info("Changed setting " + key + " from " + oldValue + " to " + value);
+		_log.info("Changed setting " + key + " from " + oldValue + " to " + value);
 	}
 
-	public void set(String key, long value) {
+	public void set(final String key, final long value) {
 		set(key, Long.toString(value));
 	}
 
-	public String get(String key) {
-		String result = properties.getProperty(key);
+	public String get(final String key) {
+		String result = _properties.getProperty(key);
 
 		if (result == null) {
 			throw new IllegalArgumentException("Setting " + key + " is not set!");
@@ -65,14 +75,14 @@ public class Settings {
 		return result;
 	}
 
-	public int getInt(String key) {
+	public int getInt(final String key) {
 		String value = get(key);
 
 		try {
 			int result = Integer.parseInt(value);
 			return result;
 		} catch (NumberFormatException e) {
-			log.error("Setting is not an int: (" + key + ": " + value + ")", e);
+			_log.error("Setting is not an int: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}

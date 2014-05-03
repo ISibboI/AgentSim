@@ -9,7 +9,7 @@ public class NoiseParameter {
 	private double max;
 	private long seed;
 
-	public NoiseParameter(double cellWidth, double cellHeight, double min, double max) {
+	public NoiseParameter(final double cellWidth, final double cellHeight, final double min, final double max) {
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;
 		this.min = min;
@@ -21,7 +21,7 @@ public class NoiseParameter {
 		return cellWidth;
 	}
 
-	public void setCellWidth(double cellWidth) {
+	public void setCellWidth(final double cellWidth) {
 		this.cellWidth = cellWidth;
 	}
 
@@ -29,7 +29,7 @@ public class NoiseParameter {
 		return cellHeight;
 	}
 
-	public void setCellHeight(double cellHeight) {
+	public void setCellHeight(final double cellHeight) {
 		this.cellHeight = cellHeight;
 	}
 
@@ -37,7 +37,7 @@ public class NoiseParameter {
 		return min;
 	}
 
-	public void setMin(double min) {
+	public void setMin(final double min) {
 		this.min = min;
 	}
 
@@ -45,7 +45,7 @@ public class NoiseParameter {
 		return max;
 	}
 
-	public void setMax(double max) {
+	public void setMax(final double max) {
 		this.max = max;
 	}
 
@@ -53,7 +53,7 @@ public class NoiseParameter {
 		return seed;
 	}
 
-	public void setSeed(long seed) {
+	public void setSeed(final long seed) {
 		this.seed = seed;
 	}
 }

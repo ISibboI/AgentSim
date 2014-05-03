@@ -8,7 +8,7 @@ public class NoiseMap extends SimplexNoise implements Noise {
 	private double min;
 	private double max;
 
-	public NoiseMap(long seed, double cellWidth, double cellHeight, double min, double max) {
+	public NoiseMap(final long seed, final double cellWidth, final double cellHeight, final double min, final double max) {
 		super(seed);
 
 		this.cellWidth = cellWidth;
@@ -17,7 +17,7 @@ public class NoiseMap extends SimplexNoise implements Noise {
 		this.max = max;
 	}
 
-	public NoiseMap(NoiseParameter noiseParameter) {
+	public NoiseMap(final NoiseParameter noiseParameter) {
 		super(noiseParameter.getSeed());
 
 		this.cellWidth = noiseParameter.getCellWidth();
@@ -26,7 +26,7 @@ public class NoiseMap extends SimplexNoise implements Noise {
 		this.max = noiseParameter.getMax();
 	}
 
-	public NoiseMap(double cellWidth, double cellHeight, double min, double max) {
+	public NoiseMap(final double cellWidth, final double cellHeight, final double min, final double max) {
 		super(new Random().nextLong());
 
 		this.cellWidth = cellWidth;
@@ -35,7 +35,8 @@ public class NoiseMap extends SimplexNoise implements Noise {
 		this.max = max;
 	}
 
-	public double noise(double x, double y) {
+	@Override
+	public double noise(final double x, final double y) {
 		double result = super.noise(x / cellWidth, y / cellHeight);
 
 		double halfTargetIntervalSize = (max - min) / 2;

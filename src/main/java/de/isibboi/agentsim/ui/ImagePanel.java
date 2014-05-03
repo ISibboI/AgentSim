@@ -3,6 +3,7 @@ package de.isibboi.agentsim.ui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
 import javax.swing.JPanel;
 
 public class ImagePanel extends JPanel {
@@ -13,13 +14,13 @@ public class ImagePanel extends JPanel {
 	public ImagePanel() {
 	}
 
-	public void setImage(BufferedImage image) {
+	public void setImage(final BufferedImage image) {
 		this.image = image;
 		setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 
 		if (image != null) {
