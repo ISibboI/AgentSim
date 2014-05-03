@@ -2,18 +2,32 @@ package de.isibboi.agentsim;
 
 import de.isibboi.agentsim.ui.AgentFrame;
 
-public class AgentSim {
+public class AgentSim implements Runnable {
 	public static void main(final String[] args) {
 		AgentSim sim = new AgentSim();
+		sim.run();
 	}
 
-	private final AgentFrame frame;
-	private final Settings settings;
+	private final AgentFrame _frame;
+	private final Settings _settings;
 
 	public AgentSim() {
-		settings = new Settings("/.settings");
+		_settings = new Settings("/.settings");
 
-		frame = new AgentFrame(settings);
-		frame.setVisible(true);
+		_frame = new AgentFrame(_settings);
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			_frame.update();
+			_frame.render();
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
