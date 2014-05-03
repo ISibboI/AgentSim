@@ -45,6 +45,7 @@ public class DrawFrame extends JFrame {
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setIgnoreRepaint(true);
+		setResizable(false);
 		pack();
 
 		createBufferStrategy(2);
