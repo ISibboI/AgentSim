@@ -10,7 +10,7 @@ public class RangeTest {
 	@Test
 	public void testNoiseMapRange() {
 		for (int i = 0; i < testRanges.length; i++) {
-			NoiseMap noiseMap = new NoiseMap(1, 1, testRanges[i][0], testRanges[i][1]);
+			ScaledSimplexNoise noiseMap = new ScaledSimplexNoise(1, 1, testRanges[i][0], testRanges[i][1]);
 
 			for (int j = 0; j < 10000; j++) {
 				double sample = noiseMap.noise(j % 100, j / 100);

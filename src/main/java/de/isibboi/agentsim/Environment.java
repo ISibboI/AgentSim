@@ -7,15 +7,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.game.map.GenerationParameters;
-import de.isibboi.agentsim.game.map.Material;
-import de.isibboi.agentsim.game.map.MaterialFactory;
 import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
+import de.isibboi.agentsim.game.map.MaterialFactory;
 
+/**
+ * Contains environment variables for the application.
+ * @author Sebastian Schmidt
+ * @since 0.0.0
+ */
 public final class Environment {
 	private static final Logger LOG = LogManager.getLogger(Environment.class);
 
 	public static final String VERSION;
-	
+
 	public static final MaterialFactory MATERIAL_FACTORY;
 
 	static {
@@ -29,11 +33,17 @@ public final class Environment {
 		}
 
 		VERSION = properties.getProperty("version");
-		
+
 		// Create materials
 		MATERIAL_FACTORY = new MaterialFactory();
 		MATERIAL_FACTORY.addMaterial("Air", 0xffffff, false, 0, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
 		MATERIAL_FACTORY.addMaterial("Dirt", 0xaa5555, true, 10, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 270));
 		MATERIAL_FACTORY.addMaterial("Stone", 0x555555, true, 30, new GenerationParameters(GenerationType.DENSITY_MAP, 270, 1e100));
+	}
+
+	/**
+	 * Unused.
+	 */
+	private Environment() {
 	}
 }

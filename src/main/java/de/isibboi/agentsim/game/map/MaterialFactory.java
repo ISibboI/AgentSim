@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * The material factory manages all materials. Materials have to have a unique color.
  * 
  * @author Sebastian Schmidt
  * @since 0.0.0
@@ -14,11 +15,12 @@ public class MaterialFactory {
 	
 	/**
 	 * Adds a new material.
-	 * @param name
-	 * @param color
-	 * @param solid
-	 * @param durability
-	 * @param generationParameters
+	 * 
+	 * @param name The name of the material.
+	 * @param color The color of the material.
+	 * @param solid If this material is solid ( = entities can't walk over it).
+	 * @param durability The durability of the material.
+	 * @param generationParameters The generation parameters of the material.
 	 */
 	public void addMaterial(final String name, final int color, final boolean solid, final int durability, final GenerationParameters generationParameters) {
 		if (_colorToMaterial.containsKey(color)) {
@@ -28,6 +30,11 @@ public class MaterialFactory {
 		_colorToMaterial.put(color, new Material(name, color, solid, durability, generationParameters));
 	}
 	
+	/**
+	 * Returns the material with the given colors.
+	 * @param color The color.
+	 * @return The material with the given color.
+	 */
 	public Material getMaterial(final int color) {
 		int maskedColor = color & 0xffffff;
 		
@@ -40,6 +47,10 @@ public class MaterialFactory {
 		return result;
 	}
 	
+	/**
+	 * Returns a {@code Collection} of all materials.
+	 * @return All materials.
+	 */
 	public Collection<Material> getAllMaterials() {
 		return _colorToMaterial.values();
 	}

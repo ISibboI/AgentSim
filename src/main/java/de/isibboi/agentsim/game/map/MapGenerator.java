@@ -13,7 +13,7 @@ import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
 import de.isibboi.agentsim.noise.BorderFunction;
 import de.isibboi.agentsim.noise.CombinedNoise;
 import de.isibboi.agentsim.noise.Noise;
-import de.isibboi.agentsim.noise.NoiseMap;
+import de.isibboi.agentsim.noise.ScaledSimplexNoise;
 
 /**
  * Generates the game map.
@@ -46,8 +46,8 @@ public class MapGenerator {
 	 */
 	private Point generateDensityMap(final BufferedImage image) {
 		CombinedNoise noise = new CombinedNoise(new Noise[] {
-				new NoiseMap(200 * _width / 1920, 200 * _height / 1080, 20, 256),
-				new NoiseMap(110 * _width / 1920, 110 * _height / 1080, 110, 190),
+				new ScaledSimplexNoise(200 * _width / 1920, 200 * _height / 1080, 20, 256),
+				new ScaledSimplexNoise(110 * _width / 1920, 110 * _height / 1080, 110, 190),
 				new BorderFunction(_width, _height, -1500 * (_width + _height) / 4000, 3) });
 
 		Collection<Material> materials = new ArrayList<>();
