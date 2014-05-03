@@ -1,9 +1,12 @@
-package de.isibboi.agentsim.game;
+package de.isibboi.agentsim.game.map;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.isibboi.agentsim.game.Block;
+import de.isibboi.agentsim.game.Drawable;
 
 /**
  * Represents the game map.

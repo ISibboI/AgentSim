@@ -2,7 +2,16 @@ package de.isibboi.agentsim;
 
 import de.isibboi.agentsim.ui.AgentFrame;
 
+/**
+ * The AgentSim main class. Executes the game.
+ * @author Sebastian Schmidt
+ * @since 0.0.0
+ */
 public class AgentSim implements Runnable {
+	/**
+	 * Starts the game.
+	 * @param args Unused.
+	 */
 	public static void main(final String[] args) {
 		AgentSim sim = new AgentSim();
 		sim.run();
@@ -11,6 +20,9 @@ public class AgentSim implements Runnable {
 	private final AgentFrame _frame;
 	private final Settings _settings;
 
+	/**
+	 * Constructs the game.
+	 */
 	public AgentSim() {
 		_settings = new Settings("/.settings");
 

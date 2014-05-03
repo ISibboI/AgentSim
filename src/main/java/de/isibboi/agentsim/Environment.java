@@ -6,13 +6,20 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.isibboi.agentsim.game.map.GenerationParameters;
+import de.isibboi.agentsim.game.map.Material;
+import de.isibboi.agentsim.game.map.MaterialFactory;
+import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
+
 public final class Environment {
 	private static final Logger LOG = LogManager.getLogger(Environment.class);
 
 	public static final String VERSION;
+	
+	public static final MaterialFactory MATERIAL_FACTORY;
 
-	// Load values from .properties file
 	static {
+		// Load values from .properties file
 		Properties properties = new Properties();
 
 		try {
@@ -22,5 +29,11 @@ public final class Environment {
 		}
 
 		VERSION = properties.getProperty("version");
+		
+		// Create materials
+		MATERIAL_FACTORY = new MaterialFactory();
+		MATERIAL_FACTORY.addMaterial(0xffffff, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
+		MATERIAL_FACTORY.addMaterial(0xaa5555, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 270));
+		MATERIAL_FACTORY.addMaterial(0x555555, new GenerationParameters(GenerationType.DENSITY_MAP, 270, 1e100));
 	}
 }
