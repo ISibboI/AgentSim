@@ -50,9 +50,9 @@ public class DrawFrame extends JFrame {
 		createBufferStrategy(2);
 		_bufferStrategy = getBufferStrategy();
 		logBufferInfo();
-		
-		_transformation = new AffineTransform(scale, 0, 0, scale, getInsets().left, getInsets().top);
-		
+
+		_transformation = new AffineTransform(scale, 0, 0, scale, 0, 0);
+
 		setVisible(true);
 	}
 
@@ -79,11 +79,11 @@ public class DrawFrame extends JFrame {
 		if (!_isRendering) {
 			throw new IllegalStateException("Rendering was not started");
 		}
-		
+
 		_isRendering = false;
 		_renderGraphics.dispose();
 		_renderGraphics = null;
-		
+
 		_bufferStrategy.show();
 	}
 
