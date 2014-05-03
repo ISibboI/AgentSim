@@ -7,7 +7,7 @@ public class BorderFunction implements Noise {
 	private final double height;
 	private final double start;
 	private final double gradient;
-	
+
 	public BorderFunction(double width, double height, double start, double gradient) {
 		centerX = width / 2;
 		centerY = height / 2;
@@ -16,17 +16,17 @@ public class BorderFunction implements Noise {
 		this.start = start;
 		this.gradient = gradient;
 	}
-	
+
 	public double noise(double x, double y) {
 		double xSquareDistance = Math.abs((x - centerX) * (x - centerX) / width * height);
 		double ySquareDistance = Math.abs((y - centerY) * (y - centerY) / height * width);
 		double distance = Math.sqrt(xSquareDistance + ySquareDistance);
-		
+
 		double result = start + distance * gradient;
 		if (result < 0) {
 			result = 0;
 		}
-		
+
 		return result;
 	}
 }

@@ -8,7 +8,7 @@ public class NoiseParameter {
 	private double min;
 	private double max;
 	private long seed;
-	
+
 	public NoiseParameter(double cellWidth, double cellHeight, double min, double max) {
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;

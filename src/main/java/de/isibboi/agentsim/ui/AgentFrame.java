@@ -10,14 +10,14 @@ import de.isibboi.agentsim.Settings;
 public class AgentFrame extends JFrame {
 	private final DrawPane drawPane;
 	private final Settings settings;
-	
+
 	public AgentFrame(Settings settings) {
 		super("Agent Sim version " + Environment.VERSION);
 		this.settings = settings;
-		
+
 		drawPane = new DrawPane(settings.getInt(Settings.UI_WIDTH), settings.getInt(Settings.UI_HEIGHT));
 		setContentPane(drawPane);
-		
+
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		pack();
 	}

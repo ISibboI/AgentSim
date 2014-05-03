@@ -1,4 +1,5 @@
 package de.isibboi.agentsim.noise;
+
 import java.util.Random;
 
 /*
@@ -38,22 +39,22 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	// length
 	private short perm[] = new short[512];
 	private short permMod12[] = new short[512];
-	
+
 	public SimplexNoise(long seed) {
 		p = new short[256];
 		boolean[] used = new boolean[256];
 		int count = 0;
 		Random r = new Random(seed);
-		
+
 		while (count < 256) {
 			int index = r.nextInt(256);
-			
+
 			if (!used[index]) {
 				used[index] = true;
 				p[count++] = (short) index;
 			}
 		}
-		
+
 		for (int i = 0; i < 512; i++) {
 			perm[i] = p[i & 255];
 			permMod12[i] = (short) (perm[i] % 12);
@@ -110,9 +111,9 @@ public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 			i1 = 0;
 			j1 = 1;
 		} // upper triangle, YX order: (0,0)->(0,1)->(1,1)
-		// A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
-		// a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
-		// c = (3-sqrt(3))/6
+			// A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+			// a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+			// c = (3-sqrt(3))/6
 		double x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed
 									// coords
 		double y1 = y0 - j1 + G2;

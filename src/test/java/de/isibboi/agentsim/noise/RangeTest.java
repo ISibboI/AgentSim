@@ -18,11 +18,11 @@ public class RangeTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testSimplexNoiseRange() {
 		SimplexNoise noise = new SimplexNoise(49805643105274513L);
-		
+
 		for (int i = 0; i < 10_000; i++) {
 			double sample = noise.noise(i / 100, i % 100);
 			assertRange(-1, 1, sample);

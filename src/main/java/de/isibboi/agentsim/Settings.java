@@ -15,6 +15,7 @@ public class Settings {
 
 	private final Properties defaults;
 	private final Properties properties;
+	private boolean _isClosed;
 
 	public Settings(String resource) {
 		defaults = new Properties();
@@ -41,11 +42,15 @@ public class Settings {
 	}
 
 	public void set(String key, String value) {
+		if (_isClosed) {
+			throw new IllegalStateException("Settings are already closed!");
+		}
+
 		String oldValue = (String) properties.setProperty(key, value);
 
 		log.info("Changed setting " + key + " from " + oldValue + " to " + value);
 	}
-	
+
 	public void set(String key, long value) {
 		set(key, Long.toString(value));
 	}
@@ -62,7 +67,7 @@ public class Settings {
 
 	public int getInt(String key) {
 		String value = get(key);
-		
+
 		try {
 			int result = Integer.parseInt(value);
 			return result;
