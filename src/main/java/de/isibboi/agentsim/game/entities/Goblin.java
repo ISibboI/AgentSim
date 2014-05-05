@@ -39,7 +39,7 @@ public class Goblin extends MapEntity {
 	public Goblin(final GameMap map, final Point location) {
 		super(map, location);
 
-		_ai = new GoblinSwarmAI();
+		_ai = new GoblinSwarmAI(map);
 	}
 
 	/**

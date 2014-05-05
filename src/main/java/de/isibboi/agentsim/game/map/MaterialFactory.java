@@ -21,13 +21,16 @@ public class MaterialFactory {
 	 * @param solid If this material is solid ( = entities can't walk over it).
 	 * @param durability The durability of the material.
 	 * @param generationParameters The generation parameters of the material.
+	 * @return The newly added material.
 	 */
-	public void addMaterial(final String name, final int color, final boolean solid, final int durability, final GenerationParameters generationParameters) {
+	public Material addMaterial(final String name, final int color, final boolean solid, final int durability, final GenerationParameters generationParameters) {
 		if (_colorToMaterial.containsKey(color)) {
 			throw new IllegalArgumentException("Map already contains a material with color: " + color);
 		}
 		
-		_colorToMaterial.put(color, new Material(name, color, solid, durability, generationParameters));
+		Material added = new Material(name, color, solid, durability, generationParameters);
+		_colorToMaterial.put(color, added);
+		return added;
 	}
 	
 	/**

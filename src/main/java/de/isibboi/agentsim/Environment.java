@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.game.map.GenerationParameters;
 import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
+import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.MaterialFactory;
 
 /**
@@ -21,6 +22,11 @@ public final class Environment {
 	public static final String VERSION;
 
 	public static final MaterialFactory MATERIAL_FACTORY;
+
+	// Materials
+	public static final Material MATERIAL_AIR;
+	public static final Material MATERIAL_DIRT;
+	public static final Material MATERIAL_STONE;
 
 	static {
 		// Load values from .properties file
@@ -36,9 +42,9 @@ public final class Environment {
 
 		// Create materials
 		MATERIAL_FACTORY = new MaterialFactory();
-		MATERIAL_FACTORY.addMaterial("Air", 0xffffff, false, 0, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
-		MATERIAL_FACTORY.addMaterial("Dirt", 0xaa5555, true, 10, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 270));
-		MATERIAL_FACTORY.addMaterial("Stone", 0x555555, true, 30, new GenerationParameters(GenerationType.DENSITY_MAP, 270, 1e100));
+		MATERIAL_AIR = MATERIAL_FACTORY.addMaterial("Air", 0xffffff, false, 0, new GenerationParameters(GenerationType.DENSITY_MAP, -1e100, 255));
+		MATERIAL_DIRT = MATERIAL_FACTORY.addMaterial("Dirt", 0xaa5555, true, 10, new GenerationParameters(GenerationType.DENSITY_MAP, 255, 300));
+		MATERIAL_STONE = MATERIAL_FACTORY.addMaterial("Stone", 0x555555, true, 100, new GenerationParameters(GenerationType.DENSITY_MAP, 300, 1e100));
 	}
 
 	/**

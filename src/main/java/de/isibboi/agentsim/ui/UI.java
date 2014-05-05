@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Drawable;
+import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -18,6 +19,7 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class UI implements Drawable, MouseListener {
 	private final Settings _settings;
+	private final GameMap _map;
 	
 	private int _width;
 	private int _height;
@@ -29,16 +31,19 @@ public class UI implements Drawable, MouseListener {
 	private final Collection<Drawable> _drawables = new ArrayList<>();
 	
 	private UINumberLabel _frameRateLabel;
+	private UINumberLabel _entityCountLabel;
 
 	/**
 	 * Creates a new ui with the given settings.
 	 * 
 	 * @param renderer The renderer used to draw the ui.
 	 * @param settings The settings.
+	 * @param map The game map.
 	 */
-	public UI(final Renderer renderer, final Settings settings) {
+	public UI(final Renderer renderer, final Settings settings, final GameMap map) {
 		_settings = settings;
 		_renderer = renderer;
+		_map = map;
 		
 		_width = settings.getInt(Settings.UI_WIDTH);
 		_height = settings.getInt(Settings.UI_HEIGHT);
@@ -52,8 +57,11 @@ public class UI implements Drawable, MouseListener {
 	 * Creates the ui.
 	 */
 	private void initUI() {
-		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 220, 10), 200, "Framerate: ", "", 1, 0);
+		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 10), 250, "Framerate: ", "", 1, 0);
 		_drawables.add(_frameRateLabel);
+		
+		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 270, 50), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
+		_drawables.add(_entityCountLabel);
 	}
 
 	@Override
@@ -61,6 +69,9 @@ public class UI implements Drawable, MouseListener {
 		// Measure frame rate.
 		_frameRateMeter.update();
 		_frameRateLabel.setValue(_frameRateMeter.getValue());
+		
+		// Measure entity count.
+		_entityCountLabel.setValue(_map.getEntityCount());
 		
 		_renderer.setGraphics(g);
 		for (Drawable d : _drawables) {

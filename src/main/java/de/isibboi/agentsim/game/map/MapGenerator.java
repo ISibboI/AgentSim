@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
+import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
 import de.isibboi.agentsim.noise.BorderFunction;
 import de.isibboi.agentsim.noise.CombinedNoise;
@@ -23,18 +24,20 @@ import de.isibboi.agentsim.noise.SimplexNoise;
 public class MapGenerator {
 	private final Logger _log = LogManager.getLogger(getClass());
 
-	private int _width;
-	private int _height;
+	private final int _width;
+	private final int _height;
+	
+	private final Settings _settings;
 
 	/**
-	 * Creates a new map generator, generating a map with the given width and height.
+	 * Creates a new map generator, generating a map with the given settings.
 	 * 
-	 * @param width The width.
-	 * @param height The height.
+	 * @param settings The settings
 	 */
-	public MapGenerator(final int width, final int height) {
-		_width = width;
-		_height = height;
+	public MapGenerator(final Settings settings) {
+		_width = settings.getInt(Settings.UI_WIDTH) / settings.getInt(Settings.GAME_SCALE);
+		_height = settings.getInt(Settings.UI_HEIGHT) / settings.getInt(Settings.GAME_SCALE);
+		_settings = settings;
 	}
 
 	/**
@@ -98,6 +101,6 @@ public class MapGenerator {
 		BufferedImage map = new BufferedImage(_width, _height, BufferedImage.TYPE_INT_RGB);
 		Point spawnPoint = generateDensityMap(map);
 
-		return new GameMap(map, spawnPoint);
+		return new GameMap(map, spawnPoint, _settings);
 	}
 }
