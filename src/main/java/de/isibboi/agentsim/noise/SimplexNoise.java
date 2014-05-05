@@ -61,6 +61,13 @@ public class SimplexNoise implements Noise { // Simplex noise in 2D, 3D and 4D
 		}
 	}
 
+	/**
+	 * Creates a new simplex noise function with a random seed.
+	 */
+	public SimplexNoise() {
+		this(new Random().nextLong());
+	}
+
 	// Skewing and unskewing factors for 2, 3, and 4 dimensions
 	private static final double F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
 	private static final double G2 = (3.0 - Math.sqrt(3.0)) / 6.0;

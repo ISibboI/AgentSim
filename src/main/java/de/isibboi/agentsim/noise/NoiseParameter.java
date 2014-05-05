@@ -3,7 +3,7 @@ package de.isibboi.agentsim.noise;
 import java.util.Random;
 
 /**
- * The parameters for a {@link ScaledSimplexNoise}.
+ * The parameters for a {@link ScaledNoise}.
  * @author Sebastian Schmidt
  * @since 0.0.0
  */

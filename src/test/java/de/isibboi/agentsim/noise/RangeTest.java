@@ -18,7 +18,7 @@ public class RangeTest {
 	@Test
 	public void testScaledSimplexNoiseRange() {
 		for (int i = 0; i < TEST_RANGES.length; i++) {
-			ScaledSimplexNoise noiseMap = new ScaledSimplexNoise(1, 1, TEST_RANGES[i][0], TEST_RANGES[i][1]);
+			ScaledNoise noiseMap = new ScaledNoise(new SimplexNoise(), 1, 1, TEST_RANGES[i][0], TEST_RANGES[i][1]);
 
 			for (int j = 0; j < 10000; j++) {
 				double sample = noiseMap.noise(j % 100, j / 100);
