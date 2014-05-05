@@ -29,6 +29,7 @@ public class AgentFrame {
 
 	private final List<Entity> _entities = new ArrayList<>();
 	private GameMap _map;
+	private final UI _ui;
 
 	private final Random _random = new Random();
 
@@ -49,6 +50,9 @@ public class AgentFrame {
 				settings.getInt(Settings.UI_WIDTH) / settings.getInt(Settings.GAME_SCALE),
 				settings.getInt(Settings.UI_HEIGHT) / settings.getInt(Settings.GAME_SCALE));
 		_map = mapGenerator.generateMap();
+		
+		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings);
+		_drawFrame.addMouseListener(_ui);
 	}
 
 	/**
@@ -95,6 +99,9 @@ public class AgentFrame {
 		for (Entity entity : _entities) {
 			entity.draw(g);
 		}
+		
+		_drawFrame.switchToUIRender();
+		_ui.draw(g);
 
 		_drawFrame.stopRender();
 	}

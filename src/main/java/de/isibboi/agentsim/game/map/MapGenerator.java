@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.game.map;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +12,8 @@ import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
 import de.isibboi.agentsim.noise.BorderFunction;
 import de.isibboi.agentsim.noise.CombinedNoise;
 import de.isibboi.agentsim.noise.Noise;
-import de.isibboi.agentsim.noise.ScaledSimplexNoise;
+import de.isibboi.agentsim.noise.ScaledNoise;
+import de.isibboi.agentsim.noise.SimplexNoise;
 
 /**
  * Generates the game map.
@@ -22,7 +22,7 @@ import de.isibboi.agentsim.noise.ScaledSimplexNoise;
  */
 public class MapGenerator {
 	private final Logger _log = LogManager.getLogger(getClass());
-	
+
 	private int _width;
 	private int _height;
 
@@ -46,14 +46,14 @@ public class MapGenerator {
 	 */
 	private Point generateDensityMap(final BufferedImage image) {
 		CombinedNoise noise = new CombinedNoise(new Noise[] {
-				new ScaledSimplexNoise(200 * _width / 1920, 200 * _height / 1080, 20, 256),
-				new ScaledSimplexNoise(110 * _width / 1920, 110 * _height / 1080, 110, 190),
+				new ScaledNoise(new SimplexNoise(), 200 * _width / 1920, 200 * _height / 1080, 20, 256),
+				new ScaledNoise(new SimplexNoise(), 110 * _width / 1920, 110 * _height / 1080, 110, 190),
 				new BorderFunction(_width, _height, -1500 * (_width + _height) / 4000, 3) });
 
 		Collection<Material> materials = new ArrayList<>();
-		Point spawnPoint = new Point();
+		Point.Builder spawnPoint = new Point.Builder();
 		double minimalDensity = 1e100;
-		
+
 		for (Material material : Environment.MATERIAL_FACTORY.getAllMaterials()) {
 			if (material.getGenerationParameters().getGenerationType() == GenerationType.DENSITY_MAP) {
 				materials.add(material);
@@ -67,8 +67,8 @@ public class MapGenerator {
 				// Search lowest density for the spawn point.
 				if (sample < minimalDensity) {
 					minimalDensity = sample;
-					spawnPoint.x = x;
-					spawnPoint.y = y;
+					spawnPoint.setX(x);
+					spawnPoint.setY(y);
 				}
 
 				boolean foundMaterial = false;
@@ -80,14 +80,14 @@ public class MapGenerator {
 						break;
 					}
 				}
-				
+
 				if (!foundMaterial) {
 					_log.error("Missing material for density sample value: " + sample);
 				}
 			}
 		}
 
-		return spawnPoint;
+		return spawnPoint.build();
 	}
 
 	/**

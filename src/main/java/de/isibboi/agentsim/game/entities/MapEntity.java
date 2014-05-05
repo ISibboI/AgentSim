@@ -1,7 +1,7 @@
 package de.isibboi.agentsim.game.entities;
 
-import java.awt.Point;
 import de.isibboi.agentsim.game.map.GameMap;
+import de.isibboi.agentsim.game.map.Point;
 
 /**
  * An entity that has a location known by the game map.
@@ -20,7 +20,7 @@ public abstract class MapEntity implements Entity {
 	 */
 	public MapEntity(final GameMap map, final Point location) {
 		_map = map;
-		setLocation(_location);
+		setLocation(location);
 	}
 
 	/**

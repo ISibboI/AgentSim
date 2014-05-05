@@ -1,9 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai;
 
-import java.awt.Point;
-
-import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.map.Point;
 
 /**
  * An interface for AI systems. Specifies all the events that can be fired by a goblin.
@@ -22,7 +20,7 @@ public interface AI {
 
 	/**
 	 * If the goblins steps on the location of another goblin, this event is fired.
-	 * @param entity The other goblin.
+	 * @param goblin The other goblin.
 	 */
 	void eventCollideWithEntity(Goblin goblin);
 

@@ -72,6 +72,13 @@ public class DrawFrame extends JFrame {
 
 		return getRenderGraphics();
 	}
+	
+	/**
+	 * Removes the content transformation.
+	 */
+	public void switchToUIRender() {
+		_renderGraphics.setTransform(new AffineTransform());
+	}
 
 	/**
 	 * Stops the rendering process and shows the rendered image.

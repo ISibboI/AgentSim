@@ -2,13 +2,13 @@ package de.isibboi.agentsim.game.entities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.Random;
 
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.ai.AI;
 import de.isibboi.agentsim.game.entities.ai.Task;
 import de.isibboi.agentsim.game.map.GameMap;
+import de.isibboi.agentsim.game.map.Point;
 
 /**
  * A goblin that digs dirt.
@@ -54,7 +54,7 @@ public class Goblin extends MapEntity {
 	@Override
 	public void draw(final Graphics2D g) {
 		g.setColor(_color);
-		g.fillRect(getLocation().x, getLocation().y, 1, 1);
+		g.fillRect(getLocation().getX(), getLocation().getY(), 1, 1);
 	}
 
 	@Override
@@ -101,25 +101,28 @@ public class Goblin extends MapEntity {
 	 * @throws GameUpdateException If the number generator generates a wrong direction.
 	 */
 	private void calculateNewLocation(final Random random) throws GameUpdateException {
-		Point newLocation = new Point(getLocation());
+		int x = getLocation().getX();
+		int y = getLocation().getY();
 
 		switch (random.nextInt(4)) {
 		case 0:
-			newLocation.x++;
+			x++;
 			break;
 		case 1:
-			newLocation.x--;
+			x--;
 			break;
 		case 2:
-			newLocation.y++;
+			y++;
 			break;
 		case 3:
-			newLocation.y--;
+			y--;
 			break;
 		default:
 			throw new GameUpdateException("Illegal direction");
 		}
 
+		Point newLocation = new Point(x, y);
+		
 		if (getMap().isValidEntityLocation(newLocation)) {
 			setLocation(newLocation);
 			_ai.eventMoveTo(newLocation);

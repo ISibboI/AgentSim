@@ -1,15 +1,13 @@
 package de.isibboi.agentsim.game.map;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import de.isibboi.agentsim.Environment;
@@ -66,7 +64,7 @@ public class GameMap implements Drawable {
 	 * @return True if the given location is valid for an entity.
 	 */
 	public boolean isValidEntityLocation(final Point location) {
-		return isValidEntityLocation(location.x, location.y);
+		return isValidEntityLocation(location.getX(), location.getY());
 	}
 
 	/**
@@ -76,14 +74,13 @@ public class GameMap implements Drawable {
 	 * @return A point that represents a valid location on the map, or null, if no location was found after {@code maxTries} tries.
 	 */
 	public Point getRandomValidLocation(final int maxTries) {
-		Point result = new Point();
+		Point.Builder result = new Point.Builder();
 
 		for (int i = 0; i < maxTries; i++) {
-			result.x = _random.nextInt();
-			result.y = _random.nextInt();
+			result.setXY(_random.nextInt(), _random.nextInt());
 
-			if (isValidEntityLocation(result)) {
-				return result;
+			if (isValidEntityLocation(result.getX(), result.getY())) {
+				return result.build();
 			}
 		}
 
@@ -100,18 +97,19 @@ public class GameMap implements Drawable {
 	public Point getRandomValidLocationNearSpawnPoint(final int maxTries, final int distance) {
 		int squaredDistance = distance * distance;
 		int doubleDistance = distance << 1;
-		Point result = new Point();
+		int x;
+		int y;
 
 		for (int i = 0; i < maxTries; i++) {
-			result.x = -distance + _random.nextInt(doubleDistance);
-			result.y = -distance + _random.nextInt(doubleDistance);
+			x = -distance + _random.nextInt(doubleDistance);
+			y = -distance + _random.nextInt(doubleDistance);
 
-			if (result.x * result.x + result.y * result.y < squaredDistance) {
-				result.x += _spawnPoint.x;
-				result.y += _spawnPoint.y;
+			if (x * x + y * y < squaredDistance) {
+				x += _spawnPoint.getX();
+				y += _spawnPoint.getY();
 
-				if (isValidEntityLocation(result)) {
-					return result;
+				if (isValidEntityLocation(x, y)) {
+					return new Point(x, y);
 				}
 			}
 		}
@@ -129,10 +127,10 @@ public class GameMap implements Drawable {
 	public void updateLocation(final Entity entity, final Point oldLocation, final Point newLocation) {
 		if (oldLocation != null) {
 			if (!_entityLocations.get(oldLocation).remove(entity)) {
-				throw new IllegalArgumentException("Given entity " + entity + " was no at location " + oldLocation);
+				throw new IllegalArgumentException("Given entity " + entity + " was not at location " + oldLocation);
 			}
 		}
-		
+
 		_entityLocations.put(newLocation, entity);
 	}
 
@@ -144,7 +142,7 @@ public class GameMap implements Drawable {
 	public Collection<Entity> getEntitiesAt(final Point location) {
 		return _entityLocations.get(location);
 	}
-	
+
 	/**
 	 * Returns all entities at the given location, except self.
 	 * @param location The location.
@@ -152,7 +150,8 @@ public class GameMap implements Drawable {
 	 * @return A collection containing all entities at the given point, except self.
 	 */
 	public Collection<Entity> getEntitesAt(final Point location, final Entity self) {
-		Collection<Entity> result = _entityLocations.get(location);
+		Collection<Entity> result = new ArrayList<>();
+		result.addAll(_entityLocations.get(location));
 		result.remove(self);
 		return result;
 	}
