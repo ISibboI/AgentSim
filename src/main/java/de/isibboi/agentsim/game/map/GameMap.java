@@ -3,10 +3,18 @@ package de.isibboi.agentsim.game.map;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.Random;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.entities.Drawable;
+import de.isibboi.agentsim.game.entities.Entity;
 
 /**
  * Represents the game map.
@@ -19,6 +27,8 @@ public class GameMap implements Drawable {
 	private final Point _spawnPoint;
 	private final MaterialFactory _materialFactory = Environment.MATERIAL_FACTORY;
 	private final Random _random = new Random();
+
+	private final Multimap<Point, Entity> _entityLocations = HashMultimap.create();
 
 	/**
 	 * Creates the map from the given image.
@@ -107,5 +117,43 @@ public class GameMap implements Drawable {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Sets the location of the given entity. If oldLocation is != null, the old location will be deleted before inserting the new one.
+	 * 
+	 * @param entity The entity.
+	 * @param oldLocation The old location of the entity.
+	 * @param newLocation The new location of the entity.
+	 */
+	public void updateLocation(final Entity entity, final Point oldLocation, final Point newLocation) {
+		if (oldLocation != null) {
+			if (!_entityLocations.get(oldLocation).remove(entity)) {
+				throw new IllegalArgumentException("Given entity " + entity + " was no at location " + oldLocation);
+			}
+		}
+		
+		_entityLocations.put(newLocation, entity);
+	}
+
+	/**
+	 * Returns all entities at the given location.
+	 * @param location The location.
+	 * @return A collection containing all entities at the given point.
+	 */
+	public Collection<Entity> getEntitiesAt(final Point location) {
+		return _entityLocations.get(location);
+	}
+	
+	/**
+	 * Returns all entities at the given location, except self.
+	 * @param location The location.
+	 * @param self The entity that should be excluded.
+	 * @return A collection containing all entities at the given point, except self.
+	 */
+	public Collection<Entity> getEntitesAt(final Point location, final Entity self) {
+		Collection<Entity> result = _entityLocations.get(location);
+		result.remove(self);
+		return result;
 	}
 }

@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.util.Random;
 
 import de.isibboi.agentsim.game.GameUpdateException;
+import de.isibboi.agentsim.game.entities.ai.AI;
+import de.isibboi.agentsim.game.entities.ai.Task;
 import de.isibboi.agentsim.game.map.GameMap;
 
 /**
@@ -13,10 +15,11 @@ import de.isibboi.agentsim.game.map.GameMap;
  * @author Sebastian Schmidt
  * @since 0.1.0
  */
-public class Goblin implements Entity {
-	private final GameMap _map;
-	private Point _location;
+public class Goblin extends MapEntity {
 	private final Color _color = new Color(0x55bb55);
+
+	private final AI _ai;
+	private Task _task;
 
 	/**
 	 * Creates a new goblin.
@@ -34,23 +37,62 @@ public class Goblin implements Entity {
 	 * @param location The location.
 	 */
 	public Goblin(final GameMap map, final Point location) {
-		if (!map.isValidEntityLocation(location)) {
-			throw new IllegalArgumentException("Location is not valid: " + location);
-		}
+		super(map, location);
 
-		_map = map;
-		_location = location;
+		_ai = new GoblinSwarmAI();
+	}
+
+	/**
+	 * Returns the AI of this goblin.
+	 * 
+	 * @return The AI of this goblin.
+	 */
+	public AI getAI() {
+		return _ai;
 	}
 
 	@Override
 	public void draw(final Graphics2D g) {
 		g.setColor(_color);
-		g.fillRect(_location.x, _location.y, 1, 1);
+		g.fillRect(getLocation().x, getLocation().y, 1, 1);
 	}
 
 	@Override
 	public void update(final Random random) throws GameUpdateException {
-		calculateNewLocation(random);
+		if (_task == null) {
+			calculateNewLocation(random);
+		} else {
+			_task.update(random);
+
+			if (_task.isFinished()) {
+				_task.complete(getMap());
+				_task = null;
+				_ai.eventTaskFinished();
+			}
+		}
+
+		handleEntityCollisions(random);
+
+		// This has to be at the end of update, since the AI generates new tasks during the update.
+		if (_task == null) {
+			_task = _ai.getNewTask();
+
+			if (_task != null) {
+				_ai.eventTaskAccepted();
+			}
+		}
+	}
+
+	/**
+	 * Checks for colliding entities and calls the AI collision event if a collision happened.
+	 * @param random The pseudo random number generator used for randomness.
+	 */
+	private void handleEntityCollisions(final Random random) {
+		for (Entity entity : getMap().getEntitesAt(getLocation(), this)) {
+			if (entity instanceof Goblin) {
+				_ai.eventCollideWithEntity((Goblin) entity);
+			}
+		}
 	}
 
 	/**
@@ -59,7 +101,7 @@ public class Goblin implements Entity {
 	 * @throws GameUpdateException If the number generator generates a wrong direction.
 	 */
 	private void calculateNewLocation(final Random random) throws GameUpdateException {
-		Point newLocation = new Point(_location);
+		Point newLocation = new Point(getLocation());
 
 		switch (random.nextInt(4)) {
 		case 0:
@@ -77,9 +119,12 @@ public class Goblin implements Entity {
 		default:
 			throw new GameUpdateException("Illegal direction");
 		}
-		
-		if (_map.isValidEntityLocation(newLocation)) {
-			_location = newLocation;
-		} 
+
+		if (getMap().isValidEntityLocation(newLocation)) {
+			setLocation(newLocation);
+			_ai.eventMoveTo(newLocation);
+		} else {
+			_ai.eventCollideWithWall(newLocation);
+		}
 	}
 }
