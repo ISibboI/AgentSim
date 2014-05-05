@@ -17,6 +17,7 @@ public class Settings {
 	public static final String UI_WIDTH = "ui.width";
 	public static final String UI_HEIGHT = "ui.height";
 	public static final String UI_FONT_FAMILY = "ui.fontFamily";
+	public static final String UI_TARGET_FRAMERATE = "ui.targetFramerate";
 	public static final String GAME_INITIAL_GOBLIN_COUNT = "game.initialGoblinCount";
 	public static final String GAME_SPAWN_RADIUS = "game.spawnRadius";
 	public static final String GAME_SCALE = "game.scale";
@@ -57,6 +58,7 @@ public class Settings {
 		_defaults.setProperty(UI_WIDTH, "1920");
 		_defaults.setProperty(UI_HEIGHT, "1080");
 		_defaults.setProperty(UI_FONT_FAMILY, "Monospaced");
+		_defaults.setProperty(UI_TARGET_FRAMERATE, "60");
 		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");

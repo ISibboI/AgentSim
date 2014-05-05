@@ -34,15 +34,13 @@ public class AgentSim implements Runnable {
 		// Spawn initial entities
 		_frame.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 		
+		FrameRateStabilizer frameRateStabilizer = new FrameRateStabilizer(_settings.getInt(Settings.UI_TARGET_FRAMERATE));
+		
 		while (true) {
 			_frame.update();
 			_frame.render();
 			
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			frameRateStabilizer.stabilize();
 		}
 	}
 }
