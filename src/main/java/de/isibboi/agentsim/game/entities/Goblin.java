@@ -126,8 +126,10 @@ public class Goblin extends MapEntity {
 		if (getMap().isValidEntityLocation(newLocation)) {
 			setLocation(newLocation);
 			_ai.eventMoveTo(newLocation);
-		} else {
+		} else if (getMap().isLocationOnMap(newLocation)) {
 			_ai.eventCollideWithWall(newLocation);
+		} else {
+			_ai.eventCollideWithMapBorder(newLocation);
 		}
 	}
 }

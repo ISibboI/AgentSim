@@ -272,4 +272,13 @@ public class GameMap implements Drawable, Updateable {
 	public int getEntityCount() {
 		return _entities.size();
 	}
+
+	/**
+	 * Returns true if the given location is on the map.
+	 * @param location The location.
+	 * @return True if {@code location} is on the map.
+	 */
+	public boolean isLocationOnMap(final Point location) {
+		return location.getX() > 0 && location.getY() > 0 && location.getX() < _map.getWidth() && location.getY() < _map.getHeight();
+	}
 }

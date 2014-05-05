@@ -25,6 +25,12 @@ public interface AI {
 	void eventCollideWithEntity(Goblin goblin);
 
 	/**
+	 * If the goblin tries to walk out of the map, this event is fired.
+	 * @param location The location at which the collision happened.
+	 */
+	void eventCollideWithMapBorder(Point location);
+
+	/**
 	 * If the goblin walks onto the given location, this event is fired.
 	 * 
 	 * @param location The location to goblin walked onto.
