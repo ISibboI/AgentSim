@@ -41,6 +41,7 @@ public class GameMap implements Drawable, Updateable {
 	private final Point _spawnPoint;
 	private final List<Entity> _entities = new ArrayList<>();
 	private final Collection<Entity> _newEntities = new ArrayList<>();
+	private final Collection<Entity> _removedEntities = new ArrayList<>();
 	private final Multimap<Point, Entity> _entityLocations = HashMultimap.create();
 	private final Set<Point> _locationLocks = new HashSet<Point>();
 
@@ -212,7 +213,7 @@ public class GameMap implements Drawable, Updateable {
 	public void unlockLocation(final Point location) {
 		_locationLocks.remove(location);
 	}
-	
+
 	/**
 	 * Spawns a goblin at the given location.
 	 * @param location The location
@@ -237,15 +238,32 @@ public class GameMap implements Drawable, Updateable {
 		for (int i = 0; i < amount; i++) {
 			spawnGoblin();
 		}
+	}
 
-		_log.info("Spawned " + amount + " Goblins");
+	/**
+	 * Removes the given entity from the map.
+	 * @param entity The entity.
+	 */
+	public void removeEntity(final Entity entity) {
+		_removedEntities.add(entity);
+
+		_log.info("Removed 1 Entity");
 	}
 
 	@Override
 	public void update(final Random random) {
-		_entities.addAll(_newEntities);
-		_newEntities.clear();
-		
+		if (_newEntities.size() > 0) {
+			_entities.addAll(_newEntities);
+			_log.info("Added " + _newEntities.size() + " entities");
+			_newEntities.clear();
+		}
+
+		if (_removedEntities.size() > 0) {
+			_entities.removeAll(_removedEntities);
+			_log.info("Removed " + _removedEntities.size() + " entities");
+			_removedEntities.clear();
+		}
+
 		for (Entity entity : _entities) {
 			try {
 				entity.update(_random);
@@ -264,7 +282,7 @@ public class GameMap implements Drawable, Updateable {
 	public void setMaterial(final Point location, final Material material) {
 		_map.setRGB(location.getX(), location.getY(), material.getColor());
 	}
-	
+
 	/**
 	 * Returns the amount of entities on the map.
 	 * @return The amount of entities on the map.
@@ -279,6 +297,14 @@ public class GameMap implements Drawable, Updateable {
 	 * @return True if {@code location} is on the map.
 	 */
 	public boolean isLocationOnMap(final Point location) {
-		return location.getX() > 0 && location.getY() > 0 && location.getX() < _map.getWidth() && location.getY() < _map.getHeight();
+		return location.getX() >= 0 && location.getY() >= 0 && location.getX() < _map.getWidth() && location.getY() < _map.getHeight();
+	}
+
+	/**
+	 * Returns the settings.
+	 * @return The settings.
+	 */
+	public Settings getSettings() {
+		return _settings;
 	}
 }

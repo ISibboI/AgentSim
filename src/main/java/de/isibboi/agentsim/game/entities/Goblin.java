@@ -39,7 +39,7 @@ public class Goblin extends MapEntity {
 	public Goblin(final GameMap map, final Point location) {
 		super(map, location);
 
-		_ai = new GoblinSwarmAI(map);
+		_ai = new GoblinSwarmAI(map, this);
 	}
 
 	/**
@@ -59,6 +59,10 @@ public class Goblin extends MapEntity {
 
 	@Override
 	public void update(final Random random) throws GameUpdateException {
+		if (!_ai.update(random)) {
+			return;
+		}
+		
 		if (_task == null) {
 			calculateNewLocation(random);
 		} else {

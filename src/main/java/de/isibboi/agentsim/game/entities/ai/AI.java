@@ -1,5 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.util.Random;
+
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -54,4 +56,11 @@ public interface AI {
 	 * @return The new task for the goblin, or null if it should continue moving.
 	 */
 	Task getNewTask();
+
+	/**
+	 * Updates the ai.
+	 * @param random The pseudo random number generator used for randomness.
+	 * @return True if the goblin should continue updating, false if it is dead.
+	 */
+	boolean update(Random random);
 }

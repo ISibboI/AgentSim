@@ -36,13 +36,23 @@ public class LocationLock {
 	}
 	
 	/**
-	 * Unlocks a locked location, if it was locked.
+	 * Unlocks the locked location, if it is locked. Must not be called if no location is locked.
 	 */
 	public void unlockLocation() {
 		if (_location != null) {
 			_map.unlockLocation(_location);
+			_location = null;
 		} else {
 			throw new IllegalStateException("No location locked!");
+		}
+	}
+
+	/**
+	 * Unlocks the location, if it is locked. May be called if no location is locked.
+	 */
+	public void unlockLocationIfLocked() {
+		if (_location != null) {
+			unlockLocation();
 		}
 	}
 }
