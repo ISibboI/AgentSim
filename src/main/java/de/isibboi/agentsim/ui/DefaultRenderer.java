@@ -3,10 +3,6 @@ package de.isibboi.agentsim.ui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JFrame;
 

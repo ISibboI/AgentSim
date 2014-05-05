@@ -18,7 +18,7 @@ public class UILabel extends UIAbstractComponent {
 	 * Creates a new ui label with an empty text.
 	 * 
 	 * @param renderer The renderer used to draw the component.
-	 * @param bounds The bounds of the label.
+	 * @param position The position of the label.
 	 * @param width The width of the label.
 	 */
 	public UILabel(final Renderer renderer, final Point position, final int width) {

@@ -51,20 +51,17 @@ public class GoblinSwarmAI implements AI {
 
 	@Override
 	public void eventCollideWithEntity(final Goblin goblin) {
-		// TODO Auto-generated method stub
-
+		// Ignored
 	}
 
 	@Override
 	public void eventCollideWithMapBorder(final Point location) {
-		// TODO Auto-generated method stub
-
+		// Ignored
 	}
 
 	@Override
 	public void eventMoveTo(final Point location) {
-		// TODO Auto-generated method stub
-
+		// Ignored
 	}
 
 	@Override
