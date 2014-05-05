@@ -254,13 +254,13 @@ public class GameMap implements Drawable, Updateable {
 	public void update(final Random random) {
 		if (_newEntities.size() > 0) {
 			_entities.addAll(_newEntities);
-			_log.info("Added " + _newEntities.size() + " entities");
+			_log.debug("Added " + _newEntities.size() + " entities");
 			_newEntities.clear();
 		}
 
 		if (_removedEntities.size() > 0) {
 			_entities.removeAll(_removedEntities);
-			_log.info("Removed " + _removedEntities.size() + " entities");
+			_log.debug("Removed " + _removedEntities.size() + " entities");
 			_removedEntities.clear();
 		}
 
