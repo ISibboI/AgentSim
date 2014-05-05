@@ -67,7 +67,7 @@ public class Settings {
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 		
-		_defaults.setProperty(AI_LIFE_TIME, "1000");
+		_defaults.setProperty(AI_LIFE_TIME, "500");
 	}
 
 	/**
