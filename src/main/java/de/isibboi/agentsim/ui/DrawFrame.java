@@ -45,7 +45,7 @@ public class DrawFrame extends JFrame {
 		contentPane.setPreferredSize(new Dimension(width, height));
 		setContentPane(contentPane);
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setIgnoreRepaint(true);
 		setResizable(false);
 		pack();

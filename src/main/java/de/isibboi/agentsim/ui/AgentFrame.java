@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.ui;
 
 import java.awt.Graphics2D;
+import java.awt.event.WindowListener;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -74,5 +75,20 @@ public class AgentFrame {
 	 */
 	public void spawnGoblins(final int amount) {
 		_map.spawnGoblins(amount);
+	}
+
+	/**
+	 * Adds a window listener to the underlying {@link DrawFrame}.
+	 * @param listener The listener.
+	 */
+	public void addWindowListener(final WindowListener listener) {
+		_drawFrame.addWindowListener(listener);
+	}
+
+	/**
+	 * Disposes the underlying {@link DrawFrame}.
+	 */
+	public void dispose() {
+		_drawFrame.dispose();
 	}
 }
