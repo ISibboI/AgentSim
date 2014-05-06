@@ -90,5 +90,6 @@ public class AgentFrame {
 	 */
 	public void dispose() {
 		_drawFrame.dispose();
+		_log.debug("Disposed frame");
 	}
 }

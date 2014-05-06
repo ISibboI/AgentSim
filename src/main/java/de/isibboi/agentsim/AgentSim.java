@@ -1,12 +1,12 @@
 package de.isibboi.agentsim;
 
-import de.isibboi.agentsim.ui.AgentFrame;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.isibboi.agentsim.ui.AgentFrame;
 
 /**
  * The AgentSim main class. Executes the game.
@@ -44,47 +44,47 @@ public class AgentSim implements Runnable, WindowListener {
 	public void run() {
 		// Spawn initial entities
 		_frame.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
-		
+
 		FrameRateStabilizer frameRateStabilizer = new FrameRateStabilizer(_settings.getInt(Settings.UI_TARGET_FRAMERATE));
-		
+
 		while (!_exit) {
 			_frame.update();
 			_frame.render();
-			
+
 			frameRateStabilizer.stabilize();
 		}
-		
+
 		_frame.dispose();
 		_settings.close();
 	}
 
 	@Override
-	public void windowOpened(WindowEvent e) {
+	public void windowOpened(final WindowEvent e) {
 	}
 
 	@Override
-	public void windowClosing(WindowEvent e) {
+	public void windowClosing(final WindowEvent e) {
 		_log.info("Exit requested");
 		_exit = true;
 	}
 
 	@Override
-	public void windowClosed(WindowEvent e) {
+	public void windowClosed(final WindowEvent e) {
 	}
 
 	@Override
-	public void windowIconified(WindowEvent e) {
+	public void windowIconified(final WindowEvent e) {
 	}
 
 	@Override
-	public void windowDeiconified(WindowEvent e) {
+	public void windowDeiconified(final WindowEvent e) {
 	}
 
 	@Override
-	public void windowActivated(WindowEvent e) {
+	public void windowActivated(final WindowEvent e) {
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {
+	public void windowDeactivated(final WindowEvent e) {
 	}
 }

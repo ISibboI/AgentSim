@@ -13,8 +13,6 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.isibboi.agentsim.Environment;
-
 /**
  * Manages the applications settings.
  * 
@@ -33,7 +31,8 @@ public class Settings {
 	
 	public static final String AI_LIFE_TIME = "ai.lifeTime";
 
-	private static final Set<String> allSettings = new HashSet<>(Arrays.asList(UI_WIDTH, UI_HEIGHT, UI_FONT_FAMILY, UI_TARGET_FRAMERATE, GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE, AI_LIFE_TIME));
+	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
+			UI_WIDTH, UI_HEIGHT, UI_FONT_FAMILY, UI_TARGET_FRAMERATE, GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE, AI_LIFE_TIME));
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
@@ -58,7 +57,7 @@ public class Settings {
 				_properties.load(in);
 
 				for (String property : _properties.stringPropertyNames()) {
-					if (!allSettings.contains(property)) {
+					if (!ALL_SETTINGS.contains(property)) {
 						_log.warn("Unknown setting: " + property);
 					}
 				}
