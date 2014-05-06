@@ -58,8 +58,8 @@ public class Settings {
 	 * Fills the default settings.
 	 */
 	private void createDefaults() {
-		_defaults.setProperty(UI_WIDTH, "1920");
-		_defaults.setProperty(UI_HEIGHT, "1080");
+		_defaults.setProperty(UI_WIDTH, "800");
+		_defaults.setProperty(UI_HEIGHT, "600");
 		_defaults.setProperty(UI_FONT_FAMILY, "Monospaced");
 		_defaults.setProperty(UI_TARGET_FRAMERATE, "60");
 		

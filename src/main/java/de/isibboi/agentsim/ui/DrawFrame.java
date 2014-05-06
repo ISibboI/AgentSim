@@ -3,6 +3,7 @@ package de.isibboi.agentsim.ui;
 import java.awt.BufferCapabilities;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
@@ -24,7 +25,8 @@ public class DrawFrame extends JFrame {
 
 	private boolean _isRendering = false;
 	private Graphics2D _renderGraphics;
-	private final AffineTransform _transformation;
+	private final AffineTransform _contentTransformation;
+	private final AffineTransform _uiTransformation;
 
 	private final BufferStrategy _bufferStrategy;
 
@@ -34,7 +36,7 @@ public class DrawFrame extends JFrame {
 	 * @param title The window title.
 	 * @param width The width of the pane.
 	 * @param height The height of the pane.
-	 * @param scale 
+	 * @param scale The scale of the content.
 	 */
 	public DrawFrame(final String title, final int width, final int height, final int scale) {
 		super(title);
@@ -52,7 +54,9 @@ public class DrawFrame extends JFrame {
 		_bufferStrategy = getBufferStrategy();
 		logBufferInfo();
 
-		_transformation = new AffineTransform(scale, 0, 0, scale, 0, 0);
+		Insets frameInsets = getInsets();
+		_contentTransformation = new AffineTransform(scale, 0, 0, scale, frameInsets.left, frameInsets.top);
+		_uiTransformation = new AffineTransform(1, 0, 0, 1, frameInsets.left, frameInsets.top);
 
 		setVisible(true);
 	}
@@ -68,16 +72,16 @@ public class DrawFrame extends JFrame {
 
 		_isRendering = true;
 		_renderGraphics = (Graphics2D) _bufferStrategy.getDrawGraphics();
-		_renderGraphics.setTransform(_transformation);
+		_renderGraphics.setTransform(_contentTransformation);
 
 		return getRenderGraphics();
 	}
 	
 	/**
-	 * Removes the content transformation.
+	 * Removes the content scaling.
 	 */
 	public void switchToUIRender() {
-		_renderGraphics.setTransform(new AffineTransform());
+		_renderGraphics.setTransform(_uiTransformation);
 	}
 
 	/**
