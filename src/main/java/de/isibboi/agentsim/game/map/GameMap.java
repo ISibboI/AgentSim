@@ -246,8 +246,6 @@ public class GameMap implements Drawable, Updateable {
 	 */
 	public void removeEntity(final Entity entity) {
 		_removedEntities.add(entity);
-
-		_log.info("Removed 1 Entity");
 	}
 
 	@Override

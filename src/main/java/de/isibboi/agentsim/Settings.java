@@ -2,10 +2,18 @@ package de.isibboi.agentsim;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.File;
 import java.util.Properties;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import de.isibboi.agentsim.Environment;
 
 /**
  * Manages the applications settings.
@@ -25,30 +33,40 @@ public class Settings {
 	
 	public static final String AI_LIFE_TIME = "ai.lifeTime";
 
+	private static final Set<String> allSettings = new HashSet<>(Arrays.asList(UI_WIDTH, UI_HEIGHT, UI_FONT_FAMILY, UI_TARGET_FRAMERATE, GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE, AI_LIFE_TIME));
+
 	private final Logger _log = LogManager.getLogger(getClass());
 
+	private final String _settingsFile;
 	private final Properties _defaults;
 	private final Properties _properties;
 	private boolean _isClosed;
 
 	/**
 	 * Reads settings from the given resource path.
-	 * @param resource The resource path.
+	 * @param settingsFile The resource path.
 	 */
-	public Settings(final String resource) {
+	public Settings(final String settingsFile) {
 		_defaults = new Properties();
 		_properties = new Properties(_defaults);
+		_settingsFile = settingsFile;
 
-		try {
-			InputStream in = getClass().getResourceAsStream(resource);
+		File f = new File(settingsFile);
 
-			if (in != null) {
+		if (f.isFile()) {
+			try (InputStream in = new FileInputStream(f)) {
 				_properties.load(in);
-			} else {
-				_log.warn("Settings file not found: " + resource);
+
+				for (String property : _properties.stringPropertyNames()) {
+					if (!allSettings.contains(property)) {
+						_log.warn("Unknown setting: " + property);
+					}
+				}
+			} catch (IOException e) {
+				_log.error("Error reading settings!", e);
 			}
-		} catch (IOException e) {
-			_log.error("Error reading settings!", e);
+		} else {
+			_log.warn("Settings file not found: " + settingsFile);
 		}
 
 		createDefaults();
@@ -123,6 +141,21 @@ public class Settings {
 		} catch (NumberFormatException e) {
 			_log.error("Setting is not an int: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Saves the current settings to disk and prevents any further modification.
+	 */
+	public void close() {
+		_isClosed = true;
+
+		File f = new File(_settingsFile);
+		
+		try (FileOutputStream out = new FileOutputStream(f)) {
+			_properties.store(out, "Created by Agent Sim version " + Environment.VERSION);
+		} catch (IOException e) {
+			_log.error("Could not save settings: " + _settingsFile);
 		}
 	}
 }

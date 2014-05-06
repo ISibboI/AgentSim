@@ -24,7 +24,7 @@ public class AgentSim implements Runnable {
 	 * Constructs the game.
 	 */
 	public AgentSim() {
-		_settings = new Settings("/.settings");
+		_settings = new Settings("agentsim.settings");
 
 		_frame = new AgentFrame(_settings);
 	}
