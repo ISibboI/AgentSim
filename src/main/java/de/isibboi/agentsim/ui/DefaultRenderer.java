@@ -43,6 +43,8 @@ public class DefaultRenderer implements Renderer {
 	public void drawBox(final int x, final int y, final int width, final int height) {
 		_g.setColor(Color.WHITE);
 		_g.fillRect(x, y, width, height);
+		_g.setColor(Color.BLACK);
+		_g.drawRect(x, y, width, height);
 	}
 
 	@Override
