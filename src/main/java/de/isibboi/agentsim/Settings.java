@@ -1,5 +1,6 @@
 package de.isibboi.agentsim;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -82,9 +83,9 @@ public class Settings {
 	private void createDefaults() {
 		_defaults.setProperty(UI_WIDTH, "800");
 		_defaults.setProperty(UI_HEIGHT, "600");
-		_defaults.setProperty(UI_FONT_FAMILY, "Monospaced");
+		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
 		
-		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "5000");
+		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 		

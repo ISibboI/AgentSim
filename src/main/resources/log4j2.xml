@@ -9,5 +9,11 @@
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
+		<Logger name="de.isibboi.agentsim.game.map.GameMap" level="info">
+		</Logger>
+		<Logger name="de.isibboi.agentsim.ui.event.MouseEventTranslator"
+			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.ui.component.UIButton"
+			level="info"></Logger>
 	</Loggers>
 </Configuration>

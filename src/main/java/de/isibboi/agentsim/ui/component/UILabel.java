@@ -12,34 +12,50 @@ import de.isibboi.agentsim.ui.Renderer;
  */
 public class UILabel extends UIAbstractComponent {
 	private String _text;
-	private Point _position;
-	private int _width;
 	
 	/**
 	 * Creates a new ui label with an empty text.
 	 * 
-	 * @param renderer The renderer used to draw the component.
-	 * @param position The position of the label.
-	 * @param width The width of the label.
+	 * @param renderer the renderer used to draw the component.
+	 * @param position the position of the label.
+	 * @param width the width of the label.
 	 */
 	public UILabel(final Renderer renderer, final Point position, final int width) {
-		super(renderer);
-		
-		_position = position;
-		_width = width;
+		this(renderer, position, width, "");
+	}
+	
+	/**
+	 * Creates a new ui label with the given text.
+	 * 
+	 * @param renderer the renderer used to draw the component.
+	 * @param position the position of the label.
+	 * @param width the width of the label.
+	 * @param text The text of the label.
+	 */
+	public UILabel(final Renderer renderer, final Point position, final int width, final String text) {
+		super(renderer, position, width, renderer.getTextHeight() + 10);
+		setText(text);
+	}
+
+	@Override
+	public void draw(final Graphics2D g) {
+		getRenderer().drawBox(getPosition().getX(), getPosition().getY(), getWidth() + 10, getRenderer().getTextHeight() + 10);
+		getRenderer().drawText(_text, getPosition().getX() + 5, getPosition().getY() + 5 + getRenderer().getTextHeight());
 	}
 	
 	/**
 	 * Sets the text of this label.
-	 * @param text The new text.
+	 * 
+	 * @param text the new text.
 	 */
 	public void setText(final String text) {
 		_text = text;
 	}
 
-	@Override
-	public void draw(final Graphics2D g) {
-		getRenderer().drawBox(_position.getX(), _position.getY(), _width + 10, getRenderer().getTextHeight() + 10);
-		getRenderer().drawText(_text, _position.getX() + 5, _position.getY() + 5 + getRenderer().getTextHeight());
+	/**
+	 * @return the text.
+	 */
+	public String getText() {
+		return _text;
 	}
 }

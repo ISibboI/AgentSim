@@ -45,7 +45,9 @@ public class AgentSim implements Runnable, WindowListener {
 		// Spawn initial entities
 		_frame.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 
-		FrameRateStabilizer frameRateStabilizer = new FrameRateStabilizer(_settings.getInt(Settings.CORE_TARGET_FRAME_RATE), _settings.getInt(Settings.CORE_TARGET_UPDATE_RATE));
+		FrameRateStabilizer frameRateStabilizer = new FrameRateStabilizer(
+				_settings.getInt(Settings.CORE_TARGET_FRAME_RATE),
+				_settings.getInt(Settings.CORE_TARGET_UPDATE_RATE));
 
 		while (!_exit) {
 			if (frameRateStabilizer.stabilize()) {

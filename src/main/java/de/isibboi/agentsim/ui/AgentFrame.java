@@ -12,6 +12,7 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.MapGenerator;
+import de.isibboi.agentsim.ui.event.MouseEventTranslator;
 
 /**
  * Contains all the game data.
@@ -26,6 +27,7 @@ public class AgentFrame {
 
 	private GameMap _map;
 	private final UI _ui;
+	private final MouseEventTranslator _mouseEventTranslator;
 
 	private final Random _random = new Random();
 
@@ -46,7 +48,9 @@ public class AgentFrame {
 		_map = mapGenerator.generateMap();
 
 		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map);
-		_drawFrame.addMouseListener(_ui);
+		_mouseEventTranslator = new MouseEventTranslator(_ui);
+		_drawFrame.addMouseListener(_mouseEventTranslator);
+		_drawFrame.addMouseMotionListener(_mouseEventTranslator);
 	}
 
 	/**

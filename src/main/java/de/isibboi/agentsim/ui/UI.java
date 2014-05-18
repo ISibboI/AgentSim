@@ -3,9 +3,13 @@ package de.isibboi.agentsim.ui;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.GameUpdateException;
@@ -13,7 +17,12 @@ import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.component.UIButton;
 import de.isibboi.agentsim.ui.component.UINumberLabel;
+import de.isibboi.agentsim.ui.event.MouseButton;
+import de.isibboi.agentsim.ui.event.UIActionListener;
+import de.isibboi.agentsim.ui.event.UIMouseInputListener;
+import de.isibboi.agentsim.ui.event.UserActionEvent;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
 
 /**
@@ -22,7 +31,9 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class UI implements Drawable, Updateable, MouseListener {
+public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionListener {
+	private final Logger _log = LogManager.getLogger(getClass());
+	
 	private final Settings _settings;
 	private final GameMap _map;
 
@@ -34,10 +45,15 @@ public class UI implements Drawable, Updateable, MouseListener {
 
 	private final Renderer _renderer;
 	private final Collection<Drawable> _drawables = new ArrayList<>();
+	private final Collection<UIMouseInputListener> _mouseListeners = new ArrayList<>();
 
 	private UINumberLabel _frameRateLabel;
 	private UINumberLabel _updateRateLabel;
 	private UINumberLabel _entityCountLabel;
+	
+	private UIButton _settingsButton;
+	
+	private UISettingsFrame _settingsFrame;
 
 	/**
 	 * Creates a new ui with the given settings.
@@ -72,6 +88,10 @@ public class UI implements Drawable, Updateable, MouseListener {
 
 		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 270, 90), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 		_drawables.add(_entityCountLabel);
+		
+		_settingsButton = new UIButton(_renderer, new Point(_width - 270, 130), 250, "Settings", this);
+		_drawables.add(_settingsButton);
+		_mouseListeners.add(_settingsButton);
 	}
 
 	@Override
@@ -82,7 +102,7 @@ public class UI implements Drawable, Updateable, MouseListener {
 
 		// Measure update rate.
 		_updateRateLabel.setValue(_updateRateMeter.getValue());
-		
+
 		// Measure entity count.
 		_entityCountLabel.setValue(_map.getEntityCount());
 
@@ -98,22 +118,21 @@ public class UI implements Drawable, Updateable, MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(final MouseEvent e) {
+	public void mouseMoved(final Point oldPosition, final Point newPosition) {
+		for (UIMouseInputListener listener : _mouseListeners) {
+			listener.mouseMoved(oldPosition, newPosition);
+		}
 	}
 
 	@Override
-	public void mouseEntered(final MouseEvent e) {
+	public void mouseClicked(final Point position, final MouseButton button, final boolean buttonDown) {
+		for (UIMouseInputListener listener : _mouseListeners) {
+			listener.mouseClicked(position, button, buttonDown);
+		}
 	}
 
 	@Override
-	public void mouseExited(final MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(final MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(final MouseEvent e) {
+	public void userAction(final UserActionEvent e) {
+		_log.debug("Received UserActionEvent");
 	}
 }
