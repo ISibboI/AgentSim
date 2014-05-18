@@ -1,8 +1,9 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.component;
 
 import java.awt.Graphics2D;
 
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.Renderer;
 /**
  * A ui component to display text.
  * 

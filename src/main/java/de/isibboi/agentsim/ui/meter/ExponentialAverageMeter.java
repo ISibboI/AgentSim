@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.meter;
 
 /**
  * An abstract meter that calculates the exponential average of the measured values.

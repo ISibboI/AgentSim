@@ -1,8 +1,9 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.component;
 
 import java.text.DecimalFormat;
 
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.Renderer;
 
 /**
  * A label that shows a number.

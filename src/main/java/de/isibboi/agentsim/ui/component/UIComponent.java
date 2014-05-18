@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.component;
 
 import de.isibboi.agentsim.game.entities.Drawable;
 

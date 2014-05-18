@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.meter;
 
 /**
  * A meter that measures the frequency it is update with.

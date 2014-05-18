@@ -10,6 +10,8 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.component.UINumberLabel;
+import de.isibboi.agentsim.ui.meter.FrequencyMeter;
 
 /**
  * Represents the game ui.
