@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.MapGenerator;
 
@@ -53,6 +54,12 @@ public class AgentFrame {
 	 */
 	public void update() {
 		_map.update(_random);
+		
+		try {
+			_ui.update(_random);
+		} catch (GameUpdateException e) {
+			_log.error("Could not update ui!", e);
+		}
 	}
 
 	/**

@@ -13,10 +13,9 @@ public class FrameRateStabilizer {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private long _lastFrameTime;
-	private long _lastUpdateTime;
-	private int _updatesSinceLastFrame;
+	private double _updatesBeforeNextFrame;
 	private final long _targetFrameTime;
-	private final long _targetUpdateTime;
+	private final double _targetUpdatesPerFrame;
 	private final int _maximumUpdatesPerFrame = 4;
 
 	/**
@@ -27,9 +26,8 @@ public class FrameRateStabilizer {
 	 */
 	public FrameRateStabilizer(final double framesPerSecond, final double updatesPerSecond) {
 		_targetFrameTime = (long) (1e9 / framesPerSecond);
-		_targetUpdateTime = (long) (1e9 / updatesPerSecond);
+		_targetUpdatesPerFrame = updatesPerSecond / framesPerSecond;
 		_lastFrameTime = System.nanoTime();
-		_lastUpdateTime = System.nanoTime();
 	}
 
 	/**
@@ -40,49 +38,55 @@ public class FrameRateStabilizer {
 	public boolean stabilize() {
 		final long currentTime = System.nanoTime();
 
-		//		if (_updatesSinceLastFrame == 0) {
-		//			return update(currentTime);
-		//		}
-		//		
-		//		if (_updatesSinceLastFrame < _maximumUpdatesPerFrame) {
-		//			if ()
-		//		}
-		
-		long waitingTime = (long) (_targetFrameTime - (currentTime - _lastFrameTime));
+		if (_updatesBeforeNextFrame > 1.0001) {
+			return update();
+		} else {
+			long waitingTime = (long) (_targetFrameTime - (currentTime - _lastFrameTime));
 
-		if (waitingTime > 0) {
-			try {
-				Thread.sleep(waitingTime / 1_000_000, (int) (waitingTime % 1_000_000));
-			} catch (InterruptedException e) {
-				_log.fatal("Waiting interrupted!", e);
+			if (waitingTime > 0) {
+				try {
+					Thread.sleep(waitingTime / 1_000_000, (int) (waitingTime % 1_000_000));
+				} catch (InterruptedException e) {
+					_log.fatal("Waiting interrupted!", e);
+				}
 			}
-		}
 
-		_lastFrameTime = currentTime + waitingTime;
-		return false;
+			double normalizedFrameTime = 1.0 * (currentTime - _lastFrameTime) / _targetFrameTime;
+			_lastFrameTime = System.nanoTime();
+			return render(normalizedFrameTime);
+		}
 	}
 
 	/**
 	 * Counts the game updates.
 	 * 
-	 * @param time the current time.
 	 * @return false.
 	 */
-	private boolean update(final long time) {
-		_lastUpdateTime = time;
-		_updatesSinceLastFrame++;
+	private boolean update() {
+		_updatesBeforeNextFrame--;
 		return false;
 	}
 
 	/**
 	 * Resets the game updates.
 	 * 
-	 * @param time the current time.
+	 * @param normalizedFrameTime the frame time. 1.0 means the frame took exactly as long as it should, values greater than one mean it took longer.
 	 * @return true.
 	 */
-	private boolean render(final long time) {
-		_lastFrameTime = time;
-		_updatesSinceLastFrame = 0;
+	private boolean render(final double normalizedFrameTime) {
+		_updatesBeforeNextFrame += _targetUpdatesPerFrame * (Math.max(1.0, normalizedFrameTime));
+		
+		if (_updatesBeforeNextFrame > _maximumUpdatesPerFrame) {
+			_updatesBeforeNextFrame = _maximumUpdatesPerFrame;
+		}
+
 		return true;
+	}
+	
+	/**
+	 * Resets the stabilizer. This should e.g. be used after pausing the rendering.
+	 */
+	public void reset() {
+		_lastFrameTime = System.nanoTime();
 	}
 }

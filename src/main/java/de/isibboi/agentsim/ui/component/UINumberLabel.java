@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.Renderer;
+import de.isibboi.agentsim.ui.meter.Meter;
 
 /**
  * A label that shows a number.
@@ -105,6 +106,15 @@ public class UINumberLabel extends UILabel {
 	 */
 	public void setValue(final double value) {
 		_value = value;
+		
+		setText(_prefix + _decimalFormat.format(_value) + _postfix);
+	}
+	
+	/**
+	 * @param meter The meter to extract the value from.
+	 */
+	public void setValue(final Meter meter) {
+		_value = meter.getValue();
 		
 		setText(_prefix + _decimalFormat.format(_value) + _postfix);
 	}
