@@ -12,8 +12,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import de.isibboi.agentsim.Messages;
 import de.isibboi.agentsim.Settings;
@@ -27,7 +31,7 @@ import de.isibboi.agentsim.ui.event.UserActionEvent;
  * @since 0.3.0
  */
 @SuppressWarnings("serial")
-public class UISettingsFrame extends JFrame implements WindowListener, ActionListener {
+public class UISettingsFrame extends JFrame implements WindowListener, ActionListener, ChangeListener {
 	private class DisplaySize {
 		private final int _width;
 		private final int _height;
@@ -88,6 +92,12 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 	private final JLabel _uiSizeLabel;
 	private final JComboBox<DisplaySize> _uiSizeValue;
 
+	private final JPanel _corePanel;
+	private final JLabel _coreFrameRateLabel;
+	private final JSpinner _coreFrameRateValue;
+	private final JLabel _coreUpdateRateLabel;
+	private final JSpinner _coreUpdateRateValue;
+
 	/**
 	 * Creates a new {@link UISettingsFrame}.
 	 * 
@@ -103,11 +113,6 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 		gbc.insets = insets;
 
 		setLayout(new GridBagLayout());
-
-		_restartLabel = new JLabel(Messages.getString(Messages.UI_SETTINGS_FRAME_RESTART_LABEL));
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		add(_restartLabel, gbc);
 
 		/////////////////////////////////////////////////////////////////////////////////
 		////  UI  ///////////////////////////////////////////////////////////////////////
@@ -128,14 +133,14 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 				new DisplaySize(2560, 1440) };
 		int selectedIndex = 0;
 		DisplaySize currentDisplaySize = new DisplaySize(_settings.getInt(Settings.UI_WIDTH), _settings.getInt(Settings.UI_HEIGHT));
-		
+
 		for (int i = 0; i < displaySizes.length; i++) {
 			if (displaySizes[i].equals(currentDisplaySize)) {
 				selectedIndex = i;
 				break;
 			}
 		}
-		
+
 		_uiSizeValue = new JComboBox<>(displaySizes);
 		_uiSizeValue.setSelectedIndex(selectedIndex);
 		gbc.gridx = 1;
@@ -143,12 +148,50 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 		_uiPanel.add(_uiSizeValue, gbc);
 		_uiSizeValue.addActionListener(this);
 
+		/////////////////////////////////////////////////////////////////////////////////
+		////  CORE  /////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////
+
+		_corePanel = new JPanel(new GridBagLayout());
+
+		_coreFrameRateLabel = new JLabel(Messages.getString(Messages.UI_SETTINGS_FRAME_CORE_FRAME_RATE_LABEL));
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		_corePanel.add(_coreFrameRateLabel, gbc);
+
+		_coreFrameRateValue = new JSpinner(new SpinnerNumberModel(_settings.getInt(Settings.CORE_TARGET_FRAME_RATE), 1, 120, 1));
+		_coreFrameRateValue.addChangeListener(this);
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		_corePanel.add(_coreFrameRateValue, gbc);
+
+		_coreUpdateRateLabel = new JLabel(Messages.getString(Messages.UI_SETTINGS_FRAME_CORE_UPDATE_RATE_LABEL));
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		_corePanel.add(_coreUpdateRateLabel, gbc);
+
+		_coreUpdateRateValue = new JSpinner(new SpinnerNumberModel(_settings.getInt(Settings.CORE_TARGET_UPDATE_RATE), 1, 120, 1));
+		_coreUpdateRateValue.addChangeListener(this);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		_corePanel.add(_coreUpdateRateValue, gbc);
+
+		/////////////////////////////////////////////////////////////////////////////////
+		////  PUTTING EVERYTHING TOGETHER  //////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////
+
 		_sectionsPane = new JTabbedPane();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		add(_sectionsPane, gbc);
 
 		_sectionsPane.addTab(Messages.getString(Messages.UI_SETTINGS_FRAME_UI_TAB), _uiPanel);
+		_sectionsPane.addTab(Messages.getString(Messages.UI_SETTINGS_FRAME_CORE_TAB), _corePanel);
+
+		_restartLabel = new JLabel(Messages.getString(Messages.UI_SETTINGS_FRAME_RESTART_LABEL));
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		add(_restartLabel, gbc);
 
 		pack();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -190,6 +233,15 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 		if (e.getSource() == _uiSizeValue) {
 			_settings.set(Settings.UI_WIDTH, ((DisplaySize) _uiSizeValue.getSelectedItem()).getWidth());
 			_settings.set(Settings.UI_HEIGHT, ((DisplaySize) _uiSizeValue.getSelectedItem()).getHeight());
+		}
+	}
+
+	@Override
+	public void stateChanged(final ChangeEvent e) {
+		if (e.getSource() == _coreFrameRateValue) {
+			_settings.set(Settings.CORE_TARGET_FRAME_RATE, (Integer) _coreFrameRateValue.getValue());
+		} else if (e.getSource() == _coreUpdateRateValue) {
+			_settings.set(Settings.CORE_TARGET_UPDATE_RATE, (Integer) _coreUpdateRateValue.getValue());
 		}
 	}
 }

@@ -33,9 +33,10 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  */
 public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionListener {
 	private final Logger _log = LogManager.getLogger(getClass());
-	
+
 	private final Settings _settings;
 	private final GameMap _map;
+	private final AgentFrame _agentFrame;
 
 	private int _width;
 	private int _height;
@@ -50,22 +51,27 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 	private UINumberLabel _frameRateLabel;
 	private UINumberLabel _updateRateLabel;
 	private UINumberLabel _entityCountLabel;
-	
+
 	private UIButton _settingsButton;
-	
+	private UIButton _renderEntitiesButton;
+	private UIButton _restartButton;
+	private UIButton _pauseButton;
+
 	private UISettingsFrame _settingsFrame;
 
 	/**
 	 * Creates a new ui with the given settings.
 	 * 
-	 * @param renderer The renderer used to draw the ui.
-	 * @param settings The settings.
-	 * @param map The game map.
+	 * @param renderer the renderer used to draw the ui.
+	 * @param settings the settings.
+	 * @param map the game map.
+	 * @param agentFrame the game main class.
 	 */
-	public UI(final Renderer renderer, final Settings settings, final GameMap map) {
+	public UI(final Renderer renderer, final Settings settings, final GameMap map, final AgentFrame agentFrame) {
 		_settings = settings;
 		_renderer = renderer;
 		_map = map;
+		_agentFrame = agentFrame;
 
 		_width = settings.getInt(Settings.UI_WIDTH);
 		_height = settings.getInt(Settings.UI_HEIGHT);
@@ -80,18 +86,30 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 	 * Creates the ui.
 	 */
 	private void initUI() {
-		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 10), 250, "Framerate: ", "", 1, 0);
+		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 10), 250, "Framerate: ", "", 0, 0);
 		_drawables.add(_frameRateLabel);
 
-		_updateRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 50), 250, "Update rate: ", "", 1, 0);
+		_updateRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 50), 250, "Update rate: ", "", 0, 0);
 		_drawables.add(_updateRateLabel);
 
 		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 270, 90), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 		_drawables.add(_entityCountLabel);
-		
+
 		_settingsButton = new UIButton(_renderer, new Point(_width - 270, 130), 250, "Settings", this);
 		_drawables.add(_settingsButton);
 		_mouseListeners.add(_settingsButton);
+
+		_renderEntitiesButton = new UIButton(_renderer, new Point(_width - 270, 170), 250, "Toggle entities", this);
+		_drawables.add(_renderEntitiesButton);
+		_mouseListeners.add(_renderEntitiesButton);
+		
+		_restartButton = new UIButton(_renderer, new Point(_width - 270, 210), 250, "Restart", this);
+		_drawables.add(_restartButton);
+		_mouseListeners.add(_restartButton);
+		
+		_pauseButton = new UIButton(_renderer, new Point(_width - 270, 250), 250, "Pause", this);
+		_drawables.add(_pauseButton);
+		_mouseListeners.add(_pauseButton);
 	}
 
 	@Override
@@ -137,10 +155,14 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 
 		if (e.getSource() == _settingsButton && _settingsFrame == null) {
 			_settingsFrame = new UISettingsFrame(_settings, this);
-		}
-		
-		if (e.getSource() == _settingsFrame) {
+		} else if (e.getSource() == _settingsFrame) {
 			_settingsFrame = null;
+		} else if (e.getSource() == _renderEntitiesButton) {
+			_map.setRenderEntities(!_map.getRenderEntities());
+		} else if (e.getSource() == _restartButton) {
+			_agentFrame.restart();
+		} else if (e.getSource() == _pauseButton) {
+			_map.setPaused(!_map.isPaused());
 		}
 	}
 }

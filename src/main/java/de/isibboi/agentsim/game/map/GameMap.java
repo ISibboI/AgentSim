@@ -45,6 +45,9 @@ public class GameMap implements Drawable, Updateable {
 	private final Multimap<Point, Entity> _entityLocations = HashMultimap.create();
 	private final Set<Point> _locationLocks = new HashSet<Point>();
 
+	private boolean _renderEntities = true;
+	private boolean _paused = false;
+
 	/**
 	 * Creates the map from the given image.
 	 * 
@@ -62,8 +65,10 @@ public class GameMap implements Drawable, Updateable {
 	public void draw(final Graphics2D g) {
 		g.drawImage(_map, 0, 0, null);
 
-		for (Entity entity : _entities) {
-			entity.draw(g);
+		if (_renderEntities) {
+			for (Entity entity : _entities) {
+				entity.draw(g);
+			}
 		}
 	}
 
@@ -250,6 +255,10 @@ public class GameMap implements Drawable, Updateable {
 
 	@Override
 	public void update(final Random random) {
+		if (_paused) {
+			return;
+		}
+
 		if (_newEntities.size() > 0) {
 			_entities.addAll(_newEntities);
 			_log.debug("Added " + _newEntities.size() + " entities");
@@ -304,5 +313,44 @@ public class GameMap implements Drawable, Updateable {
 	 */
 	public Settings getSettings() {
 		return _settings;
+	}
+
+	/**
+	 * @param renderEntities true if the entities should be rendered.
+	 */
+	public void setRenderEntities(final boolean renderEntities) {
+		_renderEntities = renderEntities;
+	}
+
+	/**
+	 * @return true if the entities are rendered.
+	 */
+	public boolean getRenderEntities() {
+		return _renderEntities;
+	}
+
+	/**
+	 * @return true if the game is paused, false if it is running.
+	 */
+	public boolean isPaused() {
+		return _paused;
+	}
+
+	/**
+	 * @param paused true if the game should be paused, false if it is running.
+	 */
+	public void setPaused(final boolean paused) {
+		if (paused == _paused) {
+			_log.warn("Game is already " + (paused ? "paused" : "unpaused"));
+			return;
+		}
+		
+		if (paused) {
+			_log.info("Game paused");
+		} else {
+			_log.info("Game unpaused");
+		}
+		
+		this._paused = paused;
 	}
 }

@@ -26,7 +26,7 @@ public class AgentFrame {
 	private final Settings _settings;
 
 	private GameMap _map;
-	private final UI _ui;
+	private UI _ui;
 	private final MouseEventTranslator _mouseEventTranslator;
 
 	private final Random _random = new Random();
@@ -47,10 +47,36 @@ public class AgentFrame {
 		MapGenerator mapGenerator = new MapGenerator(_settings);
 		_map = mapGenerator.generateMap();
 
-		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map);
+		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map, this);
 		_mouseEventTranslator = new MouseEventTranslator(_ui);
 		_drawFrame.addMouseListener(_mouseEventTranslator);
 		_drawFrame.addMouseMotionListener(_mouseEventTranslator);
+		
+		start();
+	}
+	
+	/**
+	 * Restarts the game.
+	 */
+	public void restart() {
+		MapGenerator mapGenerator = new MapGenerator(_settings);
+		_map = mapGenerator.generateMap();
+
+		_mouseEventTranslator.removeUIMouseInputListener(_ui);
+		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map, this);
+		_mouseEventTranslator.addUIMouseInputListener(_ui);
+		
+		start();
+	}
+	
+	/**
+	 * Starts the game.
+	 */
+	public void start() {
+		// Spawn initial entities
+		_map.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
+		
+		_log.info("Game started");
 	}
 
 	/**
@@ -78,14 +104,6 @@ public class AgentFrame {
 		_ui.draw(g);
 
 		_drawFrame.stopRender();
-	}
-
-	/**
-	 * Spawns {@code amount} goblins.
-	 * @param amount The amount of goblins to spawn.
-	 */
-	public void spawnGoblins(final int amount) {
-		_map.spawnGoblins(amount);
 	}
 
 	/**

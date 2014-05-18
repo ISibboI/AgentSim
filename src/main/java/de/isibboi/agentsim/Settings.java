@@ -61,6 +61,7 @@ public class Settings {
 		if (f.isFile()) {
 			try (InputStream in = new FileInputStream(f)) {
 				_properties.load(in);
+				_log.info("Settings loaded");
 
 				for (String property : _properties.stringPropertyNames()) {
 					if (!ALL_SETTINGS.contains(property)) {
@@ -165,6 +166,7 @@ public class Settings {
 
 		try (FileOutputStream out = new FileOutputStream(f)) {
 			_properties.store(out, "Created by Agent Sim version " + Environment.VERSION);
+			_log.info("Settings saved");
 		} catch (IOException e) {
 			_log.error("Could not save settings: " + _settingsFile);
 		}
