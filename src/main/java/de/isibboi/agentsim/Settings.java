@@ -24,13 +24,13 @@ public class Settings {
 	public static final String UI_WIDTH = "ui.width";
 	public static final String UI_HEIGHT = "ui.height";
 	public static final String UI_FONT_FAMILY = "ui.fontFamily";
-	
+
 	public static final String GAME_INITIAL_GOBLIN_COUNT = "game.initialGoblinCount";
 	public static final String GAME_SPAWN_RADIUS = "game.spawnRadius";
 	public static final String GAME_SCALE = "game.scale";
-	
+
 	public static final String AI_LIFE_TIME = "ai.lifeTime";
-	
+
 	public static final String CORE_TARGET_FRAME_RATE = "core.targetFrameRate";
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
 
@@ -84,11 +84,11 @@ public class Settings {
 		_defaults.setProperty(UI_WIDTH, "800");
 		_defaults.setProperty(UI_HEIGHT, "600");
 		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
-		
+
 		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
-		
+
 		_defaults.setProperty(AI_LIFE_TIME, "500");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
@@ -105,9 +105,13 @@ public class Settings {
 			throw new IllegalStateException("Settings are already closed!");
 		}
 
-		String oldValue = (String) _properties.setProperty(key, value);
-
-		_log.info("Changed setting " + key + " from " + oldValue + " to " + value);
+		if (value == null || value.trim().equals("")) {
+			String oldValue = (String) _properties.remove(key);
+			_log.info("Removed setting " + key + ". Old value: " + oldValue);
+		} else {
+			String oldValue = (String) _properties.setProperty(key, value);
+			_log.info("Changed setting " + key + " from " + oldValue + " to " + value);
+		}
 	}
 
 	/**
@@ -158,7 +162,7 @@ public class Settings {
 		_isClosed = true;
 
 		File f = new File(_settingsFile);
-		
+
 		try (FileOutputStream out = new FileOutputStream(f)) {
 			_properties.store(out, "Created by Agent Sim version " + Environment.VERSION);
 		} catch (IOException e) {

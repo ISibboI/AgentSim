@@ -134,5 +134,13 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 	@Override
 	public void userAction(final UserActionEvent e) {
 		_log.debug("Received UserActionEvent");
+
+		if (e.getSource() == _settingsButton && _settingsFrame == null) {
+			_settingsFrame = new UISettingsFrame(_settings, this);
+		}
+		
+		if (e.getSource() == _settingsFrame) {
+			_settingsFrame = null;
+		}
 	}
 }
