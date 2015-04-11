@@ -10,7 +10,7 @@ import de.isibboi.agentsim.game.map.Point;
 /**
  * Contains logic to spawn goblins on the map.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public class GoblinSpawner {
 	private final GameMap _map;

@@ -8,7 +8,7 @@ import de.isibboi.agentsim.game.map.MapGenerator;
 /**
  * Creates the default game. This is for testing purposes. The word 'default' is documented by source code.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public class DefaultGameInitializer implements GameInitializer {
 	private GameMap _map;

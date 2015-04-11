@@ -13,7 +13,7 @@ import de.isibboi.agentsim.game.map.GameMap;
 /**
  * Represents a game of AgentSim.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public class Game implements Updateable {
 	private final Logger _log = LogManager.getLogger(getClass());

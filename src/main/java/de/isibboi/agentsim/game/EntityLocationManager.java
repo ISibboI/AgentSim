@@ -18,7 +18,7 @@ import de.isibboi.agentsim.game.map.Point;
  * Manages the locations of the entities on the map. This class is intended to execute complex movement orders.
  * It should not do path finding, but move an entity along a path.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public class EntityLocationManager implements Updateable {
 	private final GameMap _map;

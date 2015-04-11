@@ -14,7 +14,7 @@ import de.isibboi.agentsim.game.GameUpdateException;
 /**
  * Contains all the entities that are alive. Entities can be added or removed, but the operations are only applied when update is called.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public class Entities implements Collection<Entity>, Updateable, Drawable {
 	private final Logger _log = LogManager.getLogger(getClass());

@@ -7,7 +7,7 @@ import de.isibboi.agentsim.game.map.GameMap;
 /**
  * Initializes the game. Generates the initial map and entities and places the entities on the map.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public interface GameInitializer {
 	/**

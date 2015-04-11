@@ -13,6 +13,7 @@ import com.google.common.collect.Multiset;
 /**
  * A Multimap that contains unique values and can map value -> key.
  * @author Sebastian Schmidt
+ * @since 0.3.0
  *
  * @param <K> The type of the keys.
  * @param <V> The type of the values.

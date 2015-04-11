@@ -9,7 +9,7 @@ import de.isibboi.agentsim.ui.event.UIMouseInputListener;
 /**
  * A certain view on the game. Every view defines a UI. The views can be exchanged to show different UI elements, like a main menu.
  * @author Sebastian Schmidt
- * @since 0.4.0
+ * @since 0.3.0
  */
 public interface View extends UIMouseInputListener, UIActionListener {
 	/**

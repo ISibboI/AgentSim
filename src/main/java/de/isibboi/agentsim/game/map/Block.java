@@ -1,6 +1,5 @@
-package de.isibboi.agentsim.game;
+package de.isibboi.agentsim.game.map;
 
-import de.isibboi.agentsim.game.map.Material;
 
 /**
  * Represents a block on the map. Can be changed by the entities.
