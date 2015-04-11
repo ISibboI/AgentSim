@@ -2,7 +2,7 @@ package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.Random;
 
-import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -21,10 +21,10 @@ public interface AI {
 	void eventCollideWithWall(Point location);
 
 	/**
-	 * If the goblins steps on the location of another goblin, this event is fired.
-	 * @param goblin The other goblin.
+	 * If the entity steps on the location of another entity, this event is fired.
+	 * @param entity The other entity.
 	 */
-	void eventCollideWithEntity(Goblin goblin);
+	void eventCollideWithEntity(Entity entity);
 
 	/**
 	 * If the goblin tries to walk out of the map, this event is fired.

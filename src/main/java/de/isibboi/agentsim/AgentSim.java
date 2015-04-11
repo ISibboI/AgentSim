@@ -20,7 +20,7 @@ public class AgentSim implements Runnable, WindowListener {
 	 */
 	public static void main(final String[] args) {
 		AgentSim sim = new AgentSim();
-		sim.run();
+		sim.run(); // Don't need to start a new thread here, as we don't need the main thread anymore.
 	}
 
 	private final Logger _log = LogManager.getLogger(getClass());

@@ -57,6 +57,8 @@ public class DrawFrame extends JFrame {
 		Insets frameInsets = getInsets();
 		_contentTransformation = new AffineTransform(scale, 0, 0, scale, frameInsets.left, frameInsets.top);
 		_uiTransformation = new AffineTransform(1, 0, 0, 1, frameInsets.left, frameInsets.top);
+		//		_contentTransformation = new AffineTransform(scale, 0, 0, scale, 1, 1);
+		//		_uiTransformation = new AffineTransform(1, 0, 0, 1, 1, 1);
 
 		setVisible(true);
 	}
@@ -76,7 +78,7 @@ public class DrawFrame extends JFrame {
 
 		return getRenderGraphics();
 	}
-	
+
 	/**
 	 * Removes the content scaling.
 	 */
@@ -85,9 +87,9 @@ public class DrawFrame extends JFrame {
 	}
 
 	/**
-	 * Stops the rendering process and shows the rendered image.
+	 * Finishes the rendering process and shows the rendered image.
 	 */
-	public void stopRender() {
+	public void finishRender() {
 		if (!_isRendering) {
 			throw new IllegalStateException("Rendering was not started");
 		}
@@ -104,7 +106,7 @@ public class DrawFrame extends JFrame {
 	 */
 	public void close() {
 		if (_isRendering) {
-			stopRender();
+			finishRender();
 		}
 
 		_bufferStrategy.dispose();

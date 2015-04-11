@@ -9,9 +9,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.game.DefaultGameInitializer;
+import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.map.GameMap;
-import de.isibboi.agentsim.game.map.MapGenerator;
 import de.isibboi.agentsim.ui.event.MouseEventTranslator;
 
 /**
@@ -25,8 +25,8 @@ public class AgentFrame {
 	private final DrawFrame _drawFrame;
 	private final Settings _settings;
 
-	private GameMap _map;
-	private UI _ui;
+	private Game _game;
+	private View _view;
 	private final MouseEventTranslator _mouseEventTranslator;
 
 	private final Random _random = new Random();
@@ -44,49 +44,36 @@ public class AgentFrame {
 				settings.getInt(Settings.UI_HEIGHT),
 				settings.getInt(Settings.GAME_SCALE));
 
-		MapGenerator mapGenerator = new MapGenerator(_settings);
-		_map = mapGenerator.generateMap();
+		_game = new Game(new DefaultGameInitializer(), settings);
 
-		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map, this);
-		_mouseEventTranslator = new MouseEventTranslator(_ui);
+		_view = new GameUI(new DefaultRenderer(_drawFrame, _settings), _settings, _game, this);
+		_mouseEventTranslator = new MouseEventTranslator(_view);
 		_drawFrame.addMouseListener(_mouseEventTranslator);
 		_drawFrame.addMouseMotionListener(_mouseEventTranslator);
-		
+
 		start();
 	}
-	
+
 	/**
 	 * Restarts the game.
 	 */
 	public void restart() {
-		MapGenerator mapGenerator = new MapGenerator(_settings);
-		_map = mapGenerator.generateMap();
-
-		_mouseEventTranslator.removeUIMouseInputListener(_ui);
-		_ui = new UI(new DefaultRenderer(_drawFrame, _settings), _settings, _map, this);
-		_mouseEventTranslator.addUIMouseInputListener(_ui);
-		
-		start();
+		_game.restart();
 	}
-	
+
 	/**
 	 * Starts the game.
 	 */
 	public void start() {
-		// Spawn initial entities
-		_map.spawnGoblins(_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
-		
-		_log.info("Game started");
+		_game.start();
 	}
 
 	/**
 	 * Updates all entities.
 	 */
 	public void update() {
-		_map.update(_random);
-		
 		try {
-			_ui.update(_random);
+			_game.update(_random);
 		} catch (GameUpdateException e) {
 			_log.error("Could not update ui!", e);
 		}
@@ -98,12 +85,11 @@ public class AgentFrame {
 	public void render() {
 		Graphics2D g = _drawFrame.startRender();
 
-		_map.draw(g);
-
+		_view.drawScaledContent(g);
 		_drawFrame.switchToUIRender();
-		_ui.draw(g);
+		_view.drawUnscaledContent(g);
 
-		_drawFrame.stopRender();
+		_drawFrame.finishRender();
 	}
 
 	/**

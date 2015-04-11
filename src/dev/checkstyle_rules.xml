@@ -85,7 +85,7 @@
 		</module>
 
 		<module name="WhitespaceAfter">
-			<property name="tokens" value="COMMA,SEMI,LCURLY" />
+			<property name="tokens" value="COMMA,SEMI" />
 		</module>
 
 		<module name="EmptyForIteratorPad" />
@@ -123,7 +123,6 @@
 		<module name="IllegalInstantiation" />
 		<module name="InnerAssignment" />
 		<module name="MissingSwitchDefault" />
-		<module name="RedundantThrows" />
 		<module name="SimplifyBooleanExpression" />
 		<module name="SimplifyBooleanReturn" />
 

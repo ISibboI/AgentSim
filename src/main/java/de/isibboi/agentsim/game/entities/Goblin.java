@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.ai.AI;
+import de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI;
 import de.isibboi.agentsim.game.entities.ai.Task;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
@@ -22,24 +24,15 @@ public class Goblin extends MapEntity {
 	private Task _task;
 
 	/**
-	 * Creates a new goblin.
-	 * 
-	 * @param map The map the goblin should interact with.
-	 */
-	public Goblin(final GameMap map) {
-		this(map, map.getRandomValidLocation(Integer.MAX_VALUE));
-	}
-
-	/**
 	 * Creates a new goblin at the specified location.
 	 * 
 	 * @param map The map the goblin should interact with.
-	 * @param location The location.
+	 * @param entityLocationManager The entity location manager that manages the location of this goblin.
 	 */
-	public Goblin(final GameMap map, final Point location) {
-		super(map, location);
+	public Goblin(final GameMap map, final EntityLocationManager entityLocationManager) {
+		super(map, entityLocationManager);
 
-		_ai = new GoblinSwarmAI(map, this);
+		_ai = new GoblinSwarmAI(map, entityLocationManager, this);
 	}
 
 	/**
@@ -62,20 +55,18 @@ public class Goblin extends MapEntity {
 		if (!_ai.update(random)) {
 			return;
 		}
-		
+
 		if (_task == null) {
 			calculateNewLocation(random);
 		} else {
 			_task.update(random);
 
 			if (_task.isFinished()) {
-				_task.complete(getMap());
+				_task.complete(getMap(), getEntityLocationManager());
 				_task = null;
 				_ai.eventTaskFinished();
 			}
 		}
-
-		handleEntityCollisions(random);
 
 		// This has to be at the end of update, since the AI generates new tasks during the update.
 		if (_task == null) {
@@ -83,18 +74,6 @@ public class Goblin extends MapEntity {
 
 			if (_task != null) {
 				_ai.eventTaskAccepted();
-			}
-		}
-	}
-
-	/**
-	 * Checks for colliding entities and calls the AI collision event if a collision happened.
-	 * @param random The pseudo random number generator used for randomness.
-	 */
-	private void handleEntityCollisions(final Random random) {
-		for (Entity entity : getMap().getEntitesAt(getLocation(), this)) {
-			if (entity instanceof Goblin) {
-				_ai.eventCollideWithEntity((Goblin) entity);
 			}
 		}
 	}
@@ -126,7 +105,7 @@ public class Goblin extends MapEntity {
 		}
 
 		Point newLocation = new Point(x, y);
-		
+
 		if (getMap().isValidEntityLocation(newLocation)) {
 			setLocation(newLocation);
 			_ai.eventMoveTo(newLocation);
@@ -135,5 +114,10 @@ public class Goblin extends MapEntity {
 		} else {
 			_ai.eventCollideWithMapBorder(newLocation);
 		}
+	}
+
+	@Override
+	public void collideWith(final Entity entity) {
+		_ai.eventCollideWithEntity(entity);
 	}
 }

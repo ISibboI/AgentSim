@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities;
 
+import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -11,40 +12,47 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public abstract class MapEntity implements Entity {
 	private final GameMap _map;
-	private Point _location;
-	
+	private final EntityLocationManager _entityLocationManager;
+
 	/**
 	 * Creates a new map entity at the given location.
 	 * @param map The game map.
-	 * @param location The location.
+	 * @param entityLocationManager The entity location manager that manages the location of this entity.
 	 */
-	public MapEntity(final GameMap map, final Point location) {
+	public MapEntity(final GameMap map, final EntityLocationManager entityLocationManager) {
 		_map = map;
-		setLocation(location);
+		_entityLocationManager = entityLocationManager;
 	}
 
-	/**
-	 * Sets the location of this entity. 
-	 * @param location The location of this map.
-	 */
-	protected void setLocation(final Point location) {
-		_map.updateLocation(this, _location, location);
-		_location = location;
-	}
-	
 	/**
 	 * Returns the current location of this entity.
 	 * @return The location of this entity.
 	 */
 	public Point getLocation() {
-		return _location;
+		return _entityLocationManager.getLocation(this);
 	}
-	
+
+	/**
+	 * Sets the location of this entity.
+	 * @param location The new location.
+	 */
+	public void setLocation(final Point location) {
+		_entityLocationManager.setLocation(this, location);
+	}
+
 	/**
 	 * Returns the game map this entity belongs to.
 	 * @return The game map.
 	 */
 	public GameMap getMap() {
 		return _map;
+	}
+
+	/**
+	 * Returns the entity location manager.
+	 * @return The entity location manager.
+	 */
+	public EntityLocationManager getEntityLocationManager() {
+		return _entityLocationManager;
 	}
 }

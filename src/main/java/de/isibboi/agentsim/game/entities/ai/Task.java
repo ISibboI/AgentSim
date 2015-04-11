@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.game.map.GameMap;
 
@@ -19,6 +20,7 @@ public interface Task extends Updateable {
 	 * Does the action that is represented by the task.
 	 * 
 	 * @param map The game map.
+	 * @param entityLocationManager The entity location manager.
 	 */
-	void complete(GameMap map);
+	void complete(GameMap map, EntityLocationManager entityLocationManager);
 }

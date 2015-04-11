@@ -2,33 +2,22 @@ package de.isibboi.agentsim.game.map;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
-import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Drawable;
-import de.isibboi.agentsim.game.entities.Entity;
-import de.isibboi.agentsim.game.entities.Goblin;
-import de.isibboi.agentsim.game.entities.Updateable;
 
 /**
  * Represents the game map.
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
-public class GameMap implements Drawable, Updateable {
+public class GameMap implements Drawable {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final BufferedImage _map;
@@ -36,17 +25,8 @@ public class GameMap implements Drawable, Updateable {
 
 	private final Settings _settings;
 
-	private final Random _random = new Random();
-
 	private final Point _spawnPoint;
-	private final List<Entity> _entities = new ArrayList<>();
-	private final Collection<Entity> _newEntities = new ArrayList<>();
-	private final Collection<Entity> _removedEntities = new ArrayList<>();
-	private final Multimap<Point, Entity> _entityLocations = HashMultimap.create();
 	private final Set<Point> _locationLocks = new HashSet<Point>();
-
-	private boolean _renderEntities = true;
-	private boolean _paused = false;
 
 	/**
 	 * Creates the map from the given image.
@@ -64,12 +44,6 @@ public class GameMap implements Drawable, Updateable {
 	@Override
 	public void draw(final Graphics2D g) {
 		g.drawImage(_map, 0, 0, null);
-
-		if (_renderEntities) {
-			for (Entity entity : _entities) {
-				entity.draw(g);
-			}
-		}
 	}
 
 	/**
@@ -93,95 +67,6 @@ public class GameMap implements Drawable, Updateable {
 	 */
 	public boolean isValidEntityLocation(final Point location) {
 		return isValidEntityLocation(location.getX(), location.getY());
-	}
-
-	/**
-	 * Searches randomly for a valid location.
-	 * 
-	 * @param maxTries The amount of random location that should be checked.
-	 * @return A point that represents a valid location on the map, or null, if no location was found after {@code maxTries} tries.
-	 */
-	public Point getRandomValidLocation(final int maxTries) {
-		Point.Builder result = new Point.Builder();
-
-		for (int i = 0; i < maxTries; i++) {
-			result.setXY(_random.nextInt(), _random.nextInt());
-
-			if (isValidEntityLocation(result.getX(), result.getY())) {
-				return result.build();
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Searches randomly for a valid location near spawn.
-	 * 
-	 * @param maxTries The amount of random location that should be checked.
-	 * @param distance The maximum distance from spawn.
-	 * @return A point that represents a valid location on the map, or null, if no location was found after {@code maxTries} tries.
-	 */
-	public Point getRandomValidLocationNearSpawnPoint(final int maxTries, final int distance) {
-		int squaredDistance = distance * distance;
-		int doubleDistance = distance << 1;
-		int x;
-		int y;
-
-		for (int i = 0; i < maxTries; i++) {
-			x = -distance + _random.nextInt(doubleDistance);
-			y = -distance + _random.nextInt(doubleDistance);
-
-			if (x * x + y * y < squaredDistance) {
-				x += _spawnPoint.getX();
-				y += _spawnPoint.getY();
-
-				if (isValidEntityLocation(x, y)) {
-					return new Point(x, y);
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Sets the location of the given entity. If oldLocation is != null, the old location will be deleted before inserting the new one.
-	 * 
-	 * @param entity The entity.
-	 * @param oldLocation The old location of the entity.
-	 * @param newLocation The new location of the entity.
-	 */
-	public void updateLocation(final Entity entity, final Point oldLocation, final Point newLocation) {
-		if (oldLocation != null) {
-			if (!_entityLocations.get(oldLocation).remove(entity)) {
-				throw new IllegalArgumentException("Given entity " + entity + " was not at location " + oldLocation);
-			}
-		}
-
-		_entityLocations.put(newLocation, entity);
-	}
-
-	/**
-	 * Returns all entities at the given location.
-	 * @param location The location.
-	 * @return A collection containing all entities at the given point.
-	 */
-	public Collection<Entity> getEntitiesAt(final Point location) {
-		return _entityLocations.get(location);
-	}
-
-	/**
-	 * Returns all entities at the given location, except self.
-	 * @param location The location.
-	 * @param self The entity that should be excluded.
-	 * @return A collection containing all entities at the given point, except self.
-	 */
-	public Collection<Entity> getEntitesAt(final Point location, final Entity self) {
-		Collection<Entity> result = new ArrayList<>();
-		result.addAll(_entityLocations.get(location));
-		result.remove(self);
-		return result;
 	}
 
 	/**
@@ -220,67 +105,6 @@ public class GameMap implements Drawable, Updateable {
 	}
 
 	/**
-	 * Spawns a goblin at the given location.
-	 * @param location The location
-	 */
-	public void spawnGoblin(final Point location) {
-		Goblin goblin = new Goblin(this, location);
-		_newEntities.add(goblin);
-	}
-
-	/**
-	* Spawns a goblin at a random location near spawn.
-	*/
-	public void spawnGoblin() {
-		spawnGoblin(getRandomValidLocationNearSpawnPoint(Integer.MAX_VALUE, _settings.getInt(Settings.GAME_SPAWN_RADIUS)));
-	}
-
-	/**
-	 * Spawns {@code amount} goblins at a random location near spawn.
-	 * @param amount The amount of goblins that should be spawned.
-	 */
-	public void spawnGoblins(final int amount) {
-		for (int i = 0; i < amount; i++) {
-			spawnGoblin();
-		}
-	}
-
-	/**
-	 * Removes the given entity from the map.
-	 * @param entity The entity.
-	 */
-	public void removeEntity(final Entity entity) {
-		_removedEntities.add(entity);
-	}
-
-	@Override
-	public void update(final Random random) {
-		if (_paused) {
-			return;
-		}
-
-		if (_newEntities.size() > 0) {
-			_entities.addAll(_newEntities);
-			_log.debug("Added " + _newEntities.size() + " entities");
-			_newEntities.clear();
-		}
-
-		if (_removedEntities.size() > 0) {
-			_entities.removeAll(_removedEntities);
-			_log.debug("Removed " + _removedEntities.size() + " entities");
-			_removedEntities.clear();
-		}
-
-		for (Entity entity : _entities) {
-			try {
-				entity.update(_random);
-			} catch (GameUpdateException e) {
-				_log.error("Error updating entity!", e);
-			}
-		}
-	}
-
-	/**
 	 * Sets the given material at the given location.
 	 * 
 	 * @param location The location.
@@ -288,14 +112,6 @@ public class GameMap implements Drawable, Updateable {
 	 */
 	public void setMaterial(final Point location, final Material material) {
 		_map.setRGB(location.getX(), location.getY(), material.getColor());
-	}
-
-	/**
-	 * Returns the amount of entities on the map.
-	 * @return The amount of entities on the map.
-	 */
-	public int getEntityCount() {
-		return _entities.size();
 	}
 
 	/**
@@ -316,41 +132,10 @@ public class GameMap implements Drawable, Updateable {
 	}
 
 	/**
-	 * @param renderEntities true if the entities should be rendered.
+	 * Returns the spawn point.
+	 * @return The spawn point.
 	 */
-	public void setRenderEntities(final boolean renderEntities) {
-		_renderEntities = renderEntities;
-	}
-
-	/**
-	 * @return true if the entities are rendered.
-	 */
-	public boolean getRenderEntities() {
-		return _renderEntities;
-	}
-
-	/**
-	 * @return true if the game is paused, false if it is running.
-	 */
-	public boolean isPaused() {
-		return _paused;
-	}
-
-	/**
-	 * @param paused true if the game should be paused, false if it is running.
-	 */
-	public void setPaused(final boolean paused) {
-		if (paused == _paused) {
-			_log.warn("Game is already " + (paused ? "paused" : "unpaused"));
-			return;
-		}
-		
-		if (paused) {
-			_log.info("Game paused");
-		} else {
-			_log.info("Game unpaused");
-		}
-		
-		this._paused = paused;
+	public Point getSpawnPoint() {
+		return _spawnPoint;
 	}
 }

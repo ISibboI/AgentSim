@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai;
 
 import de.isibboi.agentsim.Environment;
+import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -16,14 +17,15 @@ public class MiningTask extends AbstractLocalTask {
 	 * 
 	 * @param location The location of the task.
 	 * @param map The game map.
+	 * @param entityLocationManager The entity location manager.
 	 */
-	public MiningTask(final Point location, final GameMap map) {
+	public MiningTask(final Point location, final GameMap map, final EntityLocationManager entityLocationManager) {
 		super(map.getMaterialAt(location).getDurability(), location, map);
 	}
 
 	@Override
-	public void complete(final GameMap map) {
+	public void complete(final GameMap map, final EntityLocationManager entityLocationManager) {
 		map.setMaterial(getLocation(), Environment.MATERIAL_AIR);
-		map.spawnGoblin(getLocation());
+		entityLocationManager.getGoblinSpawner().spawnGoblin(getLocation());
 	}
 }

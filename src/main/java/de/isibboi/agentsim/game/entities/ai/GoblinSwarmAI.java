@@ -1,11 +1,11 @@
-package de.isibboi.agentsim.game.entities;
+package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.Random;
 
 import de.isibboi.agentsim.Settings;
-import de.isibboi.agentsim.game.entities.ai.AI;
-import de.isibboi.agentsim.game.entities.ai.MiningTask;
-import de.isibboi.agentsim.game.entities.ai.Task;
+import de.isibboi.agentsim.game.EntityLocationManager;
+import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.LocationLock;
 import de.isibboi.agentsim.game.map.Point;
@@ -18,25 +18,28 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class GoblinSwarmAI implements AI {
 	private final GameMap _map;
+	private final EntityLocationManager _entityLocationManager;
 	private final Goblin _goblin;
-	
+
 	private Task _newTask;
 	private final LocationLock _locationLock;
 	private Point _locationToLock;
 
 	private int _age;
 	private int _lifeTimeLeft;
-	
+
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
 	 * @param map The game map.
+	 * @param entityLocationManager The entity location manager.
 	 * @param goblin The controlled entity.
 	 */
-	public GoblinSwarmAI(final GameMap map, final Goblin goblin) {
+	public GoblinSwarmAI(final GameMap map, final EntityLocationManager entityLocationManager, final Goblin goblin) {
 		_map = map;
+		_entityLocationManager = entityLocationManager;
 		_locationLock = new LocationLock(map);
 		_goblin = goblin;
-		
+
 		_age = 0;
 		_lifeTimeLeft = _map.getSettings().getInt(Settings.AI_LIFE_TIME);
 	}
@@ -44,13 +47,13 @@ public class GoblinSwarmAI implements AI {
 	@Override
 	public void eventCollideWithWall(final Point location) {
 		if (!_map.isLocationLocked(location)) {
-			_newTask = new MiningTask(location, _map);
+			_newTask = new MiningTask(location, _map, _entityLocationManager);
 			_locationToLock = location;
 		}
 	}
 
 	@Override
-	public void eventCollideWithEntity(final Goblin goblin) {
+	public void eventCollideWithEntity(final Entity entity) {
 		// Ignored
 	}
 
@@ -89,12 +92,12 @@ public class GoblinSwarmAI implements AI {
 	public boolean update(final Random random) {
 		_age++;
 		_lifeTimeLeft--;
-		
+
 		if (_lifeTimeLeft < 0) {
 			die();
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -103,6 +106,6 @@ public class GoblinSwarmAI implements AI {
 	 */
 	private void die() {
 		_locationLock.unlockLocationIfLocked();
-		_map.removeEntity(_goblin);
+		_entityLocationManager.removeEntity(_goblin);
 	}
 }

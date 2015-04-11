@@ -1,9 +1,6 @@
 package de.isibboi.agentsim.ui;
 
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -12,15 +9,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Updateable;
-import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.component.UIButton;
 import de.isibboi.agentsim.ui.component.UINumberLabel;
 import de.isibboi.agentsim.ui.event.MouseButton;
-import de.isibboi.agentsim.ui.event.UIActionListener;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
 import de.isibboi.agentsim.ui.event.UserActionEvent;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
@@ -31,11 +27,11 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionListener {
+public class GameUI implements View, Updateable {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Settings _settings;
-	private final GameMap _map;
+	private Game _game;
 	private final AgentFrame _agentFrame;
 
 	private int _width;
@@ -59,18 +55,20 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 
 	private UISettingsFrame _settingsFrame;
 
+	private boolean _renderEntities = true;
+
 	/**
 	 * Creates a new ui with the given settings.
 	 * 
 	 * @param renderer the renderer used to draw the ui.
 	 * @param settings the settings.
-	 * @param map the game map.
+	 * @param game the game map.
 	 * @param agentFrame the game main class.
 	 */
-	public UI(final Renderer renderer, final Settings settings, final GameMap map, final AgentFrame agentFrame) {
+	public GameUI(final Renderer renderer, final Settings settings, final Game game, final AgentFrame agentFrame) {
 		_settings = settings;
 		_renderer = renderer;
-		_map = map;
+		_game = game;
 		_agentFrame = agentFrame;
 
 		_width = settings.getInt(Settings.UI_WIDTH);
@@ -102,18 +100,29 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 		_renderEntitiesButton = new UIButton(_renderer, new Point(_width - 270, 170), 250, "Toggle entities", this);
 		_drawables.add(_renderEntitiesButton);
 		_mouseListeners.add(_renderEntitiesButton);
-		
+
 		_restartButton = new UIButton(_renderer, new Point(_width - 270, 210), 250, "Restart", this);
 		_drawables.add(_restartButton);
 		_mouseListeners.add(_restartButton);
-		
+
 		_pauseButton = new UIButton(_renderer, new Point(_width - 270, 250), 250, "Pause", this);
 		_drawables.add(_pauseButton);
 		_mouseListeners.add(_pauseButton);
 	}
 
 	@Override
-	public void draw(final Graphics2D g) {
+	public void drawScaledContent(final Graphics2D g) {
+		// Draw map.
+		_game.getMap().draw(g);
+
+		// Draw entities.
+		if (_renderEntities) {
+			_game.getEntities().draw(g);
+		}
+	};
+
+	@Override
+	public void drawUnscaledContent(final Graphics2D g) {
 		// Measure frame rate.
 		_frameRateMeter.update();
 		_frameRateLabel.setValue(_frameRateMeter.getValue());
@@ -122,7 +131,7 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 		_updateRateLabel.setValue(_updateRateMeter.getValue());
 
 		// Measure entity count.
-		_entityCountLabel.setValue(_map.getEntityCount());
+		_entityCountLabel.setValue(_game.getEntities().size());
 
 		_renderer.setGraphics(g);
 		for (Drawable d : _drawables) {
@@ -158,11 +167,26 @@ public class UI implements Drawable, Updateable, UIMouseInputListener, UIActionL
 		} else if (e.getSource() == _settingsFrame) {
 			_settingsFrame = null;
 		} else if (e.getSource() == _renderEntitiesButton) {
-			_map.setRenderEntities(!_map.getRenderEntities());
+			_renderEntities = !_renderEntities;
 		} else if (e.getSource() == _restartButton) {
 			_agentFrame.restart();
 		} else if (e.getSource() == _pauseButton) {
-			_map.setPaused(!_map.isPaused());
+			_game.setPaused(!_game.isPaused());
 		}
+	}
+
+	@Override
+	public void activate() {
+		// Ignore
+	}
+
+	@Override
+	public void deactivate() {
+		// Ignore
+	}
+
+	@Override
+	public void setGame(final Game game) {
+		_game = game;
 	}
 }
