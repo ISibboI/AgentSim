@@ -130,14 +130,6 @@ public class GameMap implements Drawable {
 	}
 
 	/**
-	 * Returns the settings.
-	 * @return The settings.
-	 */
-	public Settings getSettings() {
-		return _settings;
-	}
-
-	/**
 	 * Returns the spawn point.
 	 * @return The spawn point.
 	 */

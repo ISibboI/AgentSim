@@ -1,13 +1,16 @@
 package de.isibboi.agentsim.game.entities;
 
+import de.isibboi.agentsim.Settings;
+
 /**
  * Contains all game-related attributes of a goblin.
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class GoblinAttributes {
+public class GoblinAttributes implements Attributes {
 	private int _age;
 	private int _saturation;
+	private boolean _alive;
 
 	/**
 	 * Creates a new object initializing all the attributes.
@@ -17,6 +20,17 @@ public class GoblinAttributes {
 	public GoblinAttributes(final int age, final int saturation) {
 		_age = age;
 		_saturation = saturation;
+		_alive = true;
+	}
+
+	/**
+	 * Creates a new goblin attributes object. Initializes the attributes with the given settings.
+	 * @param settings The settings.
+	 */
+	public GoblinAttributes(final Settings settings) {
+		_age = 0;
+		_saturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_SATURATION);
+		_alive = true;
 	}
 
 	/**
@@ -49,5 +63,21 @@ public class GoblinAttributes {
 	 */
 	public void setSaturation(final int saturation) {
 		_saturation = saturation;
+	}
+
+	/**
+	 * Returns {@code true} if the goblin is alive.
+	 * @return The alive.
+	 */
+	public boolean isAlive() {
+		return _alive;
+	}
+
+	/**
+	 * Sets the alive status of the goblin. If it is {@code false}, the goblin is dead.
+	 * @param alive The alive status.
+	 */
+	public void setAlive(final boolean alive) {
+		_alive = alive;
 	}
 }

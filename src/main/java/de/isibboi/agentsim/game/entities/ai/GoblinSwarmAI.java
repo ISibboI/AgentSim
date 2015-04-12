@@ -1,13 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai;
 
-import java.util.Random;
-
-import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
-import de.isibboi.agentsim.game.entities.Goblin;
-import de.isibboi.agentsim.game.map.GameMap;
-import de.isibboi.agentsim.game.map.LocationLock;
+import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -16,40 +11,29 @@ import de.isibboi.agentsim.game.map.Point;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class GoblinSwarmAI implements AI {
-	private final GameMap _map;
+public class GoblinSwarmAI extends TaskExecutingAI {
 	private final EntityLocationManager _entityLocationManager;
-	private final Goblin _goblin;
-
-	private Task _newTask;
-	private final LocationLock _locationLock;
-	private Point _locationToLock;
-
-	private int _age;
-	private int _lifeTimeLeft;
+	private final GoblinTaskFactory _goblinTaskFactory;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
-	 * @param map The game map.
 	 * @param entityLocationManager The entity location manager.
-	 * @param goblin The controlled entity.
+	 * @param goblinTaskFactory The goblin task factory.
 	 */
-	public GoblinSwarmAI(final GameMap map, final EntityLocationManager entityLocationManager, final Goblin goblin) {
-		_map = map;
+	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory) {
 		_entityLocationManager = entityLocationManager;
-		_locationLock = new LocationLock(map);
-		_goblin = goblin;
+		_goblinTaskFactory = goblinTaskFactory;
 
-		_age = 0;
-		_lifeTimeLeft = _map.getSettings().getInt(Settings.AI_LIFE_TIME);
+		setIdleTask(goblinTaskFactory.createIdleTask());
 	}
 
 	@Override
 	public void eventCollideWithWall(final Point location) {
-		if (!_map.isLocationLocked(location)) {
-			_newTask = new MiningTask(location, _map, _entityLocationManager);
-			_locationToLock = location;
-		}
+		// TODO Add mining task creation.
+		//		if (!_map.isLocationLocked(location)) {
+		//			_newTask = new MiningTask(location, _map, _entityLocationManager);
+		//			_locationToLock = location;
+		//		}
 	}
 
 	@Override
@@ -69,43 +53,11 @@ public class GoblinSwarmAI implements AI {
 
 	@Override
 	public void eventTaskFinished() {
-		_locationLock.unlockLocation();
+		// Ignored
 	}
 
 	@Override
-	public void eventTaskAccepted() {
-		if (_locationToLock != null) {
-			_locationLock.lockLocation(_locationToLock);
-			_locationToLock = null;
-		}
-	}
-
-	@Override
-	public Task getNewTask() {
-		Task result = _newTask;
-		_newTask = null;
-
-		return result;
-	}
-
-	@Override
-	public boolean update(final Random random) {
-		_age++;
-		_lifeTimeLeft--;
-
-		if (_lifeTimeLeft < 0) {
-			die();
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Lets the goblin die.
-	 */
-	private void die() {
-		_locationLock.unlockLocationIfLocked();
-		_entityLocationManager.removeEntity(_goblin);
+	protected void eventExecutionFinished() {
+		// Ignored
 	}
 }

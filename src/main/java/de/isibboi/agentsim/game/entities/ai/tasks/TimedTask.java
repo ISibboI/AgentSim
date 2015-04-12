@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.game.entities.ai;
+package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import java.util.Random;
 
@@ -8,7 +8,7 @@ import java.util.Random;
  * @author Sebastian Schmidt
  * @since 0.2.0 
  */
-public abstract class AbstractTask implements Task {
+public abstract class TimedTask implements Task {
 	private int _duration;
 	private int _timeLeft;
 
@@ -16,7 +16,7 @@ public abstract class AbstractTask implements Task {
 	 * Creates a new abstract task with the given duration.
 	 * @param duration The duration of the task.
 	 */
-	public AbstractTask(final int duration) {
+	public TimedTask(final int duration) {
 		_duration = duration;
 		_timeLeft = duration;
 	}

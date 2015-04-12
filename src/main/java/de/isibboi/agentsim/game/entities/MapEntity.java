@@ -11,16 +11,13 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.2.0
  */
 public abstract class MapEntity implements Entity {
-	private final GameMap _map;
 	private final EntityLocationManager _entityLocationManager;
 
 	/**
 	 * Creates a new map entity at the given location.
-	 * @param map The game map.
 	 * @param entityLocationManager The entity location manager that manages the location of this entity.
 	 */
-	public MapEntity(final GameMap map, final EntityLocationManager entityLocationManager) {
-		_map = map;
+	public MapEntity(final EntityLocationManager entityLocationManager) {
 		_entityLocationManager = entityLocationManager;
 	}
 
@@ -45,7 +42,7 @@ public abstract class MapEntity implements Entity {
 	 * @return The game map.
 	 */
 	public GameMap getMap() {
-		return _map;
+		return _entityLocationManager.getMap();
 	}
 
 	/**

@@ -1,7 +1,11 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.util.Random;
+
+import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -41,18 +45,14 @@ public interface AI {
 	/**
 	 * Updates the AI.
 	 * @param attributes The current attributes of the controlled entity.
+	 * @param random The pseudo random number generator used for randomness.
+	 * @throws GameUpdateException If updating the AI goes wrong. 
 	 */
-	void update(Attributes attributes);
-
-	/**
-	 * Returns true if the entity is alive and should continue updating, false if it is dead.
-	 * @return True if the entity is alive.
-	 */
-	boolean isAlive();
+	void update(Attributes attributes, Random random) throws GameUpdateException;
 
 	/**
 	 * Returns the next movement of the entity.
 	 * @return The next movement of the entity.
 	 */
-	Point getMovement();
+	Movement getMovement();
 }
