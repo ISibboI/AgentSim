@@ -48,8 +48,8 @@ public class AgentFrame {
 
 		_view = new GameUI(new DefaultRenderer(_drawFrame, _settings), _settings, _game, this);
 		_mouseEventTranslator = new MouseEventTranslator(_view);
-		_drawFrame.addMouseListener(_mouseEventTranslator);
-		_drawFrame.addMouseMotionListener(_mouseEventTranslator);
+		_drawFrame.getContentPane().addMouseListener(_mouseEventTranslator);
+		_drawFrame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
 
 		start();
 	}

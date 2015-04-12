@@ -19,7 +19,7 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class MouseEventTranslator implements MouseListener, MouseMotionListener {
 	private final Logger _log = LogManager.getLogger(getClass());
-	
+
 	private final List<UIMouseInputListener> _listeners = new ArrayList<>();
 
 	private Point _lastMousePosition;
@@ -67,7 +67,7 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 		for (UIMouseInputListener listener : _listeners) {
 			listener.mouseMoved(oldPosition, newPosition);
 		}
-		
+
 		_log.debug("Fired mouse moved: Old position: " + oldPosition + " New position: " + newPosition);
 	}
 
@@ -104,13 +104,13 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 
 	@Override
 	public void mouseDragged(final MouseEvent e) {
-		Point position = new Point(e.getX(), e.getY());
+		Point position = translatePoint(e.getX(), e.getY());
 		ensureMousePosition(position);
 	}
 
 	@Override
 	public void mouseMoved(final MouseEvent e) {
-		Point position = new Point(e.getX(), e.getY());
+		Point position = translatePoint(e.getX(), e.getY());
 		ensureMousePosition(position);
 	}
 
@@ -128,7 +128,7 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		Point position = new Point(e.getX(), e.getY());
+		Point position = translatePoint(e.getX(), e.getY());
 		MouseButton mouseButton = MouseButton.translateAWTMouseButton(e.getButton());
 		ensureMousePosition(position);
 
@@ -139,12 +139,22 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
-		Point position = new Point(e.getX(), e.getY());
+		Point position = translatePoint(e.getX(), e.getY());
 		MouseButton mouseButton = MouseButton.translateAWTMouseButton(e.getButton());
 		ensureMousePosition(position);
 
 		if (mouseButton != null) {
 			fireMouseClicked(position, mouseButton, false);
 		}
+	}
+
+	/**
+	 * Translates the mouse position received by the AWT event system to the coordinate system used for the UI. 
+	 * @param x The x coordinate received from the AWT event system.
+	 * @param y The y coordinate received from the AWT event system.
+	 * @return The point in the UI coordinate system.
+	 */
+	private Point translatePoint(final int x, final int y) {
+		return new Point(x, y);
 	}
 }
