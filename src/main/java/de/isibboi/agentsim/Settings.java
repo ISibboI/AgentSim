@@ -1,15 +1,15 @@
 package de.isibboi.agentsim;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +23,8 @@ import org.apache.logging.log4j.Logger;
 public class Settings {
 	public static final String UI_WIDTH = "ui.width";
 	public static final String UI_HEIGHT = "ui.height";
+	public static final String UI_X_POS = "ui.xPos";
+	public static final String UI_Y_POS = "ui.yPos";
 	public static final String UI_FONT_FAMILY = "ui.fontFamily";
 
 	public static final String GAME_INITIAL_GOBLIN_COUNT = "game.initialGoblinCount";
@@ -84,6 +86,8 @@ public class Settings {
 	private void createDefaults() {
 		_defaults.setProperty(UI_WIDTH, "800");
 		_defaults.setProperty(UI_HEIGHT, "600");
+		_defaults.setProperty(UI_X_POS, "0");
+		_defaults.setProperty(UI_Y_POS, "0");
 		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
 
 		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");

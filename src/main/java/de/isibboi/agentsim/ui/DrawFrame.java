@@ -38,9 +38,11 @@ public class DrawFrame extends JFrame {
 	 * @param title The window title.
 	 * @param width The width of the pane.
 	 * @param height The height of the pane.
+	 * @param xPos The initial X position of the frame on the screen.
+	 * @param yPos The initial Y position of the frame on the screen.
 	 * @param scale The scale of the content.
 	 */
-	public DrawFrame(final String title, final int width, final int height, final int scale) {
+	public DrawFrame(final String title, final int width, final int height, final int xPos, final int yPos, final int scale) {
 		super(title);
 		_scale = scale;
 
@@ -56,6 +58,8 @@ public class DrawFrame extends JFrame {
 		createBufferStrategy(2);
 		_bufferStrategy = getBufferStrategy();
 		logBufferInfo();
+
+		setLocation(xPos, yPos);
 
 		setVisible(true);
 	}

@@ -42,6 +42,8 @@ public class AgentFrame {
 				"Agent Sim version " + Environment.VERSION,
 				settings.getInt(Settings.UI_WIDTH),
 				settings.getInt(Settings.UI_HEIGHT),
+				settings.getInt(Settings.UI_X_POS),
+				settings.getInt(Settings.UI_Y_POS),
 				settings.getInt(Settings.GAME_SCALE));
 
 		_game = new Game(new DefaultGameInitializer(), settings);
@@ -104,6 +106,9 @@ public class AgentFrame {
 	 * Disposes the underlying {@link DrawFrame}.
 	 */
 	public void dispose() {
+		_settings.set(Settings.UI_X_POS, _drawFrame.getLocationOnScreen().x);
+		_settings.set(Settings.UI_Y_POS, _drawFrame.getLocationOnScreen().y);
+
 		_drawFrame.dispose();
 		_log.debug("Disposed frame");
 	}
