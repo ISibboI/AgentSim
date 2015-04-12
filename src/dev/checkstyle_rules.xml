@@ -9,12 +9,6 @@
 	</module>
 	<module name="SuppressionCommentFilter" />
 	<module name="TreeWalker">
-	
-		<!-- Disregard calling super methods explicitly. -->
-		<module name="RegexpSinglelineJava">
-			<property name="format" value="super[^(]" />
-			<property name="ignoreComments" value="true" />
-		</module>
 
 		<module name="FileContentsHolder" />
 
