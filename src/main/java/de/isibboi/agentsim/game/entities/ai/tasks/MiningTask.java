@@ -44,7 +44,6 @@ public class MiningTask extends MotionlessTimedTask {
 	protected void eventFinished() {
 		_entityLocationManager.getMap().setMaterial(_miningLocation, Environment.MATERIAL_AIR);
 		_entityLocationManager.getGoblinSpawner().spawnGoblin(_miningLocation);
-		_log.debug("Mined block at " + _miningLocation);
 	}
 
 	@Override

@@ -128,6 +128,7 @@ public class EntityLocationManager implements Updateable {
 	public void removeEntity(final Entity entity) {
 		_entityLocations.removeValue(entity);
 		_entities.remove(entity);
+		_map.unlockAllLocations(entity);
 	}
 
 	/**

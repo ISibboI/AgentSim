@@ -35,10 +35,11 @@ public class GoblinTaskFactory {
 	 */
 	public Task createMiningTask(final Point location, final Entity entity, final EntityLocationManager entityLocationManager) {
 		Queue<Task> _taskQueue = new LinkedList<>();
+		LockLocationTask lockLocationTask = new LockLocationTask(entityLocationManager.getMap(), location, entity);
 
-		_taskQueue.add(new LockLocationTask(entityLocationManager.getMap(), location));
+		_taskQueue.add(lockLocationTask);
 		_taskQueue.add(new MiningTask(location, entity, entityLocationManager));
-		_taskQueue.add(new UnlockLocationTask(entityLocationManager.getMap(), location));
+		_taskQueue.add(new UnlockLocationTask(lockLocationTask));
 
 		return new CompositeTask(_taskQueue);
 	}

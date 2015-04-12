@@ -101,6 +101,5 @@ public abstract class TimedTask implements Task {
 	protected void fail() {
 		_eventFinishedFired = true;
 		_timeLeft = 0;
-		_log.debug("Timed task failed: " + this);
 	}
 }

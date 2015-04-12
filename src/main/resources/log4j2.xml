@@ -15,5 +15,7 @@
 			level="info"></Logger>
 		<Logger name="de.isibboi.agentsim.ui.component.UIButton"
 			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.Entities"
+			level="info"></Logger>
 	</Loggers>
 </Configuration>

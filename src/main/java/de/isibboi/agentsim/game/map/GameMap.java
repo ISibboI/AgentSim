@@ -2,15 +2,15 @@ package de.isibboi.agentsim.game.map;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.algorithm.LockManager;
 import de.isibboi.agentsim.game.entities.Drawable;
+import de.isibboi.agentsim.game.entities.Entity;
 
 /**
  * Represents the game map.
@@ -26,7 +26,7 @@ public class GameMap implements Drawable {
 	private final Settings _settings;
 
 	private final Point _spawnPoint;
-	private final Set<Point> _locationLocks = new HashSet<Point>();
+	private final LockManager<Point, Entity> _lockManager = new LockManager<>();
 
 	/**
 	 * The age of tha map. That is the total amount of modifications made to the map.
@@ -87,10 +87,11 @@ public class GameMap implements Drawable {
 	/**
 	 * Locks the given location if possible.
 	 * @param location The location.
+	 * @param entity The entity that tries to lock the location.
 	 * @return True if the location was successfully locked, false if it was already locked.
 	 */
-	public boolean tryLockLocation(final Point location) {
-		return _locationLocks.add(location);
+	public boolean tryLockLocation(final Point location, final Entity entity) {
+		return _lockManager.tryLock(location, entity);
 	}
 
 	/**
@@ -99,15 +100,24 @@ public class GameMap implements Drawable {
 	 * @return True if the location is locked, false otherwise.
 	 */
 	public boolean isLocationLocked(final Point location) {
-		return _locationLocks.contains(location);
+		return _lockManager.isLocked(location);
 	}
 
 	/**
 	 * Unlocks the given location.
 	 * @param location The location.
+	 * @param entity The entity that unlocks the location.
 	 */
-	public void unlockLocation(final Point location) {
-		_locationLocks.remove(location);
+	public void unlockLocation(final Point location, final Entity entity) {
+		_lockManager.unlock(location, entity);
+	}
+
+	/**
+	 * Unlocks all locations that are currently locked by the given entity.
+	 * @param entity The entity.
+	 */
+	public void unlockAllLocations(final Entity entity) {
+		_lockManager.unlockAll(entity);
 	}
 
 	/**

@@ -32,7 +32,9 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithWall(final Point location) {
-		enqueueTask(_goblinTaskFactory.createMiningTask(location, _entity, _entityLocationManager));
+		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
+			enqueueTask(_goblinTaskFactory.createMiningTask(location, _entity, _entityLocationManager));
+		}
 	}
 
 	@Override
