@@ -29,6 +29,11 @@ public class GameMap implements Drawable {
 	private final Set<Point> _locationLocks = new HashSet<Point>();
 
 	/**
+	 * The age of tha map. That is the total amount of modifications made to the map.
+	 */
+	private long _age;
+
+	/**
 	 * Creates the map from the given image.
 	 * 
 	 * @param image The map image.
@@ -112,6 +117,7 @@ public class GameMap implements Drawable {
 	 */
 	public void setMaterial(final Point location, final Material material) {
 		_map.setRGB(location.getX(), location.getY(), material.getColor());
+		_age++;
 	}
 
 	/**
@@ -137,5 +143,13 @@ public class GameMap implements Drawable {
 	 */
 	public Point getSpawnPoint() {
 		return _spawnPoint;
+	}
+
+	/**
+	 * Returns the age of the map.
+	 * @return The age of the map.
+	 */
+	public long getAge() {
+		return _age;
 	}
 }

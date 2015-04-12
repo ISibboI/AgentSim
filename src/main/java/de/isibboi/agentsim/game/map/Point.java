@@ -130,25 +130,34 @@ public class Point {
 	public int getY() {
 		return _y;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + _x + ", " + _y + "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return _x ^ (_y << 16);
 	}
-	
-    @Override
-    public boolean equals(final Object o) {
-    	if (o instanceof Point) {
-    		Point p = (Point) o;
-    		
-    		return p._x == _x && p._y == _y;
-    	} else {
-    		return false;
-    	}
-    }
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof Point) {
+			Point p = (Point) o;
+
+			return p._x == _x && p._y == _y;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Creates a new point that is the sum of this and the given point.
+	 * @param other The other point.
+	 * @return A sum of {@code this} and {@code other}.
+	 */
+	public Point add(final Point other) {
+		return new Point(_x + other._x, _y + other._y);
+	}
 }
