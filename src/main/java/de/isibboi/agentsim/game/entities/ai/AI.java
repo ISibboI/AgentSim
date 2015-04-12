@@ -1,20 +1,19 @@
 package de.isibboi.agentsim.game.entities.ai;
 
-import java.util.Random;
-
+import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
- * An interface for AI systems. Specifies all the events that can be fired by a goblin.
+ * An interface for AI systems. Specifies all the events that can be fired by an entity.
  * 
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
 public interface AI {
 	/**
-	 * If the goblin tries to walk into a certain direction, but there is a wall, then this event is fired.
-	 * The point is the point of the wall that the goblin tried to walk on.
+	 * If the entity tries to walk into a certain direction, but there is a wall, then this event is fired.
+	 * The point is the point of the wall that the entity tried to walk on.
 	 * 
 	 * @param location The location at which the collision happened.
 	 */
@@ -27,40 +26,33 @@ public interface AI {
 	void eventCollideWithEntity(Entity entity);
 
 	/**
-	 * If the goblin tries to walk out of the map, this event is fired.
+	 * If the entity tries to walk out of the map, this event is fired.
 	 * @param location The location at which the collision happened.
 	 */
 	void eventCollideWithMapBorder(Point location);
 
 	/**
-	 * If the goblin walks onto the given location, this event is fired.
+	 * If the entity walks onto the given location, this event is fired.
 	 * 
-	 * @param location The location to goblin walked onto.
+	 * @param location The location to entity walked onto.
 	 */
 	void eventMoveTo(Point location);
 
 	/**
-	 * If the goblin finishes a task, this event is fired.
+	 * Updates the AI.
+	 * @param attributes The current attributes of the controlled entity.
 	 */
-	void eventTaskFinished();
+	void update(Attributes attributes);
 
 	/**
-	 * If the goblin accepts the task returned by {@link #getNewTask()}, this event is fired.
+	 * Returns true if the entity is alive and should continue updating, false if it is dead.
+	 * @return True if the entity is alive.
 	 */
-	void eventTaskAccepted();
+	boolean isAlive();
 
 	/**
-	 * After each update, if the goblin has no task, it checks if the AI has a new task.
-	 * If this method returns null, the goblin will just continue moving, otherwise it will execute the new task.
-	 * 
-	 * @return The new task for the goblin, or null if it should continue moving.
+	 * Returns the next movement of the entity.
+	 * @return The next movement of the entity.
 	 */
-	Task getNewTask();
-
-	/**
-	 * Updates the ai.
-	 * @param random The pseudo random number generator used for randomness.
-	 * @return True if the goblin should continue updating, false if it is dead.
-	 */
-	boolean update(Random random);
+	Point getMovement();
 }

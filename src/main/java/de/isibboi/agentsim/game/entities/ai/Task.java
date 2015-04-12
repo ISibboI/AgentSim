@@ -5,7 +5,7 @@ import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.game.map.GameMap;
 
 /**
- * A task that can be executed by a goblin.
+ * A task that can be executed by an entity.
  * @author Sebastian Schmidt
  * @since 0.2.0
  */

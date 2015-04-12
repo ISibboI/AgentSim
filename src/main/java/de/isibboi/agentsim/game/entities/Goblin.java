@@ -20,6 +20,7 @@ import de.isibboi.agentsim.game.map.Point;
 public class Goblin extends MapEntity {
 	private final Color _color = new Color(0x55bb55);
 
+	private GoblinAttributes _attributes;
 	private final AI _ai;
 	private Task _task;
 
