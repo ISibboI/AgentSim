@@ -31,15 +31,15 @@ public class Settings {
 	public static final String GAME_SPAWN_RADIUS = "game.spawnRadius";
 	public static final String GAME_SCALE = "game.scale";
 
-	public static final String AI_LIFE_TIME = "ai.lifeTime";
+	public static final String GAME_ENTITIES_GOBLIN_INITIAL_SATURATION = "game.entities.goblin.initialSaturation";
 
 	public static final String CORE_TARGET_FRAME_RATE = "core.targetFrameRate";
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
 
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
-			UI_WIDTH, UI_HEIGHT, UI_FONT_FAMILY,
+			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
-			AI_LIFE_TIME,
+			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
 			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE));
 
 	private final Logger _log = LogManager.getLogger(getClass());
@@ -94,7 +94,7 @@ public class Settings {
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 
-		_defaults.setProperty(AI_LIFE_TIME, "500");
+		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
 		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "60");

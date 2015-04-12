@@ -25,7 +25,7 @@ public class EntityLocationManager implements Updateable {
 	private final Entities _entities;
 	private final Settings _settings;
 
-	private final GoblinSpawner _goblinSpawner;
+	private GoblinSpawner _goblinSpawner;
 
 	private final BidirectionalHashMultimap<Point, Entity> _entityLocations = new BidirectionalHashMultimap<>();
 
@@ -39,8 +39,6 @@ public class EntityLocationManager implements Updateable {
 		_map = map;
 		_entities = entities;
 		_settings = settings;
-
-		_goblinSpawner = new GoblinSpawner(map, entities, this, settings);
 	}
 
 	/**
@@ -83,6 +81,14 @@ public class EntityLocationManager implements Updateable {
 	}
 
 	/**
+	 * Sets the goblin spawner.
+	 * @param goblinSpawner The goblin spawner.
+	 */
+	public void setGoblinSpawner(final GoblinSpawner goblinSpawner) {
+		_goblinSpawner = goblinSpawner;
+	}
+
+	/**
 	 * Sets the location of the given entity.
 	 * @param entity The entity.
 	 * @param location The location of the entity.
@@ -122,5 +128,29 @@ public class EntityLocationManager implements Updateable {
 	public void removeEntity(final Entity entity) {
 		_entityLocations.removeValue(entity);
 		_entities.remove(entity);
+	}
+
+	/**
+	 * Returns the entities.
+	 * @return The entities.
+	 */
+	public Entities getEntities() {
+		return _entities;
+	}
+
+	/**
+	 * Returns the game map.
+	 * @return The game map.
+	 */
+	public GameMap getMap() {
+		return _map;
+	}
+
+	/**
+	 * Returns the settings.
+	 * @return The settings.
+	 */
+	public Settings getSettings() {
+		return _settings;
 	}
 }

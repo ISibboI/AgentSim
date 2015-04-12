@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.game.entities.ai;
+package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.EntityLocationManager;

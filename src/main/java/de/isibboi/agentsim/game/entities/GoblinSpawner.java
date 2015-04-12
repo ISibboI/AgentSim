@@ -4,7 +4,7 @@ import java.util.Random;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.EntityLocationManager;
-import de.isibboi.agentsim.game.map.GameMap;
+import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -13,24 +13,21 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  */
 public class GoblinSpawner {
-	private final GameMap _map;
-	private final Entities _entities;
 	private final EntityLocationManager _entityLocationManager;
+	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Settings _settings;
 
 	private final Random _random = new Random();
 
 	/**
 	 * Creates a new goblin spawner.
-	 * @param map The map to look for good locations.
-	 * @param entities The entities to add the goblins to.
 	 * @param entityLocationManager The entity location manager to add the goblins to.
+	 * @param goblinTaskFactory The goblin task factory.
 	 * @param settings The settings.
 	 */
-	public GoblinSpawner(final GameMap map, final Entities entities, final EntityLocationManager entityLocationManager, final Settings settings) {
-		_map = map;
-		_entities = entities;
+	public GoblinSpawner(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Settings settings) {
 		_entityLocationManager = entityLocationManager;
+		_goblinTaskFactory = goblinTaskFactory;
 		_settings = settings;
 	}
 
@@ -39,8 +36,8 @@ public class GoblinSpawner {
 	 * @param location The location
 	 */
 	public void spawnGoblin(final Point location) {
-		Goblin goblin = new Goblin(_map, _entityLocationManager);
-		_entities.add(goblin);
+		Goblin goblin = new Goblin(_entityLocationManager, _goblinTaskFactory);
+		_entityLocationManager.getEntities().add(goblin);
 		_entityLocationManager.setLocation(goblin, location);
 	}
 
@@ -73,7 +70,7 @@ public class GoblinSpawner {
 		for (int i = 0; i < maxTries; i++) {
 			result.setXY(_random.nextInt(), _random.nextInt());
 
-			if (_map.isValidEntityLocation(result.getX(), result.getY())) {
+			if (_entityLocationManager.getMap().isValidEntityLocation(result.getX(), result.getY())) {
 				return result.build();
 			}
 		}
@@ -99,10 +96,10 @@ public class GoblinSpawner {
 			y = -distance + _random.nextInt(doubleDistance);
 
 			if (x * x + y * y < squaredDistance) {
-				x += _map.getSpawnPoint().getX();
-				y += _map.getSpawnPoint().getY();
+				x += _entityLocationManager.getMap().getSpawnPoint().getX();
+				y += _entityLocationManager.getMap().getSpawnPoint().getY();
 
-				if (_map.isValidEntityLocation(x, y)) {
+				if (_entityLocationManager.getMap().isValidEntityLocation(x, y)) {
 					return new Point(x, y);
 				}
 			}

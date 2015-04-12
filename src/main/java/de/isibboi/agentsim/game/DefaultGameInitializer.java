@@ -2,6 +2,8 @@ package de.isibboi.agentsim.game;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Entities;
+import de.isibboi.agentsim.game.entities.GoblinSpawner;
+import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.MapGenerator;
 
@@ -21,6 +23,7 @@ public class DefaultGameInitializer implements GameInitializer {
 		_map = mapGenerator.generateMap();
 		_entities = new Entities();
 		_entityLocationManager = new EntityLocationManager(_map, _entities, settings);
+		_entityLocationManager.setGoblinSpawner(new GoblinSpawner(_entityLocationManager, new GoblinTaskFactory(), settings));
 
 		_entityLocationManager.getGoblinSpawner().spawnGoblins(settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 	}

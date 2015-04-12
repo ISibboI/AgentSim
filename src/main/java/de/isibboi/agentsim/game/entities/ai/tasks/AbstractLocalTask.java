@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.game.entities.ai;
+package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
@@ -9,7 +9,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public abstract class AbstractLocalTask extends AbstractTask {
+public abstract class AbstractLocalTask extends TimedTask {
 	private final Point _location;
 	private final GameMap _map;
 

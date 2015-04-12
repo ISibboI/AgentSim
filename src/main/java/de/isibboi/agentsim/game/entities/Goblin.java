@@ -8,8 +8,7 @@ import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.ai.AI;
 import de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI;
-import de.isibboi.agentsim.game.entities.ai.Task;
-import de.isibboi.agentsim.game.map.GameMap;
+import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -20,19 +19,20 @@ import de.isibboi.agentsim.game.map.Point;
 public class Goblin extends MapEntity {
 	private final Color _color = new Color(0x55bb55);
 
+	private GoblinAttributes _attributes;
 	private final AI _ai;
-	private Task _task;
 
 	/**
 	 * Creates a new goblin at the specified location.
 	 * 
-	 * @param map The map the goblin should interact with.
 	 * @param entityLocationManager The entity location manager that manages the location of this goblin.
+	 * @param goblinTaskFactory The goblin task factory.
 	 */
-	public Goblin(final GameMap map, final EntityLocationManager entityLocationManager) {
-		super(map, entityLocationManager);
+	public Goblin(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory) {
+		super(entityLocationManager);
 
-		_ai = new GoblinSwarmAI(map, entityLocationManager, this);
+		_attributes = new GoblinAttributes(entityLocationManager.getSettings());
+		_ai = new GoblinSwarmAI(entityLocationManager, goblinTaskFactory);
 	}
 
 	/**
@@ -52,59 +52,39 @@ public class Goblin extends MapEntity {
 
 	@Override
 	public void update(final Random random) throws GameUpdateException {
-		if (!_ai.update(random)) {
-			return;
+		updateAttributes();
+
+		_ai.update(_attributes, random);
+
+		if (!_attributes.isAlive()) {
+			getEntityLocationManager().getEntities().remove(this);
 		}
 
-		if (_task == null) {
-			calculateNewLocation(random);
-		} else {
-			_task.update(random);
+		calculateNewLocation(_ai.getMovement());
+	}
 
-			if (_task.isFinished()) {
-				_task.complete(getMap(), getEntityLocationManager());
-				_task = null;
-				_ai.eventTaskFinished();
-			}
-		}
+	/**
+	 * Updates the attributes of the goblin.
+	 */
+	private void updateAttributes() {
+		// Make goblin older.
+		_attributes.setAge(_attributes.getAge() + 1);
 
-		// This has to be at the end of update, since the AI generates new tasks during the update.
-		if (_task == null) {
-			_task = _ai.getNewTask();
+		// Make goblin hungry.
+		_attributes.setSaturation(_attributes.getSaturation() - 1);
 
-			if (_task != null) {
-				_ai.eventTaskAccepted();
-			}
+		// Check if the goblin is still alive.
+		if (_attributes.getSaturation() < 0) {
+			_attributes.setAlive(false);
 		}
 	}
 
 	/**
 	 * Calculates the new location of the goblin.
-	 * @param random The pseudo random number generator used for randomness.
-	 * @throws GameUpdateException If the number generator generates a wrong direction.
+	 * @param movement The desired movement.
 	 */
-	private void calculateNewLocation(final Random random) throws GameUpdateException {
-		int x = getLocation().getX();
-		int y = getLocation().getY();
-
-		switch (random.nextInt(4)) {
-		case 0:
-			x++;
-			break;
-		case 1:
-			x--;
-			break;
-		case 2:
-			y++;
-			break;
-		case 3:
-			y--;
-			break;
-		default:
-			throw new GameUpdateException("Illegal direction");
-		}
-
-		Point newLocation = new Point(x, y);
+	private void calculateNewLocation(final Movement movement) {
+		Point newLocation = movement.move(getLocation());
 
 		if (getMap().isValidEntityLocation(newLocation)) {
 			setLocation(newLocation);
