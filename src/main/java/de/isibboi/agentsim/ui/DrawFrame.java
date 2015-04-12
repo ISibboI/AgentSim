@@ -25,8 +25,10 @@ public class DrawFrame extends JFrame {
 
 	private boolean _isRendering = false;
 	private Graphics2D _renderGraphics;
-	private final AffineTransform _contentTransformation;
-	private final AffineTransform _uiTransformation;
+	private AffineTransform _contentTransformation;
+	private AffineTransform _uiTransformation;
+	private AffineTransform _originalTransform;
+	private final int _scale;
 
 	private final BufferStrategy _bufferStrategy;
 
@@ -40,6 +42,7 @@ public class DrawFrame extends JFrame {
 	 */
 	public DrawFrame(final String title, final int width, final int height, final int scale) {
 		super(title);
+		_scale = scale;
 
 		JPanel contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(width, height));
@@ -54,12 +57,6 @@ public class DrawFrame extends JFrame {
 		_bufferStrategy = getBufferStrategy();
 		logBufferInfo();
 
-		Insets frameInsets = getInsets();
-		_contentTransformation = new AffineTransform(scale, 0, 0, scale, frameInsets.left, frameInsets.top);
-		_uiTransformation = new AffineTransform(1, 0, 0, 1, frameInsets.left, frameInsets.top);
-		//		_contentTransformation = new AffineTransform(scale, 0, 0, scale, 1, 1);
-		//		_uiTransformation = new AffineTransform(1, 0, 0, 1, 1, 1);
-
 		setVisible(true);
 	}
 
@@ -72,9 +69,14 @@ public class DrawFrame extends JFrame {
 			throw new IllegalStateException("Rendering already started");
 		}
 
+		Insets frameInsets = getInsets();
+		_contentTransformation = new AffineTransform(_scale, 0, 0, _scale, frameInsets.left, frameInsets.top);
+		_uiTransformation = new AffineTransform(1, 0, 0, 1, frameInsets.left, frameInsets.top);
+
 		_isRendering = true;
 		_renderGraphics = (Graphics2D) _bufferStrategy.getDrawGraphics();
-		_renderGraphics.setTransform(_contentTransformation);
+		_originalTransform = _renderGraphics.getTransform();
+		_renderGraphics.transform(_contentTransformation);
 
 		return getRenderGraphics();
 	}
@@ -83,7 +85,8 @@ public class DrawFrame extends JFrame {
 	 * Removes the content scaling.
 	 */
 	public void switchToUIRender() {
-		_renderGraphics.setTransform(_uiTransformation);
+		_renderGraphics.setTransform(_originalTransform);
+		_renderGraphics.transform(_uiTransformation);
 	}
 
 	/**
