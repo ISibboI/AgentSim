@@ -60,10 +60,24 @@ public abstract class Movement {
 		}
 	}
 
+	/**
+	 * A movement zero steps.
+	 * @author Sebastian Schmidt
+	 * @since 0.3.0
+	 *
+	 */
+	public static final class NoneMovement extends Movement {
+		@Override
+		public Point getPoint() {
+			return new Point(0, 0);
+		}
+	}
+
 	public static final Movement UP = new UpMovement();
 	public static final Movement DOWN = new DownMovement();
 	public static final Movement LEFT = new LeftMovement();
 	public static final Movement RIGHT = new RightMovement();
+	public static final Movement NONE = new NoneMovement();
 
 	/**
 	 * No external instantiation allowed.

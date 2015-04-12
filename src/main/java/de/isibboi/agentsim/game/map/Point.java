@@ -160,4 +160,14 @@ public class Point {
 	public Point add(final Point other) {
 		return new Point(_x + other._x, _y + other._y);
 	}
+
+	/**
+	 * Returns true if the given point is a neighbor of this point.
+	 * That is if the two points have a shortest path of length one connecting them.
+	 * @param other The other point.
+	 * @return True if the other point is a neighbor of this point.
+	 */
+	public boolean isNeighborOf(final Point other) {
+		return Math.abs(_y - other._y) + Math.abs(_x - other._x) == 1;
+	}
 }

@@ -14,26 +14,25 @@ import de.isibboi.agentsim.game.map.Point;
 public class GoblinSwarmAI extends TaskExecutingAI {
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
+	private final Entity _entity;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
 	 * @param entityLocationManager The entity location manager.
 	 * @param goblinTaskFactory The goblin task factory.
+	 * @param entity The entity that is controlled by this AI.
 	 */
-	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory) {
+	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Entity entity) {
 		_entityLocationManager = entityLocationManager;
 		_goblinTaskFactory = goblinTaskFactory;
+		_entity = entity;
 
 		setIdleTask(goblinTaskFactory.createIdleTask());
 	}
 
 	@Override
 	public void eventCollideWithWall(final Point location) {
-		// TODO Add mining task creation.
-		//		if (!_map.isLocationLocked(location)) {
-		//			_newTask = new MiningTask(location, _map, _entityLocationManager);
-		//			_locationToLock = location;
-		//		}
+		enqueueTask(_goblinTaskFactory.createMiningTask(location, _entity, _entityLocationManager));
 	}
 
 	@Override

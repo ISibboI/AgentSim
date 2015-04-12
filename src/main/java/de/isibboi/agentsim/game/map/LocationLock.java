@@ -9,7 +9,7 @@ package de.isibboi.agentsim.game.map;
 public class LocationLock {
 	private final GameMap _map;
 	private Point _location;
-	
+
 	/**
 	 * Creates a new {@link LocationLock}.
 	 * @param map The game map.
@@ -28,13 +28,13 @@ public class LocationLock {
 		if (_map.isLocationLocked(location)) {
 			return false;
 		}
-		
+
 		_location = location;
-		_map.lockLocation(location);
-		
+		_map.tryLockLocation(location);
+
 		return true;
 	}
-	
+
 	/**
 	 * Unlocks the locked location, if it is locked. Must not be called if no location is locked.
 	 */

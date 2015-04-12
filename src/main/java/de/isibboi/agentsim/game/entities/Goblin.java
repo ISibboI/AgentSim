@@ -32,7 +32,7 @@ public class Goblin extends MapEntity {
 		super(entityLocationManager);
 
 		_attributes = new GoblinAttributes(entityLocationManager.getSettings());
-		_ai = new GoblinSwarmAI(entityLocationManager, goblinTaskFactory);
+		_ai = new GoblinSwarmAI(entityLocationManager, goblinTaskFactory, this);
 	}
 
 	/**
@@ -84,6 +84,10 @@ public class Goblin extends MapEntity {
 	 * @param movement The desired movement.
 	 */
 	private void calculateNewLocation(final Movement movement) {
+		if (movement == Movement.NONE) {
+			return;
+		}
+
 		Point newLocation = movement.move(getLocation());
 
 		if (getMap().isValidEntityLocation(newLocation)) {

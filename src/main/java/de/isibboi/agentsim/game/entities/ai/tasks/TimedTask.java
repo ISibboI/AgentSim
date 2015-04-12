@@ -2,6 +2,9 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Handles task duration.
  * 
@@ -9,11 +12,20 @@ import java.util.Random;
  * @since 0.2.0 
  */
 public abstract class TimedTask implements Task {
+	private final Logger _log = LogManager.getLogger(getClass());
+
 	private int _duration;
 	private int _timeLeft;
+	private boolean _eventFinishedFired;
 
 	/**
-	 * Creates a new abstract task with the given duration.
+	 * Creates a new timed task.
+	 */
+	public TimedTask() {
+	}
+
+	/**
+	 * Creates a new timed task with the given duration.
 	 * @param duration The duration of the task.
 	 */
 	public TimedTask(final int duration) {
@@ -47,5 +59,48 @@ public abstract class TimedTask implements Task {
 		if (_timeLeft > 0) {
 			_timeLeft--;
 		}
+
+		if (_timeLeft <= 0 && !_eventFinishedFired) {
+			eventFinished();
+			_eventFinishedFired = true;
+		}
+	}
+
+	/**
+	 * Returns the duration of this task.
+	 * @return The duration of this task.
+	 */
+	public int getDuration() {
+		return _duration;
+	}
+
+	/**
+	 * Called when the task is finished.
+	 */
+	protected abstract void eventFinished();
+
+	/**
+	 * Sets the duration.
+	 * @param duration The duration.
+	 * @param duration
+	 */
+	protected void setDuration(final int duration) {
+		_duration = duration;
+	}
+
+	@Override
+	public void start() {
+		_timeLeft = _duration;
+		_eventFinishedFired = false;
+	}
+
+	/**
+	 * Aborts the task.
+	 * Does not fire {@link #eventFinished()}.
+	 */
+	protected void fail() {
+		_eventFinishedFired = true;
+		_timeLeft = 0;
+		_log.debug("Timed task failed: " + this);
 	}
 }

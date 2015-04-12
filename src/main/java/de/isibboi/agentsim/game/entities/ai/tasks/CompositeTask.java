@@ -39,6 +39,10 @@ public class CompositeTask implements Task {
 
 		if (_taskQueue.peek().isFinished()) {
 			_taskQueue.remove();
+
+			if (!_taskQueue.isEmpty()) {
+				_taskQueue.peek().start();
+			}
 		}
 	}
 
@@ -65,5 +69,10 @@ public class CompositeTask implements Task {
 	@Override
 	public void eventInformationUpdated() {
 		_taskQueue.peek().eventInformationUpdated();
+	}
+
+	@Override
+	public void start() {
+		_taskQueue.peek().start();
 	}
 }

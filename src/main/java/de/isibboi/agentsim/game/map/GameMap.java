@@ -85,11 +85,12 @@ public class GameMap implements Drawable {
 	}
 
 	/**
-	 * Locks the given location.
+	 * Locks the given location if possible.
 	 * @param location The location.
+	 * @return True if the location was successfully locked, false if it was already locked.
 	 */
-	public void lockLocation(final Point location) {
-		_locationLocks.add(location);
+	public boolean tryLockLocation(final Point location) {
+		return _locationLocks.add(location);
 	}
 
 	/**

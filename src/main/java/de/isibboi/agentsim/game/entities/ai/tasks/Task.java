@@ -36,4 +36,9 @@ public interface Task extends Updateable {
 	 * Called when there is new information available that could make the task faster.
 	 */
 	void eventInformationUpdated();
+
+	/**
+	 * Starts the task.
+	 */
+	void start();
 }

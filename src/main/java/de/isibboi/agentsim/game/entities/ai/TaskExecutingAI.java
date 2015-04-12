@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 
@@ -34,33 +35,30 @@ public abstract class TaskExecutingAI implements AI {
 
 	@Override
 	public void update(final Attributes attributes, final Random random) throws GameUpdateException {
-		if (_currentTask == null) {
-			if (_taskQueue.isEmpty()) {
+		if (_currentTask != null) {
+			_currentTask.update(random);
+
+			if (_currentTask.isFinished()) {
+				_currentTask = null;
+
 				if (!_firedExecutionFinished) {
 					eventExecutionFinished();
 					_firedExecutionFinished = true;
-
-					// Call update again in case a new task is available now.
-					// This does not allow to execute two task updates in one update,
-					// since this method returns after the recursive call.
-					update(attributes, random);
-				} else {
-					_idleTask.update(random);
 				}
 
-				return;
-			} else {
-				_currentTask = _taskQueue.remove();
+				update(attributes, random);
+			}
+		} else {
+			_currentTask = _taskQueue.poll();
+
+			if (_currentTask != null) {
 				_firedExecutionFinished = false;
+				_currentTask.start();
+				update(attributes, random);
+			} else {
+				_idleTask.update(random);
 			}
 		}
-
-		if (_currentTask.isFinished()) {
-			eventTaskFinished();
-			_currentTask = _taskQueue.poll();
-		}
-
-		_currentTask.update(random);
 	}
 
 	@Override
@@ -81,6 +79,8 @@ public abstract class TaskExecutingAI implements AI {
 	 * @param task The task.
 	 */
 	public void enqueueTask(final Task task) {
+		Objects.requireNonNull(task);
+
 		_taskQueue.add(task);
 	}
 
