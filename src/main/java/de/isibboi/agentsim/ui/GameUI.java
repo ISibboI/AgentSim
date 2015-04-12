@@ -84,28 +84,28 @@ public class GameUI implements View, Updateable {
 	 * Creates the ui.
 	 */
 	private void initUI() {
-		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 10), 250, "Framerate: ", "", 0, 0);
+		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 260, 10), 250, "Framerate: ", "", 0, 0);
 		_drawables.add(_frameRateLabel);
 
-		_updateRateLabel = new UINumberLabel(_renderer, new Point(_width - 270, 50), 250, "Update rate: ", "", 0, 0);
+		_updateRateLabel = new UINumberLabel(_renderer, new Point(_width - 260, 50), 250, "Update rate: ", "", 0, 0);
 		_drawables.add(_updateRateLabel);
 
-		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 270, 90), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
+		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 260, 90), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 		_drawables.add(_entityCountLabel);
 
-		_settingsButton = new UIButton(_renderer, new Point(_width - 270, 130), 250, "Settings", this);
+		_settingsButton = new UIButton(_renderer, new Point(_width - 260, 130), 250, "Settings", this);
 		_drawables.add(_settingsButton);
 		_mouseListeners.add(_settingsButton);
 
-		_renderEntitiesButton = new UIButton(_renderer, new Point(_width - 270, 170), 250, "Toggle entities", this);
+		_renderEntitiesButton = new UIButton(_renderer, new Point(_width - 260, 170), 250, "Toggle entities", this);
 		_drawables.add(_renderEntitiesButton);
 		_mouseListeners.add(_renderEntitiesButton);
 
-		_restartButton = new UIButton(_renderer, new Point(_width - 270, 210), 250, "Restart", this);
+		_restartButton = new UIButton(_renderer, new Point(_width - 260, 210), 250, "Restart", this);
 		_drawables.add(_restartButton);
 		_mouseListeners.add(_restartButton);
 
-		_pauseButton = new UIButton(_renderer, new Point(_width - 270, 250), 250, "Pause", this);
+		_pauseButton = new UIButton(_renderer, new Point(_width - 260, 250), 250, "Pause", this);
 		_drawables.add(_pauseButton);
 		_mouseListeners.add(_pauseButton);
 	}

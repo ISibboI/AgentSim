@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.Renderer;
+
 /**
  * A ui component to display text.
  * 
@@ -12,7 +13,7 @@ import de.isibboi.agentsim.ui.Renderer;
  */
 public class UILabel extends UIAbstractComponent {
 	private String _text;
-	
+
 	/**
 	 * Creates a new ui label with an empty text.
 	 * 
@@ -23,7 +24,7 @@ public class UILabel extends UIAbstractComponent {
 	public UILabel(final Renderer renderer, final Point position, final int width) {
 		this(renderer, position, width, "");
 	}
-	
+
 	/**
 	 * Creates a new ui label with the given text.
 	 * 
@@ -39,10 +40,10 @@ public class UILabel extends UIAbstractComponent {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		getRenderer().drawBox(getPosition().getX(), getPosition().getY(), getWidth() + 10, getRenderer().getTextHeight() + 10);
+		getRenderer().drawBox(getPosition().getX(), getPosition().getY(), getWidth(), getRenderer().getTextHeight() + 10);
 		getRenderer().drawText(_text, getPosition().getX() + 5, getPosition().getY() + 5 + getRenderer().getTextHeight());
 	}
-	
+
 	/**
 	 * Sets the text of this label.
 	 * 
