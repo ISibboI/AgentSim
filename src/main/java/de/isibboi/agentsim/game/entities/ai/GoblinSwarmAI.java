@@ -11,7 +11,7 @@ import de.isibboi.agentsim.game.map.LocationLock;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
- * An AI system that tries to simulate a swarm of autonomous agents. Agents can only share knowledge if they meet another agent.
+ * An AI system that simulates a swarm of autonomous agents. Agents can only share knowledge if they meet another agent.
  * 
  * @author Sebastian Schmidt
  * @since 0.2.0

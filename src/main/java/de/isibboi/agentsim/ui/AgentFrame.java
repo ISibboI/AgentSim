@@ -15,7 +15,7 @@ import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.ui.event.MouseEventTranslator;
 
 /**
- * Contains all the game data.
+ * Contains all the game data. Creates and manages the views.
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
@@ -77,7 +77,7 @@ public class AgentFrame {
 		try {
 			_game.update(_random);
 		} catch (GameUpdateException e) {
-			_log.error("Could not update ui!", e);
+			_log.error("Could not update game!", e);
 		}
 	}
 
