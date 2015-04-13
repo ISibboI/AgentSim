@@ -12,7 +12,6 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Drawable;
-import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.component.UIButton;
 import de.isibboi.agentsim.ui.component.UINumberLabel;
@@ -27,7 +26,7 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class GameUI implements View, Updateable {
+public class GameUI implements View {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Settings _settings;

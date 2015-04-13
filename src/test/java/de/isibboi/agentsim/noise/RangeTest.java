@@ -4,6 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import de.isibboi.agentsim.algorithm.noise.ScaledNoise;
+import de.isibboi.agentsim.algorithm.noise.SimplexNoise;
+
 /**
  * Checks if the noise functions return only values between their global minimum and maximum.
  * @author Sebastian Schmidt

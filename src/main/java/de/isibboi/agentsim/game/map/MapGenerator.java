@@ -9,12 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.algorithm.noise.BorderFunction;
+import de.isibboi.agentsim.algorithm.noise.CombinedNoise;
+import de.isibboi.agentsim.algorithm.noise.Noise;
+import de.isibboi.agentsim.algorithm.noise.ScaledNoise;
+import de.isibboi.agentsim.algorithm.noise.SimplexNoise;
 import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
-import de.isibboi.agentsim.noise.BorderFunction;
-import de.isibboi.agentsim.noise.CombinedNoise;
-import de.isibboi.agentsim.noise.Noise;
-import de.isibboi.agentsim.noise.ScaledNoise;
-import de.isibboi.agentsim.noise.SimplexNoise;
 
 /**
  * Generates the game map.

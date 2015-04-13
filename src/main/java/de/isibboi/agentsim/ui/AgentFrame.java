@@ -79,6 +79,7 @@ public class AgentFrame {
 	public void update() {
 		try {
 			_game.update(_random, _tick);
+			_view.update(_random, _tick);
 			_tick++;
 		} catch (GameUpdateException e) {
 			_log.error("Could not update game!", e);

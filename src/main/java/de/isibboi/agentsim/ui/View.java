@@ -3,6 +3,7 @@ package de.isibboi.agentsim.ui;
 import java.awt.Graphics2D;
 
 import de.isibboi.agentsim.game.Game;
+import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.ui.event.UIActionListener;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
 
@@ -11,7 +12,7 @@ import de.isibboi.agentsim.ui.event.UIMouseInputListener;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public interface View extends UIMouseInputListener, UIActionListener {
+public interface View extends UIMouseInputListener, UIActionListener, Updateable {
 	/**
 	 * Activate the {@link View}.
 	 */

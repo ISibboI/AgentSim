@@ -110,12 +110,15 @@ public class EntityLocationManager implements Updateable {
 
 		for (Point location : locations) {
 			Collection<Entity> tmpEntities = getEntitiesAt(location);
-			Entity[] entities = new Entity[tmpEntities.size()];
-			entities = tmpEntities.toArray(entities);
 
-			for (int i = 0; i < entities.length; i++) {
-				for (int j = i + 1; j < entities.length; j++) {
-					entities[i].collideWith(entities[j]);
+			if (tmpEntities.size() > 1) {
+				Entity[] entities = new Entity[tmpEntities.size()];
+				entities = tmpEntities.toArray(entities);
+
+				for (int i = 0; i < entities.length; i++) {
+					for (int j = i + 1; j < entities.length; j++) {
+						entities[i].collideWith(entities[j]);
+					}
 				}
 			}
 		}
