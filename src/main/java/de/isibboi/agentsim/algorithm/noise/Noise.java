@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.noise;
+package de.isibboi.agentsim.algorithm.noise;
 
 /**
  * A two dimensional noise function.

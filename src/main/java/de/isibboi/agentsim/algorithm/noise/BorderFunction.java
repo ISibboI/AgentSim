@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.noise;
+package de.isibboi.agentsim.algorithm.noise;
 
 /**
  * A function like a bath tube, that is zero in an oval shaped area and raises with a specific gradient outside of this area.

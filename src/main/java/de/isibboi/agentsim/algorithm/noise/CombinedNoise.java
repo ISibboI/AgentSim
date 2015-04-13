@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.noise;
+package de.isibboi.agentsim.algorithm.noise;
 
 /**
  * A noise function that just adds up the values of some other noise functions.

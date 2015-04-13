@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.noise;
+package de.isibboi.agentsim.algorithm.noise;
 
 /**
  * A function that scales a decorated noise function.
