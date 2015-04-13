@@ -98,12 +98,12 @@ public class EntityLocationManager implements Updateable {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		checkForEntityCollisions();
 	}
 
 	/**
-	 * Checks if any entities collide and fires the appopropriate collision events.
+	 * Checks if any entities collide and fires the appropriate collision events.
 	 */
 	private void checkForEntityCollisions() {
 		Set<Point> locations = _entityLocations.keySet();

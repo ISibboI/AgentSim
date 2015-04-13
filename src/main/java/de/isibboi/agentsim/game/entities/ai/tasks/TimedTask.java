@@ -55,7 +55,7 @@ public abstract class TimedTask implements Task {
 	}
 
 	@Override
-	public void update(final Random random) {
+	public void update(final Random random, final int tick) {
 		if (_timeLeft > 0) {
 			_timeLeft--;
 		}

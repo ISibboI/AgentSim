@@ -35,7 +35,7 @@ public class LockLocationTask extends InfiniteTask {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		if (_map.tryLockLocation(_location, _entity)) {
 			_locked = true;
 		}

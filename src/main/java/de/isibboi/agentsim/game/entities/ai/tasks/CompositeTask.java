@@ -34,8 +34,8 @@ public class CompositeTask implements Task {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
-		_taskQueue.peek().update(random);
+	public void update(final Random random, final int tick) throws GameUpdateException {
+		_taskQueue.peek().update(random, tick);
 
 		if (_taskQueue.peek().isFinished()) {
 			_taskQueue.remove();

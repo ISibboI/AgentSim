@@ -34,9 +34,9 @@ public abstract class TaskExecutingAI implements AI {
 	}
 
 	@Override
-	public void update(final Attributes attributes, final Random random) throws GameUpdateException {
+	public void update(final Attributes attributes, final Random random, final int tick) throws GameUpdateException {
 		if (_currentTask != null) {
-			_currentTask.update(random);
+			_currentTask.update(random, tick);
 
 			if (_currentTask.isFinished()) {
 				_currentTask = null;
@@ -46,7 +46,7 @@ public abstract class TaskExecutingAI implements AI {
 					_firedExecutionFinished = true;
 				}
 
-				update(attributes, random);
+				update(attributes, random, tick);
 			}
 		} else {
 			_currentTask = _taskQueue.poll();
@@ -54,9 +54,9 @@ public abstract class TaskExecutingAI implements AI {
 			if (_currentTask != null) {
 				_firedExecutionFinished = false;
 				_currentTask.start();
-				update(attributes, random);
+				update(attributes, random, tick);
 			} else {
-				_idleTask.update(random);
+				_idleTask.update(random, tick);
 			}
 		}
 	}

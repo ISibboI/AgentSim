@@ -23,7 +23,7 @@ public class Game implements Updateable {
 
 	private GameMap _map;
 	private Entities _entities;
-	private EntityLocationManager _entityLocations;
+	private EntityLocationManager _entityLocationManager;
 
 	private volatile boolean _paused;
 
@@ -38,12 +38,13 @@ public class Game implements Updateable {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		if (_paused) {
 			return;
 		}
 
-		_entities.update(random);
+		_entities.update(random, tick);
+		_entityLocationManager.update(random, tick);
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class Game implements Updateable {
 
 		_map = _gameInitializer.getMap();
 		_entities = _gameInitializer.getEntities();
-		_entityLocations = _gameInitializer.getEntityLocationManager();
+		_entityLocationManager = _gameInitializer.getEntityLocationManager();
 
 		_log.info("Game started");
 	}

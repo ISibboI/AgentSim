@@ -140,7 +140,7 @@ public class GameUI implements View, Updateable {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		_updateRateMeter.update();
 	}
 

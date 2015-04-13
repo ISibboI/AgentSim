@@ -51,13 +51,13 @@ public class Goblin extends MapEntity {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		updateAttributes();
 
 		if (!_attributes.isAlive()) {
 			getEntityLocationManager().removeEntity(this);
 		} else {
-			_ai.update(_attributes, random);
+			_ai.update(_attributes, random, tick);
 			calculateNewLocation(_ai.getMovement());
 		}
 	}

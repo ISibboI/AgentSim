@@ -12,10 +12,11 @@ import de.isibboi.agentsim.game.GameUpdateException;
 public interface Updateable {
 
 	/**
-	 * Updates this entity.
+	 * Updates this entity. This method must be called once per tick.
 	 * 
 	 * @param random The pseudo random number generator used for randomness.
+	 * @param tick The tick number of this update.
 	 * @throws GameUpdateException If something goes wrong.
 	 */
-	void update(Random random) throws GameUpdateException;
+	void update(Random random, int tick) throws GameUpdateException;
 }

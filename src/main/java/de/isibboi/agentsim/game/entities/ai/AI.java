@@ -46,9 +46,10 @@ public interface AI {
 	 * Updates the AI.
 	 * @param attributes The current attributes of the controlled entity.
 	 * @param random The pseudo random number generator used for randomness.
+	 * @param tick The current tick.
 	 * @throws GameUpdateException If updating the AI goes wrong. 
 	 */
-	void update(Attributes attributes, Random random) throws GameUpdateException;
+	void update(Attributes attributes, Random random, int tick) throws GameUpdateException;
 
 	/**
 	 * Returns the next movement of the entity.

@@ -27,6 +27,7 @@ public class AgentFrame {
 
 	private Game _game;
 	private View _view;
+	private int _tick;
 	private final MouseEventTranslator _mouseEventTranslator;
 
 	private final Random _random = new Random();
@@ -61,6 +62,7 @@ public class AgentFrame {
 	 */
 	public void restart() {
 		_game.restart();
+		_tick = 0;
 	}
 
 	/**
@@ -68,6 +70,7 @@ public class AgentFrame {
 	 */
 	public void start() {
 		_game.start();
+		_tick = 0;
 	}
 
 	/**
@@ -75,7 +78,8 @@ public class AgentFrame {
 	 */
 	public void update() {
 		try {
-			_game.update(_random);
+			_game.update(_random, _tick);
+			_tick++;
 		} catch (GameUpdateException e) {
 			_log.error("Could not update game!", e);
 		}

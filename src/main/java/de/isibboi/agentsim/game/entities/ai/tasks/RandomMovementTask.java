@@ -14,7 +14,7 @@ public class RandomMovementTask extends InfiniteTask {
 	private Movement _movement;
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		_movement = getRandomMovement(random);
 	}
 

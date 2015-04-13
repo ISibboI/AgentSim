@@ -46,7 +46,7 @@ public class UnlockLocationTask extends InfiniteTask {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		// Ignore
 	}
 

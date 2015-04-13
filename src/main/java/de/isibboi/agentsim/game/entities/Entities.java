@@ -107,7 +107,7 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 	}
 
 	@Override
-	public void update(final Random random) throws GameUpdateException {
+	public void update(final Random random, final int tick) throws GameUpdateException {
 		if (_newEntities.size() > 0) {
 			_entities.addAll(_newEntities);
 			_log.debug("Added " + _newEntities.size() + " entities");
@@ -116,7 +116,7 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 
 		for (Entity entity : _entities) {
 			try {
-				entity.update(random);
+				entity.update(random, tick);
 			} catch (GameUpdateException e) {
 				_log.error("Error updating entity!", e);
 			}
