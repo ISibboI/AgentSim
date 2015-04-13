@@ -150,12 +150,12 @@ public class BidirectionalHashMultimap<K, V> implements Multimap<K, V> {
 	}
 
 	/**
-	 * Updates the value for the given key. If the given entry is not yet mapped, it is put into the map.
+	 * Updates the key for the given value. If the given value is not yet mapped, it is put into the map.
 	 * @param key The key.
 	 * @param value The value.
 	 */
 	public void update(final K key, final V value) {
-		remove(key, value);
+		removeValue(value);
 		put(key, value);
 	}
 
