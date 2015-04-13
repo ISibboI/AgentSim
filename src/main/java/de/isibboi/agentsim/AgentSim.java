@@ -44,7 +44,8 @@ public class AgentSim implements Runnable, WindowListener {
 	public void run() {
 		FrameRateStabilizer frameRateStabilizer = new FrameRateStabilizer(
 				_settings.getInt(Settings.CORE_TARGET_FRAME_RATE),
-				_settings.getInt(Settings.CORE_TARGET_UPDATE_RATE));
+				_settings.getInt(Settings.CORE_TARGET_UPDATE_RATE),
+				_settings.getInt(Settings.CORE_MAX_UPDATES_PER_FRAME));
 
 		while (!_exit) {
 			if (frameRateStabilizer.stabilize()) {

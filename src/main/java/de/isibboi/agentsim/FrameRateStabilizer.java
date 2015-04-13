@@ -16,24 +16,26 @@ public class FrameRateStabilizer {
 	private double _updatesBeforeNextFrame;
 	private final long _targetFrameTime;
 	private final double _targetUpdatesPerFrame;
-	private final int _maximumUpdatesPerFrame = 4;
+	private final int _maxUpdatesPerFrame;
 
 	/**
 	 * Creates a new {@link FrameRateStabilizer}.
 	 * 
-	 * @param framesPerSecond the framerate to stabilize at.
-	 * @param updatesPerSecond the target amount of updates per second.
+	 * @param framesPerSecond The frame rate to stabilize at.
+	 * @param updatesPerSecond The target amount of updates per second.
+	 * @param maxUpdatesPerFrame The maximum amount of updates per frame.
 	 */
-	public FrameRateStabilizer(final double framesPerSecond, final double updatesPerSecond) {
+	public FrameRateStabilizer(final double framesPerSecond, final double updatesPerSecond, final int maxUpdatesPerFrame) {
 		_targetFrameTime = (long) (1e9 / framesPerSecond);
 		_targetUpdatesPerFrame = updatesPerSecond / framesPerSecond;
+		_maxUpdatesPerFrame = maxUpdatesPerFrame;
 		_lastFrameTime = System.nanoTime();
 	}
 
 	/**
 	 * Waits if necessary to keep the required frame rate. Should be called once per frame.
 	 * 
-	 * @return true if a new frame should be rendered, false if the game should be updated.
+	 * @return True if a new frame should be rendered, false if the game should be updated.
 	 */
 	public boolean stabilize() {
 		final long currentTime = System.nanoTime();
@@ -60,7 +62,7 @@ public class FrameRateStabilizer {
 	/**
 	 * Counts the game updates.
 	 * 
-	 * @return false.
+	 * @return False.
 	 */
 	private boolean update() {
 		_updatesBeforeNextFrame--;
@@ -70,19 +72,19 @@ public class FrameRateStabilizer {
 	/**
 	 * Resets the game updates.
 	 * 
-	 * @param normalizedFrameTime the frame time. 1.0 means the frame took exactly as long as it should, values greater than one mean it took longer.
-	 * @return true.
+	 * @param normalizedFrameTime The frame time. 1.0 means the frame took exactly as long as it should, values greater than one mean it took longer.
+	 * @return True.
 	 */
 	private boolean render(final double normalizedFrameTime) {
 		_updatesBeforeNextFrame += _targetUpdatesPerFrame * (Math.max(1.0, normalizedFrameTime));
-		
-		if (_updatesBeforeNextFrame > _maximumUpdatesPerFrame) {
-			_updatesBeforeNextFrame = _maximumUpdatesPerFrame;
+
+		if (_updatesBeforeNextFrame > _maxUpdatesPerFrame) {
+			_updatesBeforeNextFrame = _maxUpdatesPerFrame;
 		}
 
 		return true;
 	}
-	
+
 	/**
 	 * Resets the stabilizer. This should e.g. be used after pausing the rendering.
 	 */

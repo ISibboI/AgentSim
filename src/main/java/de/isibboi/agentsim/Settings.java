@@ -35,12 +35,13 @@ public class Settings {
 
 	public static final String CORE_TARGET_FRAME_RATE = "core.targetFrameRate";
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
+	public static final String CORE_MAX_UPDATES_PER_FRAME = "core.maxUpdatesPerFrame";
 
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
 			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
 			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
-			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE));
+			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME));
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
@@ -98,6 +99,7 @@ public class Settings {
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
 		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "60");
+		_defaults.setProperty(CORE_MAX_UPDATES_PER_FRAME, "2");
 	}
 
 	/**
