@@ -19,7 +19,7 @@ import de.isibboi.agentsim.ui.event.MouseEventTranslator;
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
-public class AgentFrame {
+public class AgentFrame implements GameStatusMessageListener {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final DrawFrame _drawFrame;
@@ -27,6 +27,8 @@ public class AgentFrame {
 
 	private Game _game;
 	private View _view;
+	private final View _gameUIView;
+	private final View _gameOverView;
 	private int _tick;
 	private final MouseEventTranslator _mouseEventTranslator;
 
@@ -47,14 +49,36 @@ public class AgentFrame {
 				settings.getInt(Settings.UI_Y_POS),
 				settings.getInt(Settings.GAME_SCALE));
 
-		_game = new Game(new DefaultGameInitializer(), settings);
+		_game = new Game(new DefaultGameInitializer(), settings, this);
 
-		_view = new GameUI(new DefaultRenderer(_drawFrame, _settings), _settings, _game, this);
-		_mouseEventTranslator = new MouseEventTranslator(_view);
+		Renderer renderer = new DefaultRenderer(_drawFrame, _settings);
+		_mouseEventTranslator = new MouseEventTranslator();
+
+		_gameUIView = new GameUIView(renderer, _settings, _game, this);
+		_gameOverView = new GameOverView(renderer, _settings, _game, this);
+		switchView(_gameUIView);
+		_view = _gameUIView;
 		_drawFrame.getContentPane().addMouseListener(_mouseEventTranslator);
 		_drawFrame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
 
 		start();
+	}
+
+	/**
+	 * Switches to the given view.
+	 * 
+	 * @param view The new view.
+	 */
+	private void switchView(final View view) {
+		_mouseEventTranslator.removeUIMouseInputListener(_view);
+
+		if (_view != null) {
+			_view.deactivate();
+		}
+
+		_view = view;
+		_view.activate();
+		_mouseEventTranslator.addUIMouseInputListener(_view);
 	}
 
 	/**
@@ -90,6 +114,10 @@ public class AgentFrame {
 	 * Renders the map and all entities.
 	 */
 	public void render() {
+		if (!_drawFrame.isVisible()) {
+			return;
+		}
+
 		Graphics2D g = _drawFrame.startRender();
 
 		_view.drawScaledContent(g);
@@ -115,6 +143,17 @@ public class AgentFrame {
 		_settings.set(Settings.UI_Y_POS, _drawFrame.getLocationOnScreen().y);
 
 		_drawFrame.dispose();
-		_log.debug("Disposed frame");
+		_log.debug("Frame disposed");
+	}
+
+	@Override
+	public void receiveGameOverMessage(final String message) {
+		switchView(_gameOverView);
+	}
+
+	@Override
+	public void receiveRestartGameMessage() {
+		switchView(_gameUIView);
+		_game.restart();
 	}
 }

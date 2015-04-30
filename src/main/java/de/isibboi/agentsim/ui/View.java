@@ -2,7 +2,6 @@ package de.isibboi.agentsim.ui;
 
 import java.awt.Graphics2D;
 
-import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.ui.event.UIActionListener;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
@@ -22,12 +21,6 @@ public interface View extends UIMouseInputListener, UIActionListener, Updateable
 	 * Deactivate the {@link View}.
 	 */
 	void deactivate();
-
-	/**
-	 * Sets the game to be viewed by the user.
-	 * @param game The game to be viewed by the user.
-	 */
-	void setGame(Game game);
 
 	/**
 	 * Draws the content that needs to be scaled when the game is for example zoomed.

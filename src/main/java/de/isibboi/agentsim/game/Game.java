@@ -9,6 +9,7 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Entities;
 import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.game.map.GameMap;
+import de.isibboi.agentsim.ui.GameStatusMessageListener;
 
 /**
  * Represents a game of AgentSim.
@@ -20,6 +21,7 @@ public class Game implements Updateable {
 
 	private final GameInitializer _gameInitializer;
 	private final Settings _settings;
+	private final GameStatusMessageListener _gameStatusMessageListener;
 
 	private GameMap _map;
 	private Entities _entities;
@@ -29,12 +31,14 @@ public class Game implements Updateable {
 
 	/**
 	 * Creates a new game.
-	 * @param gameInitializer The Initializer used to start the game.
+	 * @param gameInitializer The initializer used to start the game.
 	 * @param settings The settings.
+	 * @param gameStatusMessageListener The listener for game status messages.
 	 */
-	public Game(final GameInitializer gameInitializer, final Settings settings) {
+	public Game(final GameInitializer gameInitializer, final Settings settings, final GameStatusMessageListener gameStatusMessageListener) {
 		_gameInitializer = gameInitializer;
 		_settings = settings;
+		_gameStatusMessageListener = gameStatusMessageListener;
 	}
 
 	@Override
@@ -45,6 +49,27 @@ public class Game implements Updateable {
 
 		_entities.update(random, tick);
 		_entityLocationManager.update(random, tick);
+
+		checkGameOver();
+	}
+
+	/**
+	 * Checks if the game over conditions are met. If yes, a game over status message is sent and the game is paused. 
+	 */
+	private void checkGameOver() {
+		if (_entities.isEmpty()) {
+			gameOver();
+		}
+	}
+
+	/**
+	 * Ends the game.
+	 */
+	private void gameOver() {
+		_gameStatusMessageListener.receiveGameOverMessage("Game over :(");
+		setPaused(true);
+
+		_log.info("Game over");
 	}
 
 	/**
@@ -72,6 +97,8 @@ public class Game implements Updateable {
 		_map = _gameInitializer.getMap();
 		_entities = _gameInitializer.getEntities();
 		_entityLocationManager = _gameInitializer.getEntityLocationManager();
+
+		_paused = false;
 
 		_log.info("Game started");
 	}

@@ -40,4 +40,11 @@ public class FrequencyMeter extends ExponentialAverageMeter {
 
 		_buffer.add(time);
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+
+		_buffer.clear();
+	}
 }

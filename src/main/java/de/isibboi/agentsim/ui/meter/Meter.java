@@ -12,9 +12,14 @@ public interface Meter {
 	 * @return The current value of the meter.
 	 */
 	double getValue();
-	
+
 	/**
 	 * Updates the value of the meter.
 	 */
 	void update();
+
+	/**
+	 * Resets the value of the meter.
+	 */
+	void reset();
 }
