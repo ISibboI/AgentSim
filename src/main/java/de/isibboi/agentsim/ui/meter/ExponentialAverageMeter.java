@@ -9,6 +9,7 @@ package de.isibboi.agentsim.ui.meter;
 public abstract class ExponentialAverageMeter implements Meter {
 	private double _value;
 	private final double _factor;
+	private final double _initialValue;
 
 	/**
 	 * Creates a new exponential averaged meter.
@@ -17,9 +18,10 @@ public abstract class ExponentialAverageMeter implements Meter {
 	 */
 	public ExponentialAverageMeter(final double initialValue, final double factor) {
 		_value = initialValue;
+		_initialValue = initialValue;
 		_factor = factor;
 	}
-	
+
 	/**
 	 * Updates the value of the meter.
 	 * @param value The new value.
@@ -33,4 +35,16 @@ public abstract class ExponentialAverageMeter implements Meter {
 		return _value;
 	}
 
+	@Override
+	public void reset() {
+		_value = _initialValue;
+	}
+
+	/**
+	 * Returns the initial value of this meter.
+	 * @return The initial value.
+	 */
+	public double getInitialValue() {
+		return _initialValue;
+	}
 }

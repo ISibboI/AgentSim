@@ -1,8 +1,6 @@
 package de.isibboi.agentsim.ui;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,12 +9,9 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.component.UIButton;
 import de.isibboi.agentsim.ui.component.UINumberLabel;
-import de.isibboi.agentsim.ui.event.MouseButton;
-import de.isibboi.agentsim.ui.event.UIMouseInputListener;
 import de.isibboi.agentsim.ui.event.UserActionEvent;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
 
@@ -26,22 +21,15 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class GameUI implements View {
+public class GameUIView extends UIView {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Settings _settings;
-	private Game _game;
+	private final Game _game;
 	private final AgentFrame _agentFrame;
-
-	private int _width;
-	private int _height;
 
 	private final FrequencyMeter _frameRateMeter;
 	private final FrequencyMeter _updateRateMeter;
-
-	private final Renderer _renderer;
-	private final Collection<Drawable> _drawables = new ArrayList<>();
-	private final Collection<UIMouseInputListener> _mouseListeners = new ArrayList<>();
 
 	private UINumberLabel _frameRateLabel;
 	private UINumberLabel _updateRateLabel;
@@ -59,19 +47,17 @@ public class GameUI implements View {
 	/**
 	 * Creates a new ui with the given settings.
 	 * 
-	 * @param renderer the renderer used to draw the ui.
+	 * @param renderer the renderer used to draw the UI.
 	 * @param settings the settings.
 	 * @param game the game map.
 	 * @param agentFrame the game main class.
 	 */
-	public GameUI(final Renderer renderer, final Settings settings, final Game game, final AgentFrame agentFrame) {
+	public GameUIView(final Renderer renderer, final Settings settings, final Game game, final AgentFrame agentFrame) {
+		super(renderer, settings);
+
 		_settings = settings;
-		_renderer = renderer;
 		_game = game;
 		_agentFrame = agentFrame;
-
-		_width = settings.getInt(Settings.UI_WIDTH);
-		_height = settings.getInt(Settings.UI_HEIGHT);
 
 		_frameRateMeter = new FrequencyMeter(settings.getInt(Settings.CORE_TARGET_FRAME_RATE), 0.1, 8);
 		_updateRateMeter = new FrequencyMeter(settings.getInt(Settings.CORE_TARGET_UPDATE_RATE), 0.03, 8);
@@ -80,33 +66,34 @@ public class GameUI implements View {
 	}
 
 	/**
-	 * Creates the ui.
+	 * Creates the UI.
 	 */
 	private void initUI() {
-		_frameRateLabel = new UINumberLabel(_renderer, new Point(_width - 260, 10), 250, "Framerate: ", "", 0, 0);
-		_drawables.add(_frameRateLabel);
+		_frameRateLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 10), 250, "Framerate: ", "", 0, 0);
+		add(_frameRateLabel);
 
-		_updateRateLabel = new UINumberLabel(_renderer, new Point(_width - 260, 50), 250, "Update rate: ", "", 0, 0);
-		_drawables.add(_updateRateLabel);
+		_updateRateLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 50), 250, "Update rate: ", "", 0, 0);
+		add(_updateRateLabel);
 
-		_entityCountLabel = new UINumberLabel(_renderer, new Point(_width - 260, 90), 250, "Entity count: ", "", 0, _settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
-		_drawables.add(_entityCountLabel);
+		_entityCountLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 90), 250, "Entity count: ", "", 0,
+				_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
+		add(_entityCountLabel);
 
-		_settingsButton = new UIButton(_renderer, new Point(_width - 260, 130), 250, "Settings", this);
-		_drawables.add(_settingsButton);
-		_mouseListeners.add(_settingsButton);
+		_settingsButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 130), 250, "Settings", this);
+		add(_settingsButton);
+		addMouseListener(_settingsButton);
 
-		_renderEntitiesButton = new UIButton(_renderer, new Point(_width - 260, 170), 250, "Toggle entities", this);
-		_drawables.add(_renderEntitiesButton);
-		_mouseListeners.add(_renderEntitiesButton);
+		_renderEntitiesButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 170), 250, "Toggle entities", this);
+		add(_renderEntitiesButton);
+		addMouseListener(_renderEntitiesButton);
 
-		_restartButton = new UIButton(_renderer, new Point(_width - 260, 210), 250, "Restart", this);
-		_drawables.add(_restartButton);
-		_mouseListeners.add(_restartButton);
+		_restartButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 210), 250, "Restart", this);
+		add(_restartButton);
+		addMouseListener(_restartButton);
 
-		_pauseButton = new UIButton(_renderer, new Point(_width - 260, 250), 250, "Pause", this);
-		_drawables.add(_pauseButton);
-		_mouseListeners.add(_pauseButton);
+		_pauseButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 250), 250, "Pause", this);
+		add(_pauseButton);
+		addMouseListener(_pauseButton);
 	}
 
 	@Override
@@ -132,29 +119,12 @@ public class GameUI implements View {
 		// Measure entity count.
 		_entityCountLabel.setValue(_game.getEntities().size());
 
-		_renderer.setGraphics(g);
-		for (Drawable d : _drawables) {
-			d.draw(g);
-		}
+		super.drawUnscaledContent(g);
 	}
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
 		_updateRateMeter.update();
-	}
-
-	@Override
-	public void mouseMoved(final Point oldPosition, final Point newPosition) {
-		for (UIMouseInputListener listener : _mouseListeners) {
-			listener.mouseMoved(oldPosition, newPosition);
-		}
-	}
-
-	@Override
-	public void mouseClicked(final Point position, final MouseButton button, final boolean buttonDown) {
-		for (UIMouseInputListener listener : _mouseListeners) {
-			listener.mouseClicked(position, button, buttonDown);
-		}
 	}
 
 	@Override
@@ -176,16 +146,12 @@ public class GameUI implements View {
 
 	@Override
 	public void activate() {
-		// Ignore
+		_updateRateMeter.reset();
+		_frameRateMeter.reset();
 	}
 
 	@Override
 	public void deactivate() {
 		// Ignore
-	}
-
-	@Override
-	public void setGame(final Game game) {
-		_game = game;
 	}
 }
