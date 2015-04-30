@@ -1,5 +1,8 @@
 package de.isibboi.agentsim.game.map;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * A 2 dimensional final point with integer coordinates.
  * 
@@ -169,5 +172,38 @@ public class Point {
 	 */
 	public boolean isNeighborOf(final Point other) {
 		return Math.abs(_y - other._y) + Math.abs(_x - other._x) == 1;
+	}
+
+	/**
+	 * Returns the Manhattan distance from this point to the other point.
+	 * @param other The other point.
+	 * @return The Manhattan distance from this to other.
+	 */
+	public int manhattanDistance(final Point other) {
+		return Math.abs(_x - other._x) + Math.abs(_y - other._y);
+	}
+
+	/**
+	 * Returns a collection of all neighbours of this point.
+	 * @return The neighbours of this point.
+	 */
+	public Collection<Point> getNeighbours() {
+		Collection<Point> neighbours = new ArrayList<>(4);
+
+		neighbours.add(new Point(_x, _y + 1));
+		neighbours.add(new Point(_x, _y - 1));
+		neighbours.add(new Point(_x + 1, _y));
+		neighbours.add(new Point(_x - 1, _y));
+
+		return neighbours;
+	}
+
+	/**
+	 * Creates a new point that is the result of the subtraction this - other.
+	 * @param other The point to subtract from this point.
+	 * @return The result of the subtraction.
+	 */
+	public Point subtract(final Point other) {
+		return new Point(_x - other._x, _y - other._y);
 	}
 }
