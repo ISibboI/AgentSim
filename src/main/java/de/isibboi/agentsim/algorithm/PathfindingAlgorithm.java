@@ -19,5 +19,5 @@ public interface PathfindingAlgorithm {
 	 * @param map The map.
 	 * @return The shortest path from start to target, or null, if target is not reachable from start.
 	 */
-	List<Movement> findPath(Point start, Point target, PathfindingMap map);
+	List<Movement> findPath(Point start, Point target, BlockadeMap map);
 }

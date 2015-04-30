@@ -99,4 +99,35 @@ public abstract class Movement {
 	public Point move(final Point location) {
 		return location.add(getPoint());
 	}
+
+	/**
+	 * Returns the movement that is represented by the given point.
+	 * The point has to be a valid movement.
+	 * 
+	 * @param p The point.
+	 * @return The movement.
+	 */
+	public static Movement getMovement(final Point p) {
+		if (p.equals(UP.getPoint())) {
+			return UP;
+		}
+
+		if (p.equals(DOWN.getPoint())) {
+			return DOWN;
+		}
+
+		if (p.equals(LEFT.getPoint())) {
+			return LEFT;
+		}
+
+		if (p.equals(RIGHT.getPoint())) {
+			return RIGHT;
+		}
+
+		if (p.equals(NONE.getPoint())) {
+			return NONE;
+		}
+
+		throw new IllegalArgumentException("Given point is not a movement: " + p);
+	}
 }

@@ -19,7 +19,7 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class AStarPathfinderTest {
 	private AStarPathfinder _pathfinder;
-	private PathfindingMap _map;
+	private BlockadeMap _map;
 
 	/**
 	 * Creates the path finder.
@@ -27,12 +27,12 @@ public class AStarPathfinderTest {
 	@Before
 	public void setUp() {
 		_pathfinder = new AStarPathfinder();
-		_map = new BooleanPathfindingMap(new boolean[][] {
-				{ true, false, true, true, true },
-				{ true, true, true, false, true },
-				{ false, false, true, false, true },
-				{ true, false, true, false, true },
-				{ true, false, true, true, true } });
+		_map = new BooleanBlockadeMap(new boolean[][] {
+				{ false, true, false, false, false },
+				{ false, false, false, true, false },
+				{ true, true, false, true, false },
+				{ false, true, false, true, false },
+				{ false, true, false, false, false } });
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class AStarPathfinderTest {
 	 */
 	@Test
 	public void testUnreachable() {
-		List<Movement> path = _pathfinder.findPath(new Point(0, 3), new Point(4, 4), _map);
+		List<Movement> path = _pathfinder.findPath(new Point(3, 0), new Point(4, 4), _map);
 		assertNull("Path is not null.", path);
 	}
 
@@ -51,6 +51,6 @@ public class AStarPathfinderTest {
 	public void testShortestPath() {
 		List<Movement> path = _pathfinder.findPath(new Point(0, 0), new Point(4, 4), _map);
 		assertNotNull("Path is null.", path);
-		assertEquals("Path is not the shortest one.", path.size(), 8);
+		assertEquals("Path is not the shortest one.", 8, path.size());
 	}
 }
