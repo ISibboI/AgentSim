@@ -15,7 +15,7 @@ public interface KnowledgeProvider<Knowledge> {
 	 * Returns the current version of the knowledge.
 	 * @return The version of the knowledge.
 	 */
-	int getAge();
+	long getAge();
 
 	/**
 	 * Returns the knowledge about the specified location.

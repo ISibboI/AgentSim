@@ -11,13 +11,14 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.LockManager;
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.ai.KnowledgeProvider;
 
 /**
  * Represents the game map.
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
-public class GameMap implements Drawable {
+public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final BufferedImage _map;
@@ -29,7 +30,7 @@ public class GameMap implements Drawable {
 	private final LockManager<Point, Entity> _lockManager = new LockManager<>();
 
 	/**
-	 * The age of tha map. That is the total amount of modifications made to the map.
+	 * The age of the map. That is the total amount of modifications made to the map.
 	 */
 	private long _age;
 
@@ -154,5 +155,26 @@ public class GameMap implements Drawable {
 	 */
 	public long getAge() {
 		return _age;
+	}
+
+	/**
+	 * Returns the width of the map.
+	 * @return The width of the map.
+	 */
+	public int getWidth() {
+		return _map.getWidth();
+	}
+
+	/**
+	 * Returns the height of the map.
+	 * @return The height of the map.
+	 */
+	public int getHeight() {
+		return _map.getHeight();
+	}
+
+	@Override
+	public Material getKnowledge(final Point location) {
+		return getMaterialAt(location);
 	}
 }

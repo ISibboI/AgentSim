@@ -2,7 +2,9 @@ package de.isibboi.agentsim.game.entities.ai;
 
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
+import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -15,6 +17,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Entity _entity;
+	private final ProviderBackedKnowledgeMap<Material> _mapKnowledge;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
@@ -26,12 +29,16 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		_entityLocationManager = entityLocationManager;
 		_goblinTaskFactory = goblinTaskFactory;
 		_entity = entity;
+		_mapKnowledge = new ProviderBackedKnowledgeMap<>(new ArrayKnowledgeMap<Material>(entityLocationManager.getMap().getWidth(),
+				entityLocationManager.getMap().getHeight()), entityLocationManager.getMap());
 
 		setIdleTask(goblinTaskFactory.createIdleTask());
 	}
 
 	@Override
 	public void eventCollideWithWall(final Point location) {
+		explorePoint(location);
+
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
 			enqueueTask(_goblinTaskFactory.createMiningTask(location, _entity, _entityLocationManager));
 		}
@@ -39,7 +46,20 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithEntity(final Entity entity) {
-		// Ignored
+		// Those downcasts should be removed and replaced with proper object oriented code.
+		if (entity instanceof Goblin) {
+			Goblin g = (Goblin) entity;
+			GoblinSwarmAI ai = (GoblinSwarmAI) g.getAI();
+			exchangeInformation(ai);
+		}
+	}
+
+	/**
+	 * Exchanges information with the other AI.
+	 * @param ai The other AI.
+	 */
+	public void exchangeInformation(final GoblinSwarmAI ai) {
+		_mapKnowledge.exchangeInformation(ai._mapKnowledge);
 	}
 
 	@Override
@@ -49,7 +69,15 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventMoveTo(final Point location) {
-		// Ignored
+		explorePoint(location);
+	}
+
+	/**
+	 * Explores the given location. That means that the entity gains some knowledge about the location.
+	 * @param location The location to explore.
+	 */
+	private void explorePoint(final Point location) {
+		_mapKnowledge.updateLocation(location);
 	}
 
 	@Override
