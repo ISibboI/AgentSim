@@ -110,18 +110,18 @@ public class GameUI implements View {
 	}
 
 	@Override
-	public void drawScaledContent(final Graphics2D g) {
+	public void drawScaledContent(final Graphics2D g, final double transition) {
 		// Draw map.
-		_game.getMap().draw(g);
+		_game.getMap().draw(g, transition);
 
 		// Draw entities.
 		if (_renderEntities) {
-			_game.getEntities().draw(g);
+			_game.getEntities().draw(g, transition);
 		}
 	};
 
 	@Override
-	public void drawUnscaledContent(final Graphics2D g) {
+	public void drawUnscaledContent(final Graphics2D g, final double transition) {
 		// Measure frame rate.
 		_frameRateMeter.update();
 		_frameRateLabel.setValue(_frameRateMeter.getValue());
@@ -134,7 +134,7 @@ public class GameUI implements View {
 
 		_renderer.setGraphics(g);
 		for (Drawable d : _drawables) {
-			d.draw(g);
+			d.draw(g, transition);
 		}
 	}
 

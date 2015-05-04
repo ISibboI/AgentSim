@@ -47,11 +47,13 @@ public class Goblin extends MapEntity {
 	@Override
 	public void draw(final Graphics2D g) {
 		g.setColor(_color);
-		g.fillRect(getLocation().getX(), getLocation().getY(), 1, 1);
+		g.fillRect(0, 0, 1, 1);
 	}
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
+		super.update(random, tick);
+
 		updateAttributes();
 
 		if (!_attributes.isAlive()) {

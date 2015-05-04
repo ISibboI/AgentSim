@@ -39,7 +39,7 @@ public class UILabel extends UIAbstractComponent {
 	}
 
 	@Override
-	public void draw(final Graphics2D g) {
+	public void draw(final Graphics2D g, final double transition) {
 		getRenderer().drawBox(getPosition().getX(), getPosition().getY(), getWidth(), getRenderer().getTextHeight() + 10);
 		getRenderer().drawText(_text, getPosition().getX() + 5, getPosition().getY() + 5 + getRenderer().getTextHeight());
 	}
