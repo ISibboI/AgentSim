@@ -20,6 +20,8 @@ import de.isibboi.agentsim.ui.event.MouseEventTranslator;
  * @since 0.0.0
  */
 public class AgentFrame implements GameStatusMessageListener {
+	private static final int START_TICK = 0;
+
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final DrawFrame _drawFrame;
@@ -89,7 +91,7 @@ public class AgentFrame implements GameStatusMessageListener {
 	 */
 	public void restart() {
 		_game.restart();
-		_tick = 0;
+		_tick = START_TICK;
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class AgentFrame implements GameStatusMessageListener {
 	 */
 	public void start() {
 		_game.start();
-		_tick = 0;
+		_tick = START_TICK;
 	}
 
 	/**

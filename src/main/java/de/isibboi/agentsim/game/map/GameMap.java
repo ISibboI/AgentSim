@@ -32,7 +32,7 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	/**
 	 * The age of the map. That is the total amount of modifications made to the map.
 	 */
-	private long _age;
+	private long _age = 1; // Needs to be one for knowledge maps to work.
 
 	/**
 	 * Creates the map from the given image.

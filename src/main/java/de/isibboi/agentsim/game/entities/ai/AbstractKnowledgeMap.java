@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import de.isibboi.agentsim.game.map.Point;
@@ -15,8 +16,9 @@ import de.isibboi.agentsim.game.map.Point;
 public abstract class AbstractKnowledgeMap<Knowledge> implements KnowledgeMap<Knowledge> {
 	@Override
 	public void exchangeInformation(final KnowledgeMap<Knowledge> other) {
-		Set<Point> knownLocations = getKnownLocationSet();
+		Set<Point> knownLocations = new HashSet<>();
 		knownLocations.addAll(other.getKnownLocationSet());
+		knownLocations.addAll(getKnownLocationSet());
 
 		exchangeInformation(other, knownLocations);
 	}
