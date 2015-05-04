@@ -37,11 +37,14 @@ public class Settings {
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
 	public static final String CORE_MAX_UPDATES_PER_FRAME = "core.maxUpdatesPerFrame";
 
+	public static final String CORE_RENDER_TRANSITION_AMOUNT = "core.render.transitionAmount";
+
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
 			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
 			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
-			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME));
+			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME,
+			CORE_RENDER_TRANSITION_AMOUNT));
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
@@ -100,6 +103,8 @@ public class Settings {
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
 		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "60");
 		_defaults.setProperty(CORE_MAX_UPDATES_PER_FRAME, "2");
+
+		_defaults.setProperty(CORE_RENDER_TRANSITION_AMOUNT, "1");
 	}
 
 	/**
@@ -131,6 +136,15 @@ public class Settings {
 	}
 
 	/**
+	 * Sets a setting to the given double.
+	 * @param key The name of the setting.
+	 * @param value The new value of the setting.
+	 */
+	public void set(final String key, final double value) {
+		set(key, Double.toString(value));
+	}
+
+	/**
 	 * Returns the value of a setting.
 	 * @param key The name of the setting.
 	 * @return The value of the setting.
@@ -154,10 +168,25 @@ public class Settings {
 		String value = get(key);
 
 		try {
-			int result = Integer.parseInt(value);
-			return result;
+			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			_log.error("Setting is not an int: (" + key + ": " + value + ")", e);
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Returns the value of a given setting as double.
+	 * @param key The name of the setting.
+	 * @return The value of the setting.
+	 */
+	public double getDouble(final String key) {
+		String value = get(key);
+
+		try {
+			return Double.parseDouble(value);
+		} catch (NumberFormatException e) {
+			_log.error("Setting is not a double: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}

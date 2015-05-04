@@ -97,18 +97,18 @@ public class GameUIView extends UIView {
 	}
 
 	@Override
-	public void drawScaledContent(final Graphics2D g) {
+	public void drawScaledContent(final Graphics2D g, final double transition) {
 		// Draw map.
-		_game.getMap().draw(g);
+		_game.getMap().draw(g, transition);
 
 		// Draw entities.
 		if (_renderEntities) {
-			_game.getEntities().draw(g);
+			_game.getEntities().draw(g, transition);
 		}
 	};
 
 	@Override
-	public void drawUnscaledContent(final Graphics2D g) {
+	public void drawUnscaledContent(final Graphics2D g, final double transition) {
 		// Measure frame rate.
 		_frameRateMeter.update();
 		_frameRateLabel.setValue(_frameRateMeter.getValue());
@@ -119,7 +119,7 @@ public class GameUIView extends UIView {
 		// Measure entity count.
 		_entityCountLabel.setValue(_game.getEntities().size());
 
-		super.drawUnscaledContent(g);
+		super.drawUnscaledContent(g, transition);
 	}
 
 	@Override

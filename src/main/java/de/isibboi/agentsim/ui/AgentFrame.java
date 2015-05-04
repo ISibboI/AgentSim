@@ -30,6 +30,7 @@ public class AgentFrame implements GameStatusMessageListener {
 	private final View _gameUIView;
 	private final View _gameOverView;
 	private int _tick;
+	private double _transitionFactor;
 	private final MouseEventTranslator _mouseEventTranslator;
 
 	private final Random _random = new Random();
@@ -60,6 +61,8 @@ public class AgentFrame implements GameStatusMessageListener {
 		_view = _gameUIView;
 		_drawFrame.getContentPane().addMouseListener(_mouseEventTranslator);
 		_drawFrame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
+
+		_transitionFactor = 1 / settings.getDouble(Settings.CORE_RENDER_TRANSITION_AMOUNT);
 
 		start();
 	}
@@ -112,17 +115,27 @@ public class AgentFrame implements GameStatusMessageListener {
 
 	/**
 	 * Renders the map and all entities.
+	 * The transition parameter determines where the entity is exactly drawn.
+	 * For zero, the entity should be drawn at the location from the last update, for one, it should be drawn at the current location.
+	 * Values between zero and one should be used for linear interpolation between old and new location.
+	 * @param transition A value between zero and one.
 	 */
-	public void render() {
+	public void render(final double transition) {
 		if (!_drawFrame.isVisible()) {
 			return;
 		}
 
+		double shortenedTransition = transition * _transitionFactor;
+
+		if (shortenedTransition > 1) {
+			shortenedTransition = 1;
+		}
+
 		Graphics2D g = _drawFrame.startRender();
 
-		_view.drawScaledContent(g);
+		_view.drawScaledContent(g, shortenedTransition);
 		_drawFrame.switchToUIRender();
-		_view.drawUnscaledContent(g);
+		_view.drawUnscaledContent(g, shortenedTransition);
 
 		_drawFrame.finishRender();
 	}

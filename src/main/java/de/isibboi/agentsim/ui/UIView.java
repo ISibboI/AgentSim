@@ -53,10 +53,10 @@ public abstract class UIView implements View {
 	}
 
 	@Override
-	public void drawUnscaledContent(final Graphics2D g) {
+	public void drawUnscaledContent(final Graphics2D g, final double transition) {
 		_renderer.setGraphics(g);
 		for (Drawable d : _drawables) {
-			d.draw(g);
+			d.draw(g, transition);
 		}
 	}
 
@@ -88,7 +88,7 @@ public abstract class UIView implements View {
 	 * Does nothing. Override to use.
 	 */
 	@Override
-	public void drawScaledContent(final Graphics2D g) {
+	public void drawScaledContent(final Graphics2D g, final double transition) {
 		// Ignore
 	}
 

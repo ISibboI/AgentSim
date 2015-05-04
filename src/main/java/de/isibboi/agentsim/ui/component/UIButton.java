@@ -61,7 +61,7 @@ public class UIButton extends UILabel implements UIMouseInputListener {
 	}
 
 	@Override
-	public void draw(final Graphics2D g) {
+	public void draw(final Graphics2D g, final double transition) {
 		if (_mouseHovering) {
 			if (_mouseDown) {
 				getRenderer().drawClickedBox(getPosition().getX(), getPosition().getY(), getWidth(), getRenderer().getTextHeight() + 10);

@@ -130,9 +130,9 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 	}
 
 	@Override
-	public void draw(final Graphics2D g) {
+	public void draw(final Graphics2D g, final double transition) {
 		for (Entity entity : _entities) {
-			entity.draw(g);
+			entity.draw(g, transition);
 		}
 	}
 }

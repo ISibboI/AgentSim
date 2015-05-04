@@ -47,7 +47,7 @@ public class GameMap implements Drawable {
 	}
 
 	@Override
-	public void draw(final Graphics2D g) {
+	public void draw(final Graphics2D g, final double transition) {
 		g.drawImage(_map, 0, 0, null);
 	}
 
