@@ -40,7 +40,12 @@ public class EntityLocationManager implements Updateable {
 		_map = map;
 		_entities = entities;
 		_settings = settings;
-		_entityCollider = new SimpleEntityCollider(settings);
+
+		if (settings.getInt(Settings.CORE_UPDATE_COLLISION_THREAD_COUNT) > 1) {
+			_entityCollider = new MultiThreadedEntityCollider(settings);
+		} else {
+			_entityCollider = new SimpleEntityCollider(settings);
+		}
 	}
 
 	/**
