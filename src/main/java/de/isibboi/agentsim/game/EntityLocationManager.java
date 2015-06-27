@@ -169,4 +169,11 @@ public class EntityLocationManager implements Updateable {
 	public Settings getSettings() {
 		return _settings;
 	}
+
+	/**
+	 * Shuts the underlying {@link EntityCollider} down.
+	 */
+	public void shutdown() {
+		_entityCollider.shutdown();
+	}
 }

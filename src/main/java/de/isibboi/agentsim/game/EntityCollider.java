@@ -35,4 +35,10 @@ public interface EntityCollider {
 	 * When this method returns, all collisions that were passed to {@link #collide(Entity, Entity)} are evaluated.
 	 */
 	void finishCollision();
+
+	/**
+	 * Releases all additional resources allocated by this object.
+	 * After calling this method, the object might not be usable anymore.
+	 */
+	void shutdown();
 }

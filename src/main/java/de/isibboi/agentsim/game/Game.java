@@ -107,6 +107,7 @@ public class Game implements Updateable {
 	 * Restarts the game.
 	 */
 	public void restart() {
+		stop();
 		start();
 	}
 
@@ -135,5 +136,12 @@ public class Game implements Updateable {
 		}
 
 		this._paused = paused;
+	}
+
+	/**
+	 * 
+	 */
+	public void stop() {
+		_entityLocationManager.shutdown();
 	}
 }

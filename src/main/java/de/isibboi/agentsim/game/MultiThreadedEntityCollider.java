@@ -49,6 +49,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 
 	private final ThreadPoolExecutor _executor;
 	private final Collection<Future<?>> _futures;
+	private volatile boolean _shutdown = false;
 
 	/**
 	 * Creates a new {@link MultiThreadedEntityCollider}.
@@ -87,5 +88,14 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		} catch (InterruptedException | ExecutionException e) {
 			_log.error("Could not finish collision evaluation", e);
 		}
+
+		if (_shutdown) {
+			_executor.shutdown();
+		}
+	}
+
+	@Override
+	public void shutdown() {
+		_shutdown = true;
 	}
 }

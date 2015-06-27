@@ -37,4 +37,9 @@ public class SimpleEntityCollider implements EntityCollider {
 	public void finishCollision() {
 		// Do nothing.
 	}
+
+	@Override
+	public void shutdown() {
+		// Do nothing.
+	}
 }

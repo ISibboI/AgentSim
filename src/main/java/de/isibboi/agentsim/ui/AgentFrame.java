@@ -157,6 +157,8 @@ public class AgentFrame implements GameStatusMessageListener {
 		_settings.set(Settings.UI_X_POS, _drawFrame.getLocationOnScreen().x);
 		_settings.set(Settings.UI_Y_POS, _drawFrame.getLocationOnScreen().y);
 
+		_game.stop();
+
 		_drawFrame.dispose();
 		_log.debug("Frame disposed");
 	}
