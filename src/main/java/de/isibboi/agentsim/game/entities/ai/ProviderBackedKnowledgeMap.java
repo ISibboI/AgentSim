@@ -74,4 +74,12 @@ public class ProviderBackedKnowledgeMap<Knowledge> implements KnowledgeMap<Knowl
 	public Set<Point> getKnownLocationSet() {
 		return _knowledgeMap.getKnownLocationSet();
 	}
+
+	/**
+	 * Returns the {@link KnowledgeMap} that is decorated by this object.
+	 * @return The KnowledgeMap.
+	 */
+	public KnowledgeMap<Knowledge> getDecoratedKnowledgeMap() {
+		return _knowledgeMap;
+	}
 }

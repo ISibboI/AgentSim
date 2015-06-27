@@ -55,6 +55,17 @@ public class ArrayKnowledgeMap<Knowledge> extends AbstractKnowledgeMap<Knowledge
 		}
 	}
 
+	@Override
+	public void exchangeInformation(final KnowledgeMap<Knowledge> other) {
+		if (other instanceof ProviderBackedKnowledgeMap) {
+			exchangeInformation(((ProviderBackedKnowledgeMap<Knowledge>) other).getDecoratedKnowledgeMap());
+		} else if (other instanceof ArrayKnowledgeMap) {
+			exchangeInformation((ArrayKnowledgeMap<Knowledge>) other);
+		} else {
+			super.exchangeInformation(other);
+		}
+	}
+
 	/**
 	 * @see #exchangeInformation(KnowledgeMap)
 	 * @param other The other map.
