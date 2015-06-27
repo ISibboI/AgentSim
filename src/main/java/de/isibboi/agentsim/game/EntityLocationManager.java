@@ -24,6 +24,7 @@ public class EntityLocationManager implements Updateable {
 	private final GameMap _map;
 	private final Entities _entities;
 	private final Settings _settings;
+	private final EntityCollider _entityCollider;
 
 	private GoblinSpawner _goblinSpawner;
 
@@ -39,6 +40,7 @@ public class EntityLocationManager implements Updateable {
 		_map = map;
 		_entities = entities;
 		_settings = settings;
+		_entityCollider = new SimpleEntityCollider(settings);
 	}
 
 	/**
@@ -106,6 +108,7 @@ public class EntityLocationManager implements Updateable {
 	 * Checks if any entities collide and fires the appropriate collision events.
 	 */
 	private void checkForEntityCollisions() {
+		_entityCollider.startCollision();
 		Set<Point> locations = _entityLocations.keySet();
 
 		for (Point location : locations) {
@@ -117,11 +120,15 @@ public class EntityLocationManager implements Updateable {
 
 				for (int i = 0; i < entities.length; i++) {
 					for (int j = i + 1; j < entities.length; j++) {
-						entities[i].collideWith(entities[j]);
+						_entityCollider.collide(entities[i], entities[j]);
 					}
 				}
+
+				_entityCollider.finishBlock();
 			}
 		}
+
+		_entityCollider.finishCollision();
 	}
 
 	/**
