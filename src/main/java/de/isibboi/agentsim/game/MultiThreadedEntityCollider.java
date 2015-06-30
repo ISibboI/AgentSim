@@ -62,6 +62,8 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		_executor = new ThreadPoolExecutor(threadAmount, threadAmount, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 		_executor.prestartAllCoreThreads();
 		_futures = new LinkedList<>();
+
+		_log.info("Entity collider threads started");
 	}
 
 	@Override
@@ -91,11 +93,13 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 
 		if (_shutdown) {
 			_executor.shutdown();
+			_log.info("Entity collider thread pool is shutting down");
 		}
 	}
 
 	@Override
 	public void shutdown() {
 		_shutdown = true;
+		_log.info("Entity collider received shutdown request");
 	}
 }
