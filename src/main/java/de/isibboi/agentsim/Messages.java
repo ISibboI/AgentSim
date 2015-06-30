@@ -21,6 +21,7 @@ public final class Messages {
 	public static final String UI_SETTINGS_FRAME_RESTART_LABEL = "UISettingsFrame.restartLabel";
 	public static final String UI_SETTINGS_FRAME_UI_SIZE_LABEL = "UISettingsFrame.uiSizeLabel";
 	public static final String UI_SETTINGS_FRAME_UI_TAB = "UISettingsFrame.uiTab";
+	public static final String UI_SETTINGS_FRAME_TITLE = "UISettingsFrame.title";
 	public static final String UI_SETTINGS_FRAME_CORE_FRAME_RATE_LABEL = "UISettingsFrame.coreFrameRateLabel";
 	public static final String UI_SETTINGS_FRAME_CORE_UPDATE_RATE_LABEL = "UISettingsFrame.coreUpdateRateLabel";
 	public static final String UI_SETTINGS_FRAME_CORE_TAB = "UISettingsFrame.coreTab";
