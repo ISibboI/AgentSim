@@ -5,6 +5,10 @@ AgentSim
 * Java 7 or higher
 * maven, only tested with version 3
 
+### How to run on Linux
+* Execute `install.sh` to compile the program
+* Execute `run.sh` to execute the program after compilation
+
 ### Goal
 Simulate a small goblin population in a cave. The population should slowly build up and produce resources.
 
