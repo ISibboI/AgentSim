@@ -49,7 +49,9 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 
 	private final ThreadPoolExecutor _executor;
 	private final Collection<Future<?>> _futures;
+
 	private volatile boolean _shutdown = false;
+	private volatile boolean _isColliding = false;
 
 	/**
 	 * Creates a new {@link MultiThreadedEntityCollider}.
@@ -67,8 +69,8 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	}
 
 	@Override
-	public void startCollision() {
-		// Do nothing.
+	public synchronized void startCollision() {
+		_isColliding = true;
 	}
 
 	@Override
@@ -82,7 +84,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	}
 
 	@Override
-	public void finishCollision() {
+	public synchronized void finishCollision() {
 		try {
 			for (Future<?> future : _futures) {
 				future.get();
@@ -92,14 +94,27 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		}
 
 		if (_shutdown) {
-			_executor.shutdown();
-			_log.info("Entity collider thread pool is shutting down");
+			shutdownExecutor();
 		}
+
+		_isColliding = false;
+	}
+
+	/**
+	 * Shuts the pooled executor down.
+	 */
+	private void shutdownExecutor() {
+		_executor.shutdown();
+		_log.info("Entity collider thread pool is shutting down");
 	}
 
 	@Override
-	public void shutdown() {
+	public synchronized void shutdown() {
 		_shutdown = true;
 		_log.info("Entity collider received shutdown request");
+
+		if (!_isColliding) {
+			shutdownExecutor();
+		}
 	}
 }
