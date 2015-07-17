@@ -73,7 +73,7 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 		@Override
 		public int compare(final AStarNode a, final AStarNode b) {
 			// Less than <=> Shorter distance to target.
-			return a._distanceToTarget - b._distanceToTarget;
+			return a._costs - b._costs;
 		}
 	}
 
