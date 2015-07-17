@@ -22,6 +22,8 @@ public class MiningTask extends MotionlessTimedTask {
 	private final Entity _entity;
 	private final EntityLocationManager _entityLocationManager;
 
+	private Material _minedMaterial;
+
 	/**
 	 * Creates a new mining task.
 	 * 
@@ -44,18 +46,20 @@ public class MiningTask extends MotionlessTimedTask {
 	protected void eventFinished() {
 		_entityLocationManager.getMap().setMaterial(_miningLocation, Environment.MATERIAL_AIR);
 		_entityLocationManager.getGoblinSpawner().spawnGoblin(_miningLocation);
+
+		_log.trace("MiningTask finished: " + _entity + " mined a " + _minedMaterial + " at " + _miningLocation);
 	}
 
 	@Override
 	public void start() {
-		Material minedMaterial = _entityLocationManager.getMap().getMaterialAt(_miningLocation);
+		_minedMaterial = _entityLocationManager.getMap().getMaterialAt(_miningLocation);
 		Point location = _entityLocationManager.getLocation(_entity);
 		int duration = _entityLocationManager.getMap().getMaterialAt(_miningLocation).getDurability();
 
 		setDuration(duration);
 		super.start();
 
-		if (!location.isNeighborOf(_miningLocation) || minedMaterial == Environment.MATERIAL_AIR) {
+		if (!location.isNeighborOf(_miningLocation) || _minedMaterial == Environment.MATERIAL_AIR) {
 			fail();
 		}
 	}

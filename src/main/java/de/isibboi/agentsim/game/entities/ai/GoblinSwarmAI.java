@@ -1,6 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai;
 
 import de.isibboi.agentsim.Settings;
+import de.isibboi.agentsim.algorithm.BlockadeMap;
+import de.isibboi.agentsim.algorithm.KnowledgeBasedBlockadeMap;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
@@ -17,19 +19,19 @@ import de.isibboi.agentsim.game.map.Point;
 public class GoblinSwarmAI extends TaskExecutingAI {
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
-	private final Entity _entity;
+	private final Goblin _goblin;
 	private final ProviderBackedKnowledgeMap<Material> _mapKnowledge;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
 	 * @param entityLocationManager The entity location manager.
 	 * @param goblinTaskFactory The goblin task factory.
-	 * @param entity The entity that is controlled by this AI.
+	 * @param goblin The entity that is controlled by this AI.
 	 */
-	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Entity entity) {
+	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Goblin goblin) {
 		_entityLocationManager = entityLocationManager;
 		_goblinTaskFactory = goblinTaskFactory;
-		_entity = entity;
+		_goblin = goblin;
 
 		KnowledgeMap<Material> knowledgeRepresentation;
 
@@ -58,7 +60,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		explorePoint(location);
 
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-			enqueueTask(_goblinTaskFactory.createMiningTask(location, _entity, _entityLocationManager));
+			enqueueTask(_goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager));
 		}
 	}
 
@@ -106,5 +108,15 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	@Override
 	protected void eventExecutionFinished() {
 		// Ignored
+	}
+
+	/**
+	 * Returns the blockade map that represents the locations that are known as blocking to this AI.
+	 * Unknown locations are blocked.
+	 * 
+	 * @return The blockade map for this AI.
+	 */
+	public BlockadeMap getBlockadeMap() {
+		return new KnowledgeBasedBlockadeMap(_mapKnowledge);
 	}
 }

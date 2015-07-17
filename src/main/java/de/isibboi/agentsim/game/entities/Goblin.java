@@ -6,7 +6,6 @@ import java.util.Random;
 
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.entities.ai.AI;
 import de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
@@ -20,7 +19,7 @@ public class Goblin extends MapEntity {
 	private final Color _color = new Color(0x55bb55);
 
 	private GoblinAttributes _attributes;
-	private final AI _ai;
+	private final GoblinSwarmAI _ai;
 
 	/**
 	 * Creates a new goblin at the specified location.
@@ -40,7 +39,7 @@ public class Goblin extends MapEntity {
 	 * 
 	 * @return The AI of this goblin.
 	 */
-	public AI getAI() {
+	public GoblinSwarmAI getAI() {
 		return _ai;
 	}
 

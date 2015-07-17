@@ -13,9 +13,10 @@ import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
+ * Test case for the A* pathfinder.
+ * 
  * @author Sebastian Schmidt
- * @since 
- *
+ * @since 0.3.0
  */
 public class AStarPathfinderTest {
 	private AStarPathfinder _pathfinder;
