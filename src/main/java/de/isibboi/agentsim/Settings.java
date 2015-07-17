@@ -41,13 +41,18 @@ public class Settings {
 
 	public static final String CORE_UPDATE_COLLISION_THREAD_COUNT = "core.update.collisionThreadCount";
 
+	public static final String CORE_AI_KNOWLEDGE_REPRESENTATION = "core.ai.knowledgeRepresentation";
+	public static final String CORE_AI_KNOWLEDGE_REPRESENTATION_ARRAY = "core.ai.knowledgeRepresentation.ARRAY";
+	public static final String CORE_AI_KNOWLEDGE_REPRESENTATION_HASHMAP = "core.ai.knowledgeRepresentation.HASHMAP";
+
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
 			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
 			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
 			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME,
 			CORE_RENDER_TRANSITION_AMOUNT,
-			CORE_UPDATE_COLLISION_THREAD_COUNT));
+			CORE_UPDATE_COLLISION_THREAD_COUNT,
+			CORE_AI_KNOWLEDGE_REPRESENTATION));
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
@@ -110,6 +115,8 @@ public class Settings {
 		_defaults.setProperty(CORE_RENDER_TRANSITION_AMOUNT, "1");
 
 		_defaults.setProperty(CORE_UPDATE_COLLISION_THREAD_COUNT, "2");
+
+		_defaults.setProperty(CORE_AI_KNOWLEDGE_REPRESENTATION, CORE_AI_KNOWLEDGE_REPRESENTATION_HASHMAP);
 	}
 
 	/**
@@ -218,5 +225,14 @@ public class Settings {
 		} catch (IOException e) {
 			_log.error("Could not save settings: " + _settingsFile);
 		}
+	}
+
+	/**
+	 * Throws an {@link IllegalArgumentException} stating that the value of the given setting is invalid.
+	 * 
+	 * @param key The setting that has an invalid value.
+	 */
+	public void throwIllegalSettingValue(final String key) {
+		throw new IllegalArgumentException("Setting '" + key + "' has an illegal value: " + get(key));
 	}
 }

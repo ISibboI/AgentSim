@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
@@ -29,8 +30,25 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		_entityLocationManager = entityLocationManager;
 		_goblinTaskFactory = goblinTaskFactory;
 		_entity = entity;
-		_mapKnowledge = new ProviderBackedKnowledgeMap<>(new ArrayKnowledgeMap<Material>(entityLocationManager.getMap().getWidth(),
-				entityLocationManager.getMap().getHeight()), entityLocationManager.getMap());
+
+		KnowledgeMap<Material> knowledgeRepresentation;
+
+		switch (entityLocationManager.getSettings().get(Settings.CORE_AI_KNOWLEDGE_REPRESENTATION)) {
+		case Settings.CORE_AI_KNOWLEDGE_REPRESENTATION_ARRAY:
+			knowledgeRepresentation = new ArrayKnowledgeMap<>(entityLocationManager.getMap().getWidth(),
+					entityLocationManager.getMap().getHeight());
+			break;
+
+		case Settings.CORE_AI_KNOWLEDGE_REPRESENTATION_HASHMAP:
+			knowledgeRepresentation = new HashKnowledgeMap<>();
+			break;
+
+		default:
+			knowledgeRepresentation = null;
+			entityLocationManager.getSettings().throwIllegalSettingValue(Settings.CORE_AI_KNOWLEDGE_REPRESENTATION);
+		}
+
+		_mapKnowledge = new ProviderBackedKnowledgeMap<>(knowledgeRepresentation, entityLocationManager.getMap());
 
 		setIdleTask(goblinTaskFactory.createIdleTask());
 	}
