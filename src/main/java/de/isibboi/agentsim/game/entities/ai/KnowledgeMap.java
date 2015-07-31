@@ -14,9 +14,12 @@ import de.isibboi.agentsim.game.map.Point;
 public interface KnowledgeMap<Knowledge> {
 	/**
 	 * Updates the knowledge about the specified location.
+	 * If the given knowledge is older than or equally old as the existing one,
+	 * nothing happens.
+	 * 
 	 * @param location The location.
 	 * @param knowledge The knowledge.
-	 * @param tick The tick this knowledge was created.
+	 * @param tick The tick this knowledge was created. Must be greater than zero.
 	 */
 	void updateLocation(final Point location, final Knowledge knowledge, final long tick);
 
@@ -24,6 +27,7 @@ public interface KnowledgeMap<Knowledge> {
 	 * Merges the information of this and the given {@code KnowledgeMap}.
 	 * Both maps will contain the result of the merge.
 	 * For every cell, the newer information is selected.
+	 * It is undefined what happens when both maps contain different knowledge with the same age.
 	 * 
 	 * @param other The {@code KnowledgeMap} to merge with.
 	 */
@@ -31,6 +35,8 @@ public interface KnowledgeMap<Knowledge> {
 
 	/**
 	 * Returns the age of the knowledge about the specified location.
+	 * If there is no knowledge about the location, 0 is returned.
+	 * 
 	 * @param location The location.
 	 * @return The age of the knowledge about the specified location.
 	 */
@@ -38,6 +44,8 @@ public interface KnowledgeMap<Knowledge> {
 
 	/**
 	 * Returns the knowledge about the specified location.
+	 * If there is no knowledge about the location, null is returned.
+	 * 
 	 * @param location The location.
 	 * @return The knowledge about the specified location.
 	 */

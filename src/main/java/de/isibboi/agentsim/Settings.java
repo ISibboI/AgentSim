@@ -109,7 +109,7 @@ public class Settings {
 
 		_defaults.setProperty(CORE_RENDER_TRANSITION_AMOUNT, "1");
 
-		_defaults.setProperty(CORE_UPDATE_COLLISION_THREAD_COUNT, "1");
+		_defaults.setProperty(CORE_UPDATE_COLLISION_THREAD_COUNT, "2");
 	}
 
 	/**

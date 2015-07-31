@@ -194,6 +194,7 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 		add(_restartLabel, gbc);
 
 		pack();
+		setTitle(Messages.getString(Messages.UI_SETTINGS_FRAME_TITLE));
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addWindowListener(this);
 		setVisible(true);
