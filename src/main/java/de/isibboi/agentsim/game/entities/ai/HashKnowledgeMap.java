@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import de.isibboi.agentsim.game.map.Point;
@@ -113,7 +114,7 @@ public class HashKnowledgeMap<Knowledge> extends AbstractKnowledgeMap<Knowledge>
 	public void exchangeInformation(final HashKnowledgeMap<Knowledge> other) {
 		final HashMap<Point, KnowledgeBucket<Knowledge>> toPutIntoOther = new HashMap<>();
 
-		for (HashMap.Entry<Point, KnowledgeBucket<Knowledge>> mapping : other._map.entrySet()) {
+		for (Map.Entry<Point, KnowledgeBucket<Knowledge>> mapping : other._map.entrySet()) {
 			KnowledgeBucket<Knowledge> ownKnowledge = getKnowledgeBucket(mapping.getKey());
 
 			if (ownKnowledge._lastUpdate < mapping.getValue().getLastUpdate()) {
