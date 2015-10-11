@@ -104,4 +104,9 @@ public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
 	protected double getUpdatesBeforeNextFrame() {
 		return _updatesBeforeNextFrame;
 	}
+
+	@Override
+	public void setGamePaused(final boolean isGamePaused) {
+		// Ignore.
+	}
 }

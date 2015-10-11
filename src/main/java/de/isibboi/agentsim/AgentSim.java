@@ -48,6 +48,8 @@ public class AgentSim implements Runnable, WindowListener {
 				_settings.getInt(Settings.CORE_MAX_UPDATES_PER_FRAME));
 
 		while (!_exit) {
+			frameRateStabilizer.setGamePaused(_frame.isGamePaused());
+
 			if (frameRateStabilizer.stabilize()) {
 				_frame.render(frameRateStabilizer.getTransition());
 			} else {

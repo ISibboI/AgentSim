@@ -22,4 +22,10 @@ public interface FrameRateStabilizer {
 	 * @return True if a new frame should be rendered, false if the game should be updated.
 	 */
 	boolean stabilize();
+
+	/**
+	 * Set if the game is paused.
+	 * @param isGamePaused True if the game is paused, false otherwise.
+	 */
+	void setGamePaused(boolean isGamePaused);
 }

@@ -173,4 +173,12 @@ public class AgentFrame implements GameStatusMessageListener {
 		switchView(_gameUIView);
 		_game.restart();
 	}
+
+	/**
+	 * Returns if the game is paused.
+	 * @return True if the game is paused, false otherwise.
+	 */
+	public boolean isGamePaused() {
+		return _game.isPaused();
+	}
 }
