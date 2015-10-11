@@ -232,9 +232,6 @@ public class EntitySelectionManager implements UIMouseInputListener, Drawable {
 
 			if (((MapEntity) entity).getBounds().contains(position2d)) {
 				_selectedEntities.add(entity);
-
-				System.out.println(((MapEntity) entity).getBounds());
-
 				break;
 			}
 		}
