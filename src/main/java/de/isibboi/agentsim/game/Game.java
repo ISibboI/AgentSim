@@ -89,6 +89,14 @@ public class Game implements Updateable {
 	}
 
 	/**
+	 * Returns the entity location manager.
+	 * @return The entity location manager.
+	 */
+	public EntityLocationManager getEntityLocationManager() {
+		return _entityLocationManager;
+	}
+
+	/**
 	 * Starts the game.
 	 */
 	public void start() {
@@ -139,7 +147,7 @@ public class Game implements Updateable {
 	}
 
 	/**
-	 * 
+	 * Stops the game.
 	 */
 	public void stop() {
 		_entityLocationManager.shutdown();

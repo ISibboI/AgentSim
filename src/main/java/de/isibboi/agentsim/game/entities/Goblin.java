@@ -18,6 +18,7 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class Goblin extends MapEntity {
 	private final Color _color = new Color(0x55bb55);
+	private final Color _selectedColor = new Color(0xaaddaa);
 
 	private GoblinAttributes _attributes;
 	private final AI _ai;
@@ -46,7 +47,12 @@ public class Goblin extends MapEntity {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setColor(_color);
+		if (isSelected()) {
+			g.setColor(_selectedColor);
+		} else {
+			g.setColor(_color);
+		}
+
 		g.fillRect(0, 0, 1, 1);
 	}
 

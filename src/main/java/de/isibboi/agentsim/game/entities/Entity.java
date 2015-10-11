@@ -5,7 +5,7 @@ package de.isibboi.agentsim.game.entities;
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
-public interface Entity extends Drawable, Updateable {
+public interface Entity extends Drawable, Updateable, Selectable {
 	/**
 	 * This entity collides with the given entity.
 	 * @param entity The other entity.

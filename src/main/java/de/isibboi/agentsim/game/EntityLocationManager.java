@@ -2,6 +2,7 @@ package de.isibboi.agentsim.game;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -37,6 +38,10 @@ public class EntityLocationManager implements Updateable {
 	 * @param settings The settings.
 	 */
 	public EntityLocationManager(final GameMap map, final Entities entities, final Settings settings) {
+		Objects.requireNonNull(map);
+		Objects.requireNonNull(entities);
+		Objects.requireNonNull(settings);
+
 		_map = map;
 		_entities = entities;
 		_settings = settings;

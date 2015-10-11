@@ -42,6 +42,9 @@ public class GameUIView extends UIView {
 
 	private UISettingsFrame _settingsFrame;
 
+	private MapRenderMode _mapRenderMode;
+	private EntitySelectionManager _entitySelectionManager;
+
 	private boolean _renderEntities = true;
 
 	/**
@@ -61,6 +64,10 @@ public class GameUIView extends UIView {
 
 		_frameRateMeter = new FrequencyMeter(settings.getInt(Settings.CORE_TARGET_FRAME_RATE), 0.1, 8);
 		_updateRateMeter = new FrequencyMeter(settings.getInt(Settings.CORE_TARGET_UPDATE_RATE), 0.03, 8);
+
+		_mapRenderMode = new DrawAllMapRenderMode();
+		_entitySelectionManager = new EntitySelectionManager(_game, _settings, getRenderer());
+		addMouseListener(_entitySelectionManager);
 
 		initUI();
 	}
@@ -98,17 +105,17 @@ public class GameUIView extends UIView {
 
 	@Override
 	public void drawScaledContent(final Graphics2D g, final double transition) {
-		// Draw map.
-		_game.getMap().draw(g, transition);
+		_mapRenderMode.drawMap(g, transition, _game.getMap());
 
-		// Draw entities.
 		if (_renderEntities) {
-			_game.getEntities().draw(g, transition);
+			_mapRenderMode.drawEntities(g, transition, _game.getEntities());
 		}
 	};
 
 	@Override
 	public void drawUnscaledContent(final Graphics2D g, final double transition) {
+		super.drawUnscaledContent(g, transition);
+
 		// Measure frame rate.
 		_frameRateMeter.update();
 		_frameRateLabel.setValue(_frameRateMeter.getValue());
@@ -119,7 +126,7 @@ public class GameUIView extends UIView {
 		// Measure entity count.
 		_entityCountLabel.setValue(_game.getEntities().size());
 
-		super.drawUnscaledContent(g, transition);
+		_entitySelectionManager.draw(g, transition);
 	}
 
 	@Override

@@ -14,6 +14,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.isibboi.agentsim.ui.EntitySelectionManager;
+
 /**
  * Manages the applications settings.
  * 
@@ -26,6 +28,7 @@ public class Settings {
 	public static final String UI_X_POS = "ui.xPos";
 	public static final String UI_Y_POS = "ui.yPos";
 	public static final String UI_FONT_FAMILY = "ui.fontFamily";
+	public static final String UI_SELECTION_MODE = "ui.selectionMode";
 
 	public static final String GAME_INITIAL_GOBLIN_COUNT = "game.initialGoblinCount";
 	public static final String GAME_SPAWN_RADIUS = "game.spawnRadius";
@@ -42,7 +45,7 @@ public class Settings {
 	public static final String CORE_UPDATE_COLLISION_THREAD_COUNT = "core.update.collisionThreadCount";
 
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
-			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY,
+			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY, UI_SELECTION_MODE,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
 			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
 			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME,
@@ -96,6 +99,7 @@ public class Settings {
 		_defaults.setProperty(UI_X_POS, "0");
 		_defaults.setProperty(UI_Y_POS, "0");
 		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
+		_defaults.setProperty(UI_SELECTION_MODE, EntitySelectionManager.SelectionMode.TOUCH.toString());
 
 		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
@@ -104,7 +108,7 @@ public class Settings {
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
-		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "60");
+		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "1");
 		_defaults.setProperty(CORE_MAX_UPDATES_PER_FRAME, "2");
 
 		_defaults.setProperty(CORE_RENDER_TRANSITION_AMOUNT, "1");
@@ -158,6 +162,16 @@ public class Settings {
 	}
 
 	/**
+	 * Sets a setting to the given enum constant.
+	 * @param <T> The type of the enum.
+	 * @param key The name of the setting.
+	 * @param value The new value of the setting.
+	 */
+	public <T extends Enum<T>> void set(final String key, final Enum<T> value) {
+		set(key, value.toString());
+	}
+
+	/**
 	 * Returns the value of a setting.
 	 * @param key The name of the setting.
 	 * @return The value of the setting.
@@ -202,6 +216,16 @@ public class Settings {
 			_log.error("Setting is not a double: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Returns the value of a given setting as enum constant.
+	 * @param <T> The type of the enum.
+	 * @param key The name of the setting.
+	 * @return The value of the setting.
+	 */
+	public <T extends Enum<T>> T getEnumConstant(final String key, final Class<T> enumeration) {
+		return Enum.valueOf(enumeration, get(key));
 	}
 
 	/**

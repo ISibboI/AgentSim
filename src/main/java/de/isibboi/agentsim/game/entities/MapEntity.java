@@ -2,12 +2,15 @@ package de.isibboi.agentsim.game.entities;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.util.Util;
 
 /**
  * An entity that has a location known by the game map.
@@ -18,6 +21,8 @@ import de.isibboi.agentsim.game.map.Point;
 public abstract class MapEntity implements Entity {
 	private final EntityLocationManager _entityLocationManager;
 	private Point _oldLocation;
+	private Rectangle2D.Double _bounds;
+	private boolean _isSelected;
 
 	/**
 	 * Creates a new map entity at the given location.
@@ -90,9 +95,24 @@ public abstract class MapEntity implements Entity {
 		AffineTransform old = g.getTransform();
 		g.translate(x, y);
 
+		Point2D.Double a = new Point2D.Double(0, 0);
+		Point2D.Double b = new Point2D.Double(1, 1);
+		g.getTransform().transform(a, a);
+		g.getTransform().transform(b, b);
+		_bounds = Util.createRectangle(a, b);
+
 		draw(g);
 
 		g.setTransform(old);
+	}
+
+	/**
+	 * Returns the current bounds of this entity as seen on the map.
+	 * 
+	 * @return The current bounds of this entity.
+	 */
+	public Rectangle2D.Double getBounds() {
+		return _bounds;
 	}
 
 	/**
@@ -100,4 +120,14 @@ public abstract class MapEntity implements Entity {
 	 * @param g The graphics object used for drawing.
 	 */
 	protected abstract void draw(final Graphics2D g);
+
+	@Override
+	public void setSelected(final boolean isSelected) {
+		_isSelected = isSelected;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return _isSelected;
+	}
 }
