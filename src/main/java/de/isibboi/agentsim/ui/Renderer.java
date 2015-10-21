@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.ui;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  * Provides functions to render basic ui elements.
@@ -69,4 +70,11 @@ public interface Renderer {
 	 * @return the height of text.
 	 */
 	int getTextHeight();
+
+	/**
+	 * Draws the rectangle visualizing the current selection process.
+	 * 
+	 * @param rectangle The current selection rectangle.
+	 */
+	void drawEntitySelectionRectangle(Rectangle rectangle);
 }

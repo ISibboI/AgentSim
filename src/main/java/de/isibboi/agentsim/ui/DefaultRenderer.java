@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.font.TextAttribute;
 import java.util.Collections;
@@ -92,5 +93,11 @@ public class DefaultRenderer implements Renderer {
 		_g.drawRect(x + (int) Math.ceil(additionalThickness / 2.0f), y + (int) Math.ceil(additionalThickness / 2.0f),
 				width - additionalThickness, height - additionalThickness);
 		_g.setStroke(oldStroke);
+	}
+
+	@Override
+	public void drawEntitySelectionRectangle(final Rectangle rectangle) {
+		_g.setColor(new Color(230, 20, 20));
+		_g.draw(rectangle);
 	}
 }
