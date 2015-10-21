@@ -104,4 +104,13 @@ public class Goblin extends MapEntity {
 	public void collideWith(final Entity entity) {
 		_ai.eventCollideWithEntity(entity);
 	}
+
+	/**
+	 * Returns the attributes of this goblin.
+	 * 
+	 * @return The attributes of this goblin.
+	 */
+	public GoblinAttributes getAttributes() {
+		return _attributes;
+	}
 }

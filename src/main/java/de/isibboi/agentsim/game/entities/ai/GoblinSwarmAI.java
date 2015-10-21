@@ -102,7 +102,10 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventTaskFinished() {
-		// Ignored
+		// Make entities move to spawn point if saturation is low.
+		if (!isExecuting() && _goblin.getAttributes().getSaturation() <= _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint())) {
+			enqueueTask(_goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin));
+		}
 	}
 
 	@Override

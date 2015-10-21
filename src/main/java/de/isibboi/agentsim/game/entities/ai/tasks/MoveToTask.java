@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
@@ -67,8 +68,11 @@ public class MoveToTask implements Task {
 	public void eventInformationUpdated() {
 		_movementQueue.clear();
 		PathfindingAlgorithm pathfinder = new AStarPathfinder();
+		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, _blockadeMap);
 
-		_movementQueue.addAll(pathfinder.findPath(_entity.getLocation(), _target, _blockadeMap));
+		if (path != null) {
+			_movementQueue.addAll(path);
+		}
 	}
 
 	@Override
