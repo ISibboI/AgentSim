@@ -32,7 +32,7 @@ public class GoblinAttributes implements Attributes {
 	public GoblinAttributes(final Settings settings) {
 		_age = 0;
 		_saturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_SATURATION);
-		_saturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION);
+		_maxSaturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION);
 		_alive = true;
 	}
 
