@@ -39,10 +39,16 @@ public abstract class TaskExecutingAI implements AI {
 			_currentTask.update(random, tick);
 
 			if (_currentTask.isFinished()) {
+				boolean success = _currentTask.wasSuccessful();
 				_currentTask = null;
 
 				eventTaskFinished();
-				update(attributes, random, tick);
+
+				if (success) {
+					update(attributes, random, tick);
+				} else {
+					_idleTask.update(random, tick);
+				}
 			}
 		} else {
 			_currentTask = _taskQueue.poll();
@@ -57,6 +63,7 @@ public abstract class TaskExecutingAI implements AI {
 					_firedExecutionFinished = true;
 				}
 
+				eventExecutingIdleTask();
 				_idleTask.update(random, tick);
 			}
 		}
@@ -120,4 +127,28 @@ public abstract class TaskExecutingAI implements AI {
 	 * Fired when all tasks have been executed.
 	 */
 	protected abstract void eventExecutionFinished();
+
+	/**
+	 * Fired when the idle task is executing.
+	 * It it fired once per update, until another task is executing.
+	 */
+	protected abstract void eventExecutingIdleTask();
+
+	/**
+	 * Returns a guess of the time that executing all tasks, enclosing the currently executing task, takes.
+	 * @return The guessed time to finish all tasks.
+	 */
+	public int guessDurationToFinishQueue() {
+		int duration = 0;
+
+		for (Task task : _taskQueue) {
+			duration += task.guessDuration();
+		}
+
+		if (_currentTask != null) {
+			duration += _currentTask.guessDuration();
+		}
+
+		return duration;
+	}
 }

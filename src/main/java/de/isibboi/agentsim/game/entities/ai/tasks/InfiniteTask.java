@@ -26,4 +26,9 @@ public abstract class InfiniteTask implements Task {
 		// Ignore
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		// Doesn't matter what is returned here, because infinite tasks are never completed.
+		return true;
+	}
 }

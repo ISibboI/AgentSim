@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.isibboi.agentsim.algorithm.AStarPathfinder;
 import de.isibboi.agentsim.algorithm.BlockadeMap;
 import de.isibboi.agentsim.algorithm.PathfindingAlgorithm;
@@ -20,11 +23,15 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  */
 public class MoveToTask implements Task {
+	private static final Logger _log = LogManager.getLogger(MoveToTask.class);
+
 	private final Point _target;
 	private final MapEntity _entity;
 	private final BlockadeMap _blockadeMap;
 
 	private final Queue<Movement> _movementQueue = new LinkedList<>();
+
+	private Movement _currentMovement;
 
 	/**
 	 * Creates an new task that moves the given Entity to the given target.
@@ -56,6 +63,7 @@ public class MoveToTask implements Task {
 
 	@Override
 	public int guessDuration() {
+		// TODO add guess if task was not started yet.
 		return _movementQueue.size();
 	}
 
@@ -72,11 +80,22 @@ public class MoveToTask implements Task {
 
 		if (path != null) {
 			_movementQueue.addAll(path);
+		} else {
+			_log.trace("Could not find a valid path.");
+		}
+
+		if (_movementQueue.isEmpty()) {
+			_movementQueue.add(Movement.NONE);
 		}
 	}
 
 	@Override
 	public void start() {
 		eventInformationUpdated();
+	}
+
+	@Override
+	public boolean wasSuccessful() {
+		return _entity.getLocation().equals(_target);
 	}
 }

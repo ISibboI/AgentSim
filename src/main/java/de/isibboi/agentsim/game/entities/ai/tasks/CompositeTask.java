@@ -16,6 +16,7 @@ import de.isibboi.agentsim.game.entities.Movement;
 public class CompositeTask implements Task {
 	private final Queue<Task> _taskQueue;
 	private final int _duration;
+	private boolean _wasSuccessful = true;
 
 	/**
 	 * Creates a new composite task executing the given queue.
@@ -38,7 +39,10 @@ public class CompositeTask implements Task {
 		_taskQueue.peek().update(random, tick);
 
 		if (_taskQueue.peek().isFinished()) {
-			_taskQueue.remove();
+			if (!_taskQueue.remove().wasSuccessful()) {
+				_taskQueue.clear();
+				_wasSuccessful = false;
+			}
 
 			if (!_taskQueue.isEmpty()) {
 				_taskQueue.peek().start();
@@ -74,5 +78,10 @@ public class CompositeTask implements Task {
 	@Override
 	public void start() {
 		_taskQueue.peek().start();
+	}
+
+	@Override
+	public boolean wasSuccessful() {
+		return _wasSuccessful;
 	}
 }

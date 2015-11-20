@@ -18,11 +18,8 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class AStarPathfinder implements PathfindingAlgorithm {
 	/**
-	 * Note: this class has a natural ordering that is inconsistent with equals.
-	 * 
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
-	 *
 	 */
 	private class AStarNode {
 		private final Point _location;

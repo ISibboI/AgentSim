@@ -84,4 +84,9 @@ public class LockLocationTask extends InfiniteTask {
 	public Entity getEntity() {
 		return _entity;
 	}
+
+	@Override
+	public boolean wasSuccessful() {
+		return true;
+	}
 }

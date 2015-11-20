@@ -34,11 +34,14 @@ public class GoblinSpawner {
 	/**
 	 * Spawns a goblin at the given location.
 	 * @param location The location
+	 * @return The goblin that was spawned.
 	 */
-	public void spawnGoblin(final Point location) {
+	public Goblin spawnGoblin(final Point location) {
 		Goblin goblin = new Goblin(_entityLocationManager, _goblinTaskFactory);
 		_entityLocationManager.getEntities().add(goblin);
 		_entityLocationManager.setLocation(goblin, location);
+
+		return goblin;
 	}
 
 	/**

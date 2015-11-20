@@ -17,6 +17,7 @@ public abstract class TimedTask implements Task {
 	private int _duration;
 	private int _timeLeft;
 	private boolean _eventFinishedFired;
+	private boolean _wasSuccessful = true;
 
 	/**
 	 * Creates a new timed task.
@@ -101,5 +102,11 @@ public abstract class TimedTask implements Task {
 	protected void fail() {
 		_eventFinishedFired = true;
 		_timeLeft = 0;
+		_wasSuccessful = false;
+	}
+
+	@Override
+	public boolean wasSuccessful() {
+		return _wasSuccessful;
 	}
 }

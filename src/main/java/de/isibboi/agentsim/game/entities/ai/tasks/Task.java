@@ -16,6 +16,12 @@ public interface Task extends Updateable {
 	boolean isFinished();
 
 	/**
+	 * Returns if the execution of this task was successful.
+	 * @return True if the execution of this task was successful.
+	 */
+	boolean wasSuccessful();
+
+	/**
 	 * Returns the movement order for the current step.
 	 * @return The movement order.
 	 */

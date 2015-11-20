@@ -1,5 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +13,7 @@ import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
+import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
@@ -59,6 +63,19 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 		_mapKnowledge = new ProviderBackedKnowledgeMap<>(knowledgeRepresentation, entityLocationManager.getMap());
 
+		// ---- Learn path to spawn
+		final int spawnRadius = entityLocationManager.getSettings().getInt(Settings.GAME_SPAWN_RADIUS);
+		List<Point> spawnPattern = new ArrayList<>((spawnRadius + 1) * (spawnRadius + 1));
+
+		for (int i = -spawnRadius; i <= spawnRadius; i++) {
+			for (int j = -spawnRadius; j <= spawnRadius; j++) {
+				spawnPattern.add(new Point(i, j));
+			}
+		}
+
+		_mapKnowledge.updateLocation(entityLocationManager.getMap().getSpawnPoint(), spawnPattern);
+		// ---- Learned path to spawn
+
 		setIdleTask(goblinTaskFactory.createIdleTask());
 	}
 
@@ -67,7 +84,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		explorePoint(location);
 
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-			enqueueTask(_goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager));
+			tryEnqueueTask(_goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager));
 		}
 	}
 
@@ -113,14 +130,47 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	@Override
 	public void eventTaskFinished() {
 		// Make entities move to spawn point if saturation is low.
-		if (!isExecuting() && _goblin.getAttributes().getSaturation() <= _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint())) {
-			enqueueTask(_goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin));
-		}
+		moveToSpawnIfNecessary();
 	}
 
 	@Override
 	protected void eventExecutionFinished() {
 		// Ignored
+	}
+
+	@Override
+	protected void eventExecutingIdleTask() {
+		moveToSpawnIfNecessary();
+	}
+
+	/**
+	 * Moves the goblin back to the spawn point, if it would be starving otherwise.
+	 */
+	protected void moveToSpawnIfNecessary() {
+		if (!isExecuting() && _goblin.getAttributes().getSaturation() <= _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint())) {
+			enqueueTask(_goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin));
+			_log.trace("Goblin moving back to spawn to prevent starvation.");
+		}
+	}
+
+	/**
+	 * Tries to enqueue the given task.
+	 * The task is only enqueued, if its execution does not make the goblin starve.
+	 * @param task The task to enqueue.
+	 * @return True if the task was enqueued, false otherwise.
+	 */
+	protected boolean tryEnqueueTask(final Task task) {
+		int currentDuration = guessDurationToFinishQueue();
+		int additionalDuration = task.guessDuration();
+		int moveHomeDuration = _entityLocationManager.getMap().getSpawnPoint().manhattanDistance(_goblin.getLocation());
+
+		if (currentDuration + additionalDuration + moveHomeDuration < _goblin.getAttributes().getSaturation()) {
+			enqueueTask(task);
+			return true;
+		} else {
+			moveToSpawnIfNecessary();
+			return false;
+		}
 	}
 
 	/**

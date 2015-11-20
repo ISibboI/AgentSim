@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -45,7 +46,9 @@ public class MiningTask extends MotionlessTimedTask {
 	@Override
 	protected void eventFinished() {
 		_entityLocationManager.getMap().setMaterial(_miningLocation, Environment.MATERIAL_AIR);
-		_entityLocationManager.getGoblinSpawner().spawnGoblin(_miningLocation);
+		Goblin newGoblin = _entityLocationManager.getGoblinSpawner().spawnGoblin(_miningLocation);
+
+		newGoblin.collideWith(_entity);
 
 		_log.trace("MiningTask finished: " + _entity + " mined a " + _minedMaterial + " at " + _miningLocation);
 	}
@@ -61,6 +64,7 @@ public class MiningTask extends MotionlessTimedTask {
 
 		if (!location.isNeighborOf(_miningLocation) || _minedMaterial == Environment.MATERIAL_AIR) {
 			fail();
+			_log.trace("MiningTask failed: " + _entity + " tried to mine a " + _minedMaterial + " at " + _miningLocation + " from " + location);
 		}
 	}
 }
