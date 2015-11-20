@@ -41,11 +41,7 @@ public abstract class TaskExecutingAI implements AI {
 			if (_currentTask.isFinished()) {
 				_currentTask = null;
 
-				if (!_firedExecutionFinished) {
-					eventExecutionFinished();
-					_firedExecutionFinished = true;
-				}
-
+				eventTaskFinished();
 				update(attributes, random, tick);
 			}
 		} else {
@@ -56,6 +52,11 @@ public abstract class TaskExecutingAI implements AI {
 				_currentTask.start();
 				update(attributes, random, tick);
 			} else {
+				if (!_firedExecutionFinished) {
+					eventExecutionFinished();
+					_firedExecutionFinished = true;
+				}
+
 				_idleTask.update(random, tick);
 			}
 		}
