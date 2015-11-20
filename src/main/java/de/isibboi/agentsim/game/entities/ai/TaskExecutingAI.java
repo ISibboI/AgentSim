@@ -2,7 +2,6 @@ package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.LinkedList;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Random;
 
 import de.isibboi.agentsim.game.GameUpdateException;
@@ -16,7 +15,7 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
  * @since 0.3.0
  */
 public abstract class TaskExecutingAI implements AI {
-	private final Queue<Task> _taskQueue;
+	private final LinkedList<Task> _taskQueue;
 	private Task _currentTask;
 
 	/**
@@ -42,11 +41,16 @@ public abstract class TaskExecutingAI implements AI {
 				boolean success = _currentTask.wasSuccessful();
 				_currentTask = null;
 
-				eventTaskFinished();
-
 				if (success) {
+					if (_taskQueue.isEmpty()) {
+						eventTaskFinished(1);
+					} else {
+						eventTaskFinished(_taskQueue.peek().guessDuration());
+					}
+
 					update(attributes, random, tick);
 				} else {
+					eventTaskFinished(1);
 					_idleTask.update(random, tick);
 				}
 			}
@@ -93,6 +97,16 @@ public abstract class TaskExecutingAI implements AI {
 	}
 
 	/**
+	 * Enqueues the given task at the front of the queue.
+	 * @param task The task.
+	 */
+	public void enqueueTaskFront(final Task task) {
+		Objects.requireNonNull(task);
+
+		_taskQueue.add(0, task);
+	}
+
+	/**
 	 * Enqueues the given tasks.
 	 * @param tasks The tasks.
 	 */
@@ -120,8 +134,9 @@ public abstract class TaskExecutingAI implements AI {
 
 	/**
 	 * Fired when the execution of a task has been finished.
+	 * @param nextTaskDuration The guesstimated duration of the next task.
 	 */
-	protected abstract void eventTaskFinished();
+	protected abstract void eventTaskFinished(int nextTaskDuration);
 
 	/**
 	 * Fired when all tasks have been executed.

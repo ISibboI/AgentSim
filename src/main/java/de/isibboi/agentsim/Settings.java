@@ -37,6 +37,9 @@ public class Settings {
 	public static final String GAME_ENTITIES_GOBLIN_INITIAL_SATURATION = "game.entities.goblin.initialSaturation";
 	public static final String GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION = "game.entities.goblin.initialMaxSaturation";
 
+	public static final String GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR = "game.ai.saturationBufferDistanceFactor";
+	public static final String GAME_AI_SATURATION_BUFFER_MINIMUM = "game.ai.saturationBufferMinimum";
+
 	public static final String CORE_TARGET_FRAME_RATE = "core.targetFrameRate";
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
 	public static final String CORE_MAX_UPDATES_PER_FRAME = "core.maxUpdatesPerFrame";
@@ -53,6 +56,7 @@ public class Settings {
 			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY, UI_SELECTION_MODE,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
 			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION,
+			GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR, GAME_AI_SATURATION_BUFFER_MINIMUM,
 			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME,
 			CORE_RENDER_TRANSITION_AMOUNT,
 			CORE_UPDATE_COLLISION_THREAD_COUNT,
@@ -113,6 +117,9 @@ public class Settings {
 
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "50");
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION, "100");
+
+		_defaults.setProperty(GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR, "1.05");
+		_defaults.setProperty(GAME_AI_SATURATION_BUFFER_MINIMUM, "5");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
 		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "1");
@@ -207,6 +214,22 @@ public class Settings {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			_log.error("Setting is not an int: (" + key + ": " + value + ")", e);
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Returns the value of a given setting as float.
+	 * @param key The name of the setting.
+	 * @return The value of the setting.
+	 */
+	public float getFloat(final String key) {
+		String value = get(key);
+
+		try {
+			return Float.parseFloat(value);
+		} catch (NumberFormatException e) {
+			_log.error("Setting is not a float: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}
