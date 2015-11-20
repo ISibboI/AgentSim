@@ -11,4 +11,10 @@ public interface Entity extends Drawable, Updateable, Selectable {
 	 * @param entity The other entity.
 	 */
 	void collideWith(Entity entity);
+
+	/**
+	 * If this entity blocks buildings, it has to be moved away before a building can be built at its location.
+	 * @return True if this entity blocks buildings.
+	 */
+	boolean blocksBuildings();
 }

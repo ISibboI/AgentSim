@@ -4,6 +4,8 @@ import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Entities;
 import de.isibboi.agentsim.game.entities.GoblinSpawner;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
+import de.isibboi.agentsim.game.entities.buildings.Building;
+import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.MapGenerator;
 
@@ -24,6 +26,10 @@ public class DefaultGameInitializer implements GameInitializer {
 		_entities = new Entities();
 		_entityLocationManager = new EntityLocationManager(_map, _entities, settings);
 		_entityLocationManager.setGoblinSpawner(new GoblinSpawner(_entityLocationManager, new GoblinTaskFactory(), settings));
+
+		Building swarmMainBuilding = new SwarmMainBuilding(_entityLocationManager);
+
+		_entityLocationManager.addBuilding(swarmMainBuilding, _entityLocationManager.getMap().getSpawnPoint());
 
 		_entityLocationManager.getGoblinSpawner().spawnGoblins(settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
 	}

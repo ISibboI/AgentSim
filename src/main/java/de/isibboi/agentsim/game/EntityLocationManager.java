@@ -12,6 +12,7 @@ import de.isibboi.agentsim.game.entities.Entities;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.GoblinSpawner;
 import de.isibboi.agentsim.game.entities.Updateable;
+import de.isibboi.agentsim.game.entities.buildings.Building;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -68,7 +69,7 @@ public class EntityLocationManager implements Updateable {
 	 * @param self The entity that should be excluded.
 	 * @return A collection containing all entities at the given point, except self.
 	 */
-	public Collection<Entity> getEntitesAt(final Point location, final Entity self) {
+	public Collection<Entity> getEntitiesAt(final Point location, final Entity self) {
 		Collection<Entity> result = new ArrayList<>();
 		result.addAll(_entityLocations.get(location));
 		result.remove(self);
@@ -180,5 +181,33 @@ public class EntityLocationManager implements Updateable {
 	 */
 	public void shutdown() {
 		_entityCollider.shutdown();
+	}
+
+	/**
+	 * Returns if a new building can be built at the specified location.
+	 * @param location The location.
+	 * @return True if a new building can be built at the specified location.
+	 */
+	public boolean canBuildAt(final Point location) {
+		for (Entity entity : getEntitiesAt(location)) {
+			if (entity.blocksBuildings()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param building The building to place.
+	 * @param location The location of the new building.
+	 */
+	public void addBuilding(final Building building, final Point location) {
+		if (!canBuildAt(location)) {
+			throw new IllegalArgumentException("Cannot build at the given location!");
+		}
+
+		building.setLocation(location);
+		_entities.add(building);
 	}
 }

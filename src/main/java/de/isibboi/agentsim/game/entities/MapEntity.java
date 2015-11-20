@@ -130,4 +130,9 @@ public abstract class MapEntity implements Entity {
 	public boolean isSelected() {
 		return _isSelected;
 	}
+
+	@Override
+	public int getDrawPriority() {
+		return 10;
+	}
 }

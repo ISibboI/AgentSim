@@ -64,4 +64,9 @@ public abstract class UIAbstractComponent implements UIComponent {
 	public int getHeight() {
 		return _height;
 	}
+
+	@Override
+	public int getDrawPriority() {
+		return 1000;
+	}
 }

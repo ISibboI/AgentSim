@@ -135,4 +135,9 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 			entity.draw(g, transition);
 		}
 	}
+
+	@Override
+	public int getDrawPriority() {
+		return Integer.MAX_VALUE;
+	}
 }

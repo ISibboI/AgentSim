@@ -119,4 +119,9 @@ public class Goblin extends MapEntity {
 	public GoblinAttributes getAttributes() {
 		return _attributes;
 	}
+
+	@Override
+	public boolean blocksBuildings() {
+		return false;
+	}
 }

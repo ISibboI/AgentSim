@@ -177,4 +177,9 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	public Material getKnowledge(final Point location) {
 		return getMaterialAt(location);
 	}
+
+	@Override
+	public int getDrawPriority() {
+		return -10;
+	}
 }

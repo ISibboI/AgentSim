@@ -18,4 +18,12 @@ public interface Drawable {
 	 * @param transition A value between zero and one.
 	 */
 	void draw(Graphics2D g, double transition);
+
+	/**
+	 * Returns the draw priority of this drawable.
+	 * If it is high, the drawable is drawn later and thus won't be masked easily.
+	 * 
+	 * @return The drawing priority.
+	 */
+	int getDrawPriority();
 }

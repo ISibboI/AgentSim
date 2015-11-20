@@ -263,4 +263,9 @@ public class EntitySelectionManager implements UIMouseInputListener, Drawable {
 			_renderer.drawEntitySelectionRectangle(Util.createRectangle(_startingPoint, _currentPoint));
 		}
 	}
+
+	@Override
+	public int getDrawPriority() {
+		return 100;
+	}
 }
