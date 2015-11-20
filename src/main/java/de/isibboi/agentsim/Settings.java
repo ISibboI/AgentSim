@@ -112,7 +112,7 @@ public class Settings {
 		_defaults.setProperty(GAME_SCALE, "4");
 
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
-		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
+		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION, "500");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
 		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "1");
