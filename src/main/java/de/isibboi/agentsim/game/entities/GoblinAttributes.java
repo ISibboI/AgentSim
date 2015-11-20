@@ -10,6 +10,7 @@ import de.isibboi.agentsim.Settings;
 public class GoblinAttributes implements Attributes {
 	private int _age;
 	private int _saturation;
+	private int _maxSaturation;
 	private boolean _alive;
 
 	/**
@@ -17,9 +18,10 @@ public class GoblinAttributes implements Attributes {
 	 * @param age The age of the goblin.
 	 * @param saturation The saturation of the goblin.
 	 */
-	public GoblinAttributes(final int age, final int saturation) {
+	public GoblinAttributes(final int age, final int saturation, final int maxSaturation) {
 		_age = age;
 		_saturation = saturation;
+		_maxSaturation = maxSaturation;
 		_alive = true;
 	}
 
@@ -30,6 +32,7 @@ public class GoblinAttributes implements Attributes {
 	public GoblinAttributes(final Settings settings) {
 		_age = 0;
 		_saturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_SATURATION);
+		_saturation = settings.getInt(Settings.GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION);
 		_alive = true;
 	}
 
@@ -79,5 +82,16 @@ public class GoblinAttributes implements Attributes {
 	 */
 	public void setAlive(final boolean alive) {
 		_alive = alive;
+	}
+
+	/**
+	 * Feeds the goblin until it is full.
+	 * @return The saturation difference created by this method.
+	 */
+	public int feedCompletely() {
+		int feedAmount = _maxSaturation - _saturation;
+		_saturation = _maxSaturation;
+
+		return feedAmount;
 	}
 }

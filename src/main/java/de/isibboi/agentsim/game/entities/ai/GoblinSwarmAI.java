@@ -7,11 +7,13 @@ import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
+import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
- * An AI system that simulates a swarm of autonomous agents. Agents can only share knowledge if they meet another agent.
+ * An AI system that simulates a swarm of autonomous agents.
+ * Agents can share knowledge if they meet another agent.
  * 
  * @author Sebastian Schmidt
  * @since 0.2.0
@@ -71,6 +73,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 			Goblin g = (Goblin) entity;
 			GoblinSwarmAI ai = (GoblinSwarmAI) g.getAI();
 			exchangeInformation(ai);
+		} else if (entity instanceof SwarmMainBuilding) {
+			_goblin.getAttributes().feedCompletely();
 		}
 	}
 

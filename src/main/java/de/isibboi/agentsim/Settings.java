@@ -35,6 +35,7 @@ public class Settings {
 	public static final String GAME_SCALE = "game.scale";
 
 	public static final String GAME_ENTITIES_GOBLIN_INITIAL_SATURATION = "game.entities.goblin.initialSaturation";
+	public static final String GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION = "game.entities.goblin.initialMaxSaturation";
 
 	public static final String CORE_TARGET_FRAME_RATE = "core.targetFrameRate";
 	public static final String CORE_TARGET_UPDATE_RATE = "core.targetUpdateRate";
@@ -51,7 +52,7 @@ public class Settings {
 	private static final Set<String> ALL_SETTINGS = new HashSet<>(Arrays.asList(
 			UI_WIDTH, UI_HEIGHT, UI_X_POS, UI_Y_POS, UI_FONT_FAMILY, UI_SELECTION_MODE,
 			GAME_INITIAL_GOBLIN_COUNT, GAME_SPAWN_RADIUS, GAME_SCALE,
-			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION,
+			GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION,
 			CORE_TARGET_FRAME_RATE, CORE_TARGET_UPDATE_RATE, CORE_MAX_UPDATES_PER_FRAME,
 			CORE_RENDER_TRANSITION_AMOUNT,
 			CORE_UPDATE_COLLISION_THREAD_COUNT,
@@ -110,6 +111,7 @@ public class Settings {
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 
+		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "500");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
