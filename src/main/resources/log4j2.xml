@@ -6,7 +6,7 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Root level="debug">
+		<Root level="trace">
 			<AppenderRef ref="Console" />
 		</Root>
 		<Logger name="de.isibboi.agentsim.game.map.GameMap" level="info">
@@ -16,6 +16,8 @@
 		<Logger name="de.isibboi.agentsim.ui.component.UIButton"
 			level="info"></Logger>
 		<Logger name="de.isibboi.agentsim.game.entities.Entities"
+			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.ai.tasks.MiningTask"
 			level="info"></Logger>
 	</Loggers>
 </Configuration>

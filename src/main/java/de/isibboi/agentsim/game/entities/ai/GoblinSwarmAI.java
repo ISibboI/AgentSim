@@ -1,5 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.BlockadeMap;
 import de.isibboi.agentsim.algorithm.KnowledgeBasedBlockadeMap;
@@ -19,6 +22,8 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.2.0
  */
 public class GoblinSwarmAI extends TaskExecutingAI {
+	private static final Logger _log = LogManager.getLogger(GoblinSwarmAI.class);
+
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Goblin _goblin;
@@ -74,7 +79,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 			GoblinSwarmAI ai = (GoblinSwarmAI) g.getAI();
 			exchangeInformation(ai);
 		} else if (entity instanceof SwarmMainBuilding) {
-			_goblin.getAttributes().feedCompletely();
+			int feedAmount = _goblin.getAttributes().feedCompletely();
+			_log.trace("A goblin was fed at main building. It ate " + feedAmount + " units.");
 		}
 	}
 

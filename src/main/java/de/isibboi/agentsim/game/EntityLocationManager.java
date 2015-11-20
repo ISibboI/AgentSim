@@ -129,6 +129,8 @@ public class EntityLocationManager implements Updateable {
 				Entity[] entities = new Entity[tmpEntities.size()];
 				entities = tmpEntities.toArray(entities);
 
+				// Let all entities collide just one time.
+				// Do not implement asymmetric collisions!
 				for (int i = 0; i < entities.length; i++) {
 					for (int j = i + 1; j < entities.length; j++) {
 						_entityCollider.collide(entities[i], entities[j]);

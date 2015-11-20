@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.buildings;
 
 import de.isibboi.agentsim.game.EntityLocationManager;
+import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.MapEntity;
 
 /**
@@ -20,11 +21,16 @@ public abstract class Building extends MapEntity {
 	 */
 	public Building(EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int getDrawPriority() {
 		return 0;
+	}
+
+	@Override
+	public void collideWith(Entity entity) {
+		// Let other entities handle the collision.
+		entity.collideWith(this);
 	}
 }

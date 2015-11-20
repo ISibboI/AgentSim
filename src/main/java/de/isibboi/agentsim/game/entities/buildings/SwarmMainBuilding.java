@@ -4,11 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.isibboi.agentsim.game.EntityLocationManager;
-import de.isibboi.agentsim.game.entities.Entity;
 
 /**
  * The main building of the swarm.
- * It is to be decided what it does exactly.
+ * It is to be decided what it exactly does.
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
@@ -24,13 +23,6 @@ public class SwarmMainBuilding extends Building {
 	 */
 	public SwarmMainBuilding(EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void collideWith(Entity entity) {
-		// TODO Auto-generated method stub
-		// Give food, for example.
 	}
 
 	@Override
