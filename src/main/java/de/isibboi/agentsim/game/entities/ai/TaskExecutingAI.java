@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
@@ -15,6 +18,8 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
  * @since 0.3.0
  */
 public abstract class TaskExecutingAI implements AI {
+	private static final Logger _log = LogManager.getLogger(TaskExecutingAI.class);
+
 	private final LinkedList<Task> _taskQueue;
 	private Task _currentTask;
 
@@ -38,21 +43,7 @@ public abstract class TaskExecutingAI implements AI {
 			_currentTask.update(random, tick);
 
 			if (_currentTask.isFinished()) {
-				boolean success = _currentTask.wasSuccessful();
-				_currentTask = null;
-
-				if (success) {
-					if (_taskQueue.isEmpty()) {
-						eventTaskFinished(1);
-					} else {
-						eventTaskFinished(_taskQueue.peek().guessDuration());
-					}
-
-					update(attributes, random, tick);
-				} else {
-					eventTaskFinished(1);
-					_idleTask.update(random, tick);
-				}
+				finishTask(attributes, random, tick);
 			}
 		} else {
 			_currentTask = _taskQueue.poll();
@@ -60,7 +51,11 @@ public abstract class TaskExecutingAI implements AI {
 			if (_currentTask != null) {
 				_firedExecutionFinished = false;
 				_currentTask.start();
-				update(attributes, random, tick);
+
+				// If the task finishes immediately.
+				if (_currentTask.isFinished()) {
+					finishTask(attributes, random, tick);
+				}
 			} else {
 				if (!_firedExecutionFinished) {
 					eventExecutionFinished();
@@ -70,6 +65,35 @@ public abstract class TaskExecutingAI implements AI {
 				eventExecutingIdleTask();
 				_idleTask.update(random, tick);
 			}
+		}
+	}
+
+	/**
+	 * Called when a task is finished.
+	 * Fires the correct events.
+	 * 
+	 * @param attributes The current attributes of the controlled entity.
+	 * @param random The pseudo random number generator used for randomness.
+	 * @param tick The current tick.
+	 * @throws GameUpdateException If finishing the task goes wrong. 
+	 */
+	private void finishTask(final Attributes attributes, final Random random, final int tick) throws GameUpdateException {
+		Task lastTask = _currentTask;
+		_currentTask = null;
+
+		if (lastTask.wasSuccessful()) {
+			if (_taskQueue.isEmpty()) {
+				eventTaskFinished(lastTask, 1);
+			} else {
+				eventTaskFinished(lastTask, _taskQueue.peek().guessDuration());
+			}
+
+			update(attributes, random, tick);
+		} else {
+			_log.trace("Task was not executed successfully: " + lastTask);
+
+			eventTaskFinished(lastTask, 1);
+			_idleTask.update(random, tick);
 		}
 	}
 
@@ -104,6 +128,7 @@ public abstract class TaskExecutingAI implements AI {
 		Objects.requireNonNull(task);
 
 		_taskQueue.add(0, task);
+		_log.trace("Enqueued task at front." + ((_currentTask == null) ? "" : " The AI is currently executing another task."));
 	}
 
 	/**
@@ -134,9 +159,10 @@ public abstract class TaskExecutingAI implements AI {
 
 	/**
 	 * Fired when the execution of a task has been finished.
+	 * @param task The task that was finished.
 	 * @param nextTaskDuration The guesstimated duration of the next task.
 	 */
-	protected abstract void eventTaskFinished(int nextTaskDuration);
+	protected abstract void eventTaskFinished(Task task, int nextTaskDuration);
 
 	/**
 	 * Fired when all tasks have been executed.

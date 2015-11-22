@@ -2,6 +2,8 @@ package de.isibboi.agentsim.game.entities.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,9 @@ import de.isibboi.agentsim.game.map.Point;
 public class GoblinSwarmAI extends TaskExecutingAI {
 	private static final Logger _log = LogManager.getLogger(GoblinSwarmAI.class);
 
+	private static AtomicInteger _idCounter = new AtomicInteger(0);
+	private final int _id = _idCounter.incrementAndGet();
+
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Goblin _goblin;
@@ -35,6 +40,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	private final float _saturationBufferDistanceFactor;
 	private final int _saturationBufferMinimum;
+
+	private Task _moveToSpawnTask = null;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
@@ -136,9 +143,16 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	}
 
 	@Override
-	public void eventTaskFinished(final int nextTaskDuration) {
+	public void eventTaskFinished(final Task task, final int nextTaskDuration) {
+		Objects.requireNonNull(task);
+
 		// Make entities move to spawn point if saturation is low.
 		moveToSpawnIfNecessary(nextTaskDuration);
+
+		// Goblin has reached spawn.
+		if (task == _moveToSpawnTask) {
+			_moveToSpawnTask = null;
+		}
 	}
 
 	@Override
@@ -156,14 +170,22 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	 * @param nextTaskDuration The guesstimated duration of the next task.
 	 */
 	protected void moveToSpawnIfNecessary(final int nextTaskDuration) {
+		// Prevent moving to spawn more than once.
+		if (_moveToSpawnTask != null) {
+			return;
+		}
+
 		int distanceToHome = _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint());
 		int saturation = _goblin.getAttributes().getSaturation();
 		saturation /= _saturationBufferDistanceFactor;
 		saturation -= _saturationBufferMinimum;
 
 		if (saturation <= distanceToHome + nextTaskDuration) {
-			enqueueTaskFront(_goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin));
-			_log.trace("Goblin moving back to spawn to prevent starvation.");
+			_moveToSpawnTask = _goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin);
+			enqueueTaskFront(_moveToSpawnTask);
+
+			_log.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
+					+ " ticks, and the current adjusted saturation is " + saturation + ".");
 		}
 	}
 

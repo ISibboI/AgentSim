@@ -45,6 +45,8 @@ public interface Task extends Updateable {
 
 	/**
 	 * Starts the task.
+	 * This method should do some preparations that have to be done just once.
+	 * After return of this method, the first movement should be ready.
 	 */
 	void start();
 }

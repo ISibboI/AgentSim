@@ -31,8 +31,6 @@ public class MoveToTask implements Task {
 
 	private final Queue<Movement> _movementQueue = new LinkedList<>();
 
-	private Movement _currentMovement;
-
 	/**
 	 * Creates an new task that moves the given Entity to the given target.
 	 * 
@@ -49,6 +47,10 @@ public class MoveToTask implements Task {
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
 		_movementQueue.remove();
+
+		if (_movementQueue.isEmpty() && !wasSuccessful()) {
+			_log.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
+		}
 	}
 
 	@Override
