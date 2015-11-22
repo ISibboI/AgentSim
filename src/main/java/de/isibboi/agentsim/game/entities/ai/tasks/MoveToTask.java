@@ -22,7 +22,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class MoveToTask implements Task {
+public class MoveToTask extends AbstractTask {
 	private static final Logger _log = LogManager.getLogger(MoveToTask.class);
 
 	private final Point _target;

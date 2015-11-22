@@ -5,7 +5,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public abstract class InfiniteTask implements Task {
+public abstract class InfiniteTask extends AbstractTask {
 	@Override
 	public boolean isFinished() {
 		throw new UnsupportedOperationException("Operation not supported!");

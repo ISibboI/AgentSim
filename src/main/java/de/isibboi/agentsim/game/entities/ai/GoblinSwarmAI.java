@@ -99,7 +99,9 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		explorePoint(location);
 
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-			tryEnqueueTask(_goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager));
+			Task miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
+			miningTask.setPriority(1);
+			tryEnqueueTask(miningTask);
 		}
 	}
 
@@ -183,7 +185,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 		if (saturation <= distanceToHome + nextTaskDuration) {
 			_moveToSpawnTask = _goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin);
-			enqueueTaskFront(_moveToSpawnTask);
+			_moveToSpawnTask.setPriority(10_000); // TODO replace with enqueueTaskImmediately, create a decorator for the selector.
+			enqueueTask(_moveToSpawnTask);
 
 			_log.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
 					+ " ticks, and the current adjusted saturation is " + saturation + ".");

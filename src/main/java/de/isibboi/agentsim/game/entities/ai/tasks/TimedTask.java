@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
  * @author Sebastian Schmidt
  * @since 0.2.0 
  */
-public abstract class TimedTask implements Task {
+public abstract class TimedTask extends AbstractTask {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private int _duration;

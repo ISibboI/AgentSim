@@ -13,7 +13,7 @@ import de.isibboi.agentsim.game.entities.Movement;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class CompositeTask implements Task {
+public class CompositeTask extends AbstractTask {
 	private final Queue<Task> _taskQueue;
 	private final int _duration;
 	private boolean _wasSuccessful = true;

@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
+import de.isibboi.agentsim.algorithm.PriorityOrdered;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.Updateable;
 
@@ -8,7 +9,7 @@ import de.isibboi.agentsim.game.entities.Updateable;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public interface Task extends Updateable {
+public interface Task extends Updateable, PriorityOrdered {
 	/**
 	 * Returns true if the task is finished.
 	 * @return True if the task is finished.
@@ -49,4 +50,18 @@ public interface Task extends Updateable {
 	 * After return of this method, the first movement should be ready.
 	 */
 	void start();
+
+	/**
+	 * Returns the priority of this task.
+	 * The higher the priority, the earlier the task will be executed.
+	 * @return The priority.
+	 */
+	int getPriority();
+
+	/**
+	 * Sets the priority of this task.
+	 * 
+	 * @param priority The priority, must be greater than or equal to zero.
+	 */
+	void setPriority(int priority);
 }

@@ -1,12 +1,12 @@
 package de.isibboi.agentsim.game.entities.ai;
 
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.isibboi.agentsim.algorithm.PrioritizedRandomSelector;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
@@ -20,7 +20,7 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 public abstract class TaskExecutingAI implements AI {
 	private static final Logger _log = LogManager.getLogger(TaskExecutingAI.class);
 
-	private final LinkedList<Task> _taskQueue;
+	private final PrioritizedRandomSelector<Task> _taskSelector;
 	private Task _currentTask;
 
 	/**
@@ -33,7 +33,7 @@ public abstract class TaskExecutingAI implements AI {
 	 * Creates a new object.
 	 */
 	public TaskExecutingAI() {
-		_taskQueue = new LinkedList<>();
+		_taskSelector = new PrioritizedRandomSelector<>();
 		_firedExecutionFinished = false;
 	}
 
@@ -46,25 +46,7 @@ public abstract class TaskExecutingAI implements AI {
 				finishTask(attributes, random, tick);
 			}
 		} else {
-			_currentTask = _taskQueue.poll();
-
-			if (_currentTask != null) {
-				_firedExecutionFinished = false;
-				_currentTask.start();
-
-				// If the task finishes immediately.
-				if (_currentTask.isFinished()) {
-					finishTask(attributes, random, tick);
-				}
-			} else {
-				if (!_firedExecutionFinished) {
-					eventExecutionFinished();
-					_firedExecutionFinished = true;
-				}
-
-				eventExecutingIdleTask();
-				_idleTask.update(random, tick);
-			}
+			startNextTask(_taskSelector.select(), attributes, random, tick);
 		}
 	}
 
@@ -82,17 +64,53 @@ public abstract class TaskExecutingAI implements AI {
 		_currentTask = null;
 
 		if (lastTask.wasSuccessful()) {
-			if (_taskQueue.isEmpty()) {
+			if (_taskSelector.isEmpty()) {
 				eventTaskFinished(lastTask, 1);
+				update(attributes, random, tick);
 			} else {
-				eventTaskFinished(lastTask, _taskQueue.peek().guessDuration());
+				Task nextTask = _taskSelector.select();
+				eventTaskFinished(lastTask, nextTask.guessDuration());
+				startNextTask(nextTask, attributes, random, tick);
 			}
-
-			update(attributes, random, tick);
 		} else {
 			_log.trace("Task was not executed successfully: " + lastTask);
 
 			eventTaskFinished(lastTask, 1);
+			_idleTask.update(random, tick);
+		}
+	}
+
+	/**
+	 * Starts the given task.
+	 * Must not be called if {@link #_currentTask} is not {@code null}.
+	 * 
+	 * @param attributes The current attributes of the controlled entity.
+	 * @param random The pseudo random number generator used for randomness.
+	 * @param tick The current tick.
+	 * @throws GameUpdateException If finishing the task goes wrong. 
+	 */
+	private void startNextTask(final Task task, final Attributes attributes, final Random random, final int tick) throws GameUpdateException {
+		if (_currentTask != null) {
+			throw new IllegalStateException("Cannot start next task before current one is finished.");
+		}
+
+		_currentTask = task;
+
+		if (_currentTask != null) {
+			_firedExecutionFinished = false;
+			_currentTask.start();
+
+			// If the task finishes immediately.
+			if (_currentTask.isFinished()) {
+				finishTask(attributes, random, tick);
+			}
+		} else {
+			if (!_firedExecutionFinished) {
+				eventExecutionFinished();
+				_firedExecutionFinished = true;
+			}
+
+			eventExecutingIdleTask();
 			_idleTask.update(random, tick);
 		}
 	}
@@ -117,18 +135,7 @@ public abstract class TaskExecutingAI implements AI {
 	public void enqueueTask(final Task task) {
 		Objects.requireNonNull(task);
 
-		_taskQueue.add(task);
-	}
-
-	/**
-	 * Enqueues the given task at the front of the queue.
-	 * @param task The task.
-	 */
-	public void enqueueTaskFront(final Task task) {
-		Objects.requireNonNull(task);
-
-		_taskQueue.add(0, task);
-		_log.trace("Enqueued task at front." + ((_currentTask == null) ? "" : " The AI is currently executing another task."));
+		_taskSelector.add(task);
 	}
 
 	/**
@@ -182,7 +189,7 @@ public abstract class TaskExecutingAI implements AI {
 	public int guessDurationToFinishQueue() {
 		int duration = 0;
 
-		for (Task task : _taskQueue) {
+		for (Task task : _taskSelector.getData()) {
 			duration += task.guessDuration();
 		}
 
