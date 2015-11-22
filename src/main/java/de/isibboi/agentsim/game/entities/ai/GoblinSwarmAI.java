@@ -168,11 +168,12 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	/**
 	 * Moves the goblin back to the spawn point, if it would be starving otherwise.
 	 * @param nextTaskDuration The guesstimated duration of the next task.
+	 * @return True if the goblin is moving to spawn as a result of calling this method, false otherwise.
 	 */
-	protected void moveToSpawnIfNecessary(final int nextTaskDuration) {
+	protected boolean moveToSpawnIfNecessary(final int nextTaskDuration) {
 		// Prevent moving to spawn more than once.
 		if (_moveToSpawnTask != null) {
-			return;
+			return false;
 		}
 
 		int distanceToHome = _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint());
@@ -186,7 +187,10 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 			_log.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
 					+ " ticks, and the current adjusted saturation is " + saturation + ".");
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
