@@ -28,10 +28,10 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.2.0
  */
 public class GoblinSwarmAI extends TaskExecutingAI {
-	private static final Logger _log = LogManager.getLogger(GoblinSwarmAI.class);
+	private static final Logger LOG = LogManager.getLogger(GoblinSwarmAI.class);
 
-	private static AtomicInteger _idCounter = new AtomicInteger(0);
-	private final int _id = _idCounter.incrementAndGet();
+	private static AtomicInteger idCounter = new AtomicInteger(0);
+	private final int _id = idCounter.incrementAndGet();
 
 	private final EntityLocationManager _entityLocationManager;
 	private final GoblinTaskFactory _goblinTaskFactory;
@@ -114,7 +114,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 			exchangeInformation(ai);
 		} else if (entity instanceof SwarmMainBuilding) {
 			int feedAmount = _goblin.getAttributes().feedCompletely();
-			_log.trace("A goblin was fed at main building. It ate " + feedAmount + " units.");
+			LOG.trace("A goblin was fed at main building. It ate " + feedAmount + " units.");
 		}
 	}
 
@@ -188,7 +188,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 			_moveToSpawnTask.setPriority(10_000); // TODO replace with enqueueTaskImmediately, create a decorator for the selector.
 			enqueueTask(_moveToSpawnTask);
 
-			_log.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
+			LOG.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
 					+ " ticks, and the current adjusted saturation is " + saturation + ".");
 			return true;
 		}

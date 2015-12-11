@@ -15,6 +15,7 @@ import com.google.common.collect.TreeMultiset;
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
+ * @param <T> The element type.
  */
 public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Selector<T> {
 	private final SortedMultiset<T> _data = TreeMultiset.create(new PriorityComparator());
@@ -23,7 +24,7 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Sel
 	private int _prioritySum;
 
 	@Override
-	public void add(T element) {
+	public void add(final T element) {
 		if (element.getPriority() < 0) {
 			throw new IllegalArgumentException("Priority is negative.");
 		}

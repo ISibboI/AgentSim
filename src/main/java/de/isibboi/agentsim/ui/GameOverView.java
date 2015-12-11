@@ -16,7 +16,6 @@ import de.isibboi.agentsim.ui.event.UserActionEvent;
  * @since 0.3.0
  */
 public class GameOverView extends UIView {
-	private final Game _game;
 	private final AgentFrame _agentFrame;
 
 	private UIButton _restartButton;
@@ -32,7 +31,6 @@ public class GameOverView extends UIView {
 	public GameOverView(final Renderer renderer, final Settings settings, final Game game, final AgentFrame agentFrame) {
 		super(renderer, settings);
 
-		_game = game;
 		_agentFrame = agentFrame;
 
 		initUI();

@@ -17,6 +17,7 @@ public class GoblinAttributes implements Attributes {
 	 * Creates a new object initializing all the attributes.
 	 * @param age The age of the goblin.
 	 * @param saturation The saturation of the goblin.
+	 * @param maxSaturation The maximum saturation of the goblin.
 	 */
 	public GoblinAttributes(final int age, final int saturation, final int maxSaturation) {
 		_age = age;

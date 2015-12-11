@@ -19,7 +19,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.1.0
  */
 public class Goblin extends MapEntity {
-	private static final Logger _log = LogManager.getLogger(Goblin.class);
+	private static final Logger LOG = LogManager.getLogger(Goblin.class);
 
 	private final Color _color = new Color(0x55bb55);
 	private final Color _selectedColor = new Color(0xaaddaa);
@@ -87,7 +87,7 @@ public class Goblin extends MapEntity {
 		// Check if the goblin is still alive.
 		if (_attributes.getSaturation() < 0) {
 			_attributes.setAlive(false);
-			_log.trace("Goblin starved to death. It is " + getLocation().manhattanDistance(getMap().getSpawnPoint()) + " steps away from spawn.");
+			LOG.trace("Goblin starved to death. It is " + getLocation().manhattanDistance(getMap().getSpawnPoint()) + " steps away from spawn.");
 		}
 	}
 

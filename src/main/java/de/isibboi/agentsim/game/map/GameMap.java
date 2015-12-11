@@ -19,12 +19,10 @@ import de.isibboi.agentsim.game.entities.ai.KnowledgeProvider;
  * @since 0.0.0
  */
 public class GameMap implements Drawable, KnowledgeProvider<Material> {
-	private final Logger _log = LogManager.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(GameMap.class);
 
 	private final BufferedImage _map;
 	private final MaterialFactory _materialFactory = Environment.MATERIAL_FACTORY;
-
-	private final Settings _settings;
 
 	private final Point _spawnPoint;
 	private final LockManager<Point, Entity> _lockManager = new LockManager<>();
@@ -44,7 +42,6 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	public GameMap(final BufferedImage image, final Point spawnPoint, final Settings settings) {
 		_map = image;
 		_spawnPoint = spawnPoint;
-		_settings = settings;
 	}
 
 	@Override

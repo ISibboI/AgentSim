@@ -18,7 +18,7 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
  * @since 0.3.0
  */
 public abstract class TaskExecutingAI implements AI {
-	private static final Logger _log = LogManager.getLogger(TaskExecutingAI.class);
+	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
 
 	private final PrioritizedRandomSelector<Task> _taskSelector;
 	private Task _currentTask;
@@ -73,7 +73,7 @@ public abstract class TaskExecutingAI implements AI {
 				startNextTask(nextTask, attributes, random, tick);
 			}
 		} else {
-			_log.trace("Task was not executed successfully: " + lastTask);
+			LOG.trace("Task was not executed successfully: " + lastTask);
 
 			eventTaskFinished(lastTask, 1);
 			_idleTask.update(random, tick);
@@ -84,6 +84,7 @@ public abstract class TaskExecutingAI implements AI {
 	 * Starts the given task.
 	 * Must not be called if {@link #_currentTask} is not {@code null}.
 	 * 
+	 * @param task The task to start.
 	 * @param attributes The current attributes of the controlled entity.
 	 * @param random The pseudo random number generator used for randomness.
 	 * @param tick The current tick.

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  * @since 0.2.0 
  */
 public abstract class TimedTask extends AbstractTask {
-	private final Logger _log = LogManager.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(TimedTask.class);
 
 	private int _duration;
 	private int _timeLeft;
@@ -83,7 +83,6 @@ public abstract class TimedTask extends AbstractTask {
 	/**
 	 * Sets the duration.
 	 * @param duration The duration.
-	 * @param duration
 	 */
 	protected void setDuration(final int duration) {
 		_duration = duration;

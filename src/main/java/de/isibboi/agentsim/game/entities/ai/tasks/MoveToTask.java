@@ -23,7 +23,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  */
 public class MoveToTask extends AbstractTask {
-	private static final Logger _log = LogManager.getLogger(MoveToTask.class);
+	private static final Logger LOG = LogManager.getLogger(MoveToTask.class);
 
 	private final Point _target;
 	private final MapEntity _entity;
@@ -49,7 +49,7 @@ public class MoveToTask extends AbstractTask {
 		_movementQueue.remove();
 
 		if (_movementQueue.isEmpty() && !wasSuccessful()) {
-			_log.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
+			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
 		}
 	}
 
@@ -83,7 +83,7 @@ public class MoveToTask extends AbstractTask {
 		if (path != null) {
 			_movementQueue.addAll(path);
 		} else {
-			_log.trace("Could not find a valid path.");
+			LOG.trace("Could not find a valid path.");
 		}
 
 		if (_movementQueue.isEmpty()) {

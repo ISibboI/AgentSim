@@ -254,6 +254,7 @@ public class Settings {
 	 * Returns the value of a given setting as enum constant.
 	 * @param <T> The type of the enum.
 	 * @param key The name of the setting.
+	 * @param enumeration The type of the enum as class.
 	 * @return The value of the setting.
 	 */
 	public <T extends Enum<T>> T getEnumConstant(final String key, final Class<T> enumeration) {

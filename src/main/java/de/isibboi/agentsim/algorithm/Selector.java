@@ -7,6 +7,7 @@ import java.util.Collection;
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
+ * @param <T> The element type.
  */
 public interface Selector<T> {
 	/**

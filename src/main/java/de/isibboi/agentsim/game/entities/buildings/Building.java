@@ -19,7 +19,7 @@ public abstract class Building extends MapEntity {
 	 * 
 	 * @param entityLocationManager The entity location manager.
 	 */
-	public Building(EntityLocationManager entityLocationManager) {
+	public Building(final EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
 	}
 
@@ -29,7 +29,7 @@ public abstract class Building extends MapEntity {
 	}
 
 	@Override
-	public void collideWith(Entity entity) {
+	public void collideWith(final Entity entity) {
 		// Let other entities handle the collision.
 		entity.collideWith(this);
 	}

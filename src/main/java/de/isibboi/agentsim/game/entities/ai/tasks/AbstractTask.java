@@ -19,7 +19,7 @@ public abstract class AbstractTask implements Task {
 	}
 
 	@Override
-	public void setPriority(int priority) {
+	public void setPriority(final int priority) {
 		if (priority < 0) {
 			throw new IllegalArgumentException("Priority must not be negative.");
 		}

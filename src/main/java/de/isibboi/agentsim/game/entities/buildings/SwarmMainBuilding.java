@@ -21,7 +21,7 @@ public class SwarmMainBuilding extends Building {
 	 * 
 	 * @param entityLocationManager The entity location manager.
 	 */
-	public SwarmMainBuilding(EntityLocationManager entityLocationManager) {
+	public SwarmMainBuilding(final EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
 	}
 
