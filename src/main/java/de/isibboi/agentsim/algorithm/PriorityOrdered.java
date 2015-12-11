@@ -13,4 +13,10 @@ public interface PriorityOrdered {
 	 * @return A value between {@code 0} and {@code Integer.MAX_VALUE}.
 	 */
 	int getPriority();
+
+	/**
+	 * Sets the priority of this object.
+	 * @param priority The priority between {@code 0} and {@code Integer.MAX_VALUE}.
+	 */
+	void setPriority(int priority);
 }

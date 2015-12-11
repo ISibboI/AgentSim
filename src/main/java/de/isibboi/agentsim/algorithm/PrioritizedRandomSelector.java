@@ -17,7 +17,7 @@ import com.google.common.collect.TreeMultiset;
  * @since 0.3.0
  * @param <T> The element type.
  */
-public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Selector<T> {
+public class PrioritizedRandomSelector<T extends PriorityOrdered> implements PrioritySelector<T> {
 	private final SortedMultiset<T> _data = TreeMultiset.create(new PriorityComparator());
 	private final Random _random = new Random();
 
@@ -70,5 +70,20 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Sel
 	@Override
 	public Collection<T> getData() {
 		return Collections.unmodifiableCollection(_data);
+	}
+
+	@Override
+	public void updatePriority(final T element, final int priority) {
+		if (!_data.contains(element)) {
+			throw new IllegalArgumentException("The given element is not in this data structure.");
+		}
+
+		if (priority < 0) {
+			throw new IllegalArgumentException("The priority must not be negative.");
+		}
+
+		int currentPriority = element.getPriority();
+		_prioritySum += priority - currentPriority;
+		element.setPriority(priority);
 	}
 }
