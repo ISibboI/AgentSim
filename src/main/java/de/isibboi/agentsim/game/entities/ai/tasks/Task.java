@@ -6,6 +6,10 @@ import de.isibboi.agentsim.game.entities.Updateable;
 
 /**
  * A task that can be executed by an entity.
+ * The complete course of a task has to be known on creation.
+ * The task must not change dynamically during its execution.
+ * The AI is the only one that decides about what is being done.
+ * 
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
