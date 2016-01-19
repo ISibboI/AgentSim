@@ -30,7 +30,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		 * @param a The first entity.
 		 * @param b The second entity.
 		 */
-		public CollisionExecutor(final Entity a, final Entity b) {
+		CollisionExecutor(final Entity a, final Entity b) {
 			_a = a;
 			_b = b;
 		}
