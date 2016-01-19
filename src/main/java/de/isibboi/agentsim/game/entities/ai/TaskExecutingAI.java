@@ -1,12 +1,13 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.isibboi.agentsim.algorithm.PrioritizedRandomSelector;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
@@ -20,7 +21,7 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 public abstract class TaskExecutingAI implements AI {
 	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
 
-	private final PrioritizedRandomSelector<Task> _taskSelector;
+	private final Queue<Task> _taskSelector = new LinkedList<>();
 	private Task _currentTask;
 
 	/**
@@ -33,7 +34,6 @@ public abstract class TaskExecutingAI implements AI {
 	 * Creates a new object.
 	 */
 	public TaskExecutingAI() {
-		_taskSelector = new PrioritizedRandomSelector<>();
 		_firedExecutionFinished = false;
 	}
 
@@ -58,7 +58,7 @@ public abstract class TaskExecutingAI implements AI {
 
 			_currentTask.update(random, tick);
 		} else {
-			startNextTask(_taskSelector.select(), attributes, random, tick);
+			startNextTask(_taskSelector.poll(), attributes, random, tick);
 		}
 	}
 
@@ -80,7 +80,7 @@ public abstract class TaskExecutingAI implements AI {
 				eventTaskFinished(lastTask, 1);
 				update(attributes, random, tick);
 			} else {
-				Task nextTask = _taskSelector.select();
+				Task nextTask = _taskSelector.poll();
 				eventTaskFinished(lastTask, nextTask.guessDuration());
 				startNextTask(nextTask, attributes, random, tick);
 			}
@@ -198,7 +198,7 @@ public abstract class TaskExecutingAI implements AI {
 	public int guessDurationToFinishQueue() {
 		int duration = 0;
 
-		for (Task task : _taskSelector.getData()) {
+		for (Task task : _taskSelector) {
 			duration += task.guessDuration();
 		}
 

@@ -24,6 +24,9 @@ import de.isibboi.agentsim.game.map.Point;
  * An AI system that simulates a swarm of autonomous agents.
  * Agents can share knowledge if they meet another agent.
  * 
+ * The goblin automaton.
+ * 
+ * 
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
@@ -99,8 +102,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		explorePoint(location);
 
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-			Task miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
-			miningTask.setPriority(1);
+			Iterable<? extends Task> miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
+			//			miningTask.setPriority(1);
 			tryEnqueueTask(miningTask);
 		}
 	}
