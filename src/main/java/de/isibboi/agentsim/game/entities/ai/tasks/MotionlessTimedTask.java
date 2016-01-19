@@ -18,12 +18,6 @@ public abstract class MotionlessTimedTask extends TimedTask {
 		super(duration);
 	}
 
-	/**
-	 * Creates a new object.
-	 */
-	public MotionlessTimedTask() {
-	}
-
 	@Override
 	public Movement getMovement() {
 		return Movement.NONE;

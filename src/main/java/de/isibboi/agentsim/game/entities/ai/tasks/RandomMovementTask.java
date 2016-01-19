@@ -41,9 +41,4 @@ public class RandomMovementTask extends InfiniteTask {
 	public Movement getMovement() {
 		return _movement;
 	}
-
-	@Override
-	public void start() {
-		// Ignore
-	}
 }

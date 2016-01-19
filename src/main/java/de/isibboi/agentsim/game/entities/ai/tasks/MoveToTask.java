@@ -27,7 +27,6 @@ public class MoveToTask extends AbstractTask {
 
 	private final Point _target;
 	private final MapEntity _entity;
-	private final BlockadeMap _blockadeMap;
 
 	private final Queue<Movement> _movementQueue = new LinkedList<>();
 
@@ -36,12 +35,24 @@ public class MoveToTask extends AbstractTask {
 	 * 
 	 * @param target The target point on the map.
 	 * @param entity The entity to move.
-	 * @param blockadeMap The map as seen by the entity.
+	 * @param blockadeMap The map of obstacles as seen by the entity.
 	 */
 	public MoveToTask(final Point target, final MapEntity entity, final BlockadeMap blockadeMap) {
 		_target = target;
 		_entity = entity;
-		_blockadeMap = blockadeMap;
+
+		PathfindingAlgorithm pathfinder = new AStarPathfinder();
+		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, blockadeMap);
+
+		if (path != null) {
+			_movementQueue.addAll(path);
+		} else {
+			LOG.trace("Could not find a valid path.");
+		}
+
+		if (_movementQueue.isEmpty()) {
+			_movementQueue.add(Movement.NONE);
+		}
 	}
 
 	@Override
@@ -76,24 +87,7 @@ public class MoveToTask extends AbstractTask {
 
 	@Override
 	public void eventInformationUpdated() {
-		_movementQueue.clear();
-		PathfindingAlgorithm pathfinder = new AStarPathfinder();
-		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, _blockadeMap);
-
-		if (path != null) {
-			_movementQueue.addAll(path);
-		} else {
-			LOG.trace("Could not find a valid path.");
-		}
-
-		if (_movementQueue.isEmpty()) {
-			_movementQueue.add(Movement.NONE);
-		}
-	}
-
-	@Override
-	public void start() {
-		eventInformationUpdated();
+		// Ignore.
 	}
 
 	@Override

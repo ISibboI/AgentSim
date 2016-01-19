@@ -16,14 +16,9 @@ public abstract class TimedTask extends AbstractTask {
 
 	private int _duration;
 	private int _timeLeft;
-	private boolean _eventFinishedFired;
+	private boolean _eventFinishedFired = false;
 	private boolean _wasSuccessful = true;
-
-	/**
-	 * Creates a new timed task.
-	 */
-	public TimedTask() {
-	}
+	private boolean _isStarted = false;
 
 	/**
 	 * Creates a new timed task with the given duration.
@@ -57,6 +52,11 @@ public abstract class TimedTask extends AbstractTask {
 
 	@Override
 	public void update(final Random random, final int tick) {
+		if (!_isStarted) {
+			_isStarted = true;
+			eventStarted();
+		}
+
 		if (_timeLeft > 0) {
 			_timeLeft--;
 		}
@@ -81,17 +81,16 @@ public abstract class TimedTask extends AbstractTask {
 	protected abstract void eventFinished();
 
 	/**
+	 * Called when the task is started.
+	 */
+	protected abstract void eventStarted();
+
+	/**
 	 * Sets the duration.
 	 * @param duration The duration.
 	 */
 	protected void setDuration(final int duration) {
 		_duration = duration;
-	}
-
-	@Override
-	public void start() {
-		_timeLeft = _duration;
-		_eventFinishedFired = false;
 	}
 
 	/**

@@ -36,6 +36,10 @@ public class CompositeTask extends AbstractTask {
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
+		System.out.println("======================================");
+
+		handleZeroTimeTasks();
+
 		_taskQueue.peek().update(random, tick);
 
 		if (_taskQueue.peek().isFinished()) {
@@ -45,7 +49,30 @@ public class CompositeTask extends AbstractTask {
 			}
 
 			if (!_taskQueue.isEmpty()) {
-				_taskQueue.peek().start();
+				_taskQueue.peek().zeroTimeAction();
+			}
+
+			handleZeroTimeTasks();
+		}
+	}
+
+	/**
+	 * Handles the fast execution of {@code ZeroTimeTask}s.
+	 */
+	private void handleZeroTimeTasks() {
+		System.out.println("Handle zero time tasks inside CompositeTask");
+
+		if (!_taskQueue.isEmpty()) {
+			Task front = _taskQueue.peek();
+
+			if (front.isFinished()) {
+				_taskQueue.poll();
+				front = _taskQueue.peek();
+
+				if (front != null) {
+					front.zeroTimeAction();
+					handleZeroTimeTasks();
+				}
 			}
 		}
 	}
@@ -73,11 +100,6 @@ public class CompositeTask extends AbstractTask {
 	@Override
 	public void eventInformationUpdated() {
 		_taskQueue.peek().eventInformationUpdated();
-	}
-
-	@Override
-	public void start() {
-		_taskQueue.peek().start();
 	}
 
 	@Override

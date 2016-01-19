@@ -86,7 +86,7 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	 * Locks the given location if possible.
 	 * @param location The location.
 	 * @param entity The entity that tries to lock the location.
-	 * @return True if the location was successfully locked, false if it was already locked.
+	 * @return True if the location was locked successfully, false if it was already locked.
 	 */
 	public boolean tryLockLocation(final Point location, final Entity entity) {
 		return _lockManager.tryLock(location, entity);

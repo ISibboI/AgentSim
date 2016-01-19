@@ -37,15 +37,37 @@ public abstract class TaskExecutingAI implements AI {
 		_firedExecutionFinished = false;
 	}
 
+	/**
+	 * Updates the AI.
+	 * Executes tasks one by one.
+	 * If a task finishes during one update cycle, the next is started.
+	 * At most one task is updated during one cycle.
+	 * If a task is finished immediately, it will not use up an update cycle.
+	 * 
+	 * @param attributes The current attributes of the controlled entity.
+	 * @param random The pseudo random number generator used for randomness.
+	 * @param tick The current tick.
+	 * @throws GameUpdateException If updating the AI goes wrong. 
+	 */
 	@Override
 	public void update(final Attributes attributes, final Random random, final int tick) throws GameUpdateException {
+		System.out.println(" ================= Updating AI");
+
 		if (_currentTask != null) {
+			// Handle zero time tasks.
+			if (_currentTask.isFinished()) {
+				finishTask(attributes, random, tick);
+				System.out.println("Handle zero time task");
+			}
+
+			System.out.println("updating current task");
 			_currentTask.update(random, tick);
 
 			if (_currentTask.isFinished()) {
 				finishTask(attributes, random, tick);
 			}
 		} else {
+			System.out.println("starting next task");
 			startNextTask(_taskSelector.select(), attributes, random, tick);
 		}
 	}
@@ -99,10 +121,12 @@ public abstract class TaskExecutingAI implements AI {
 
 		if (_currentTask != null) {
 			_firedExecutionFinished = false;
-			_currentTask.start();
+			_currentTask.zeroTimeAction();
+			System.out.println("executed zero time action");
 
 			// If the task finishes immediately.
 			if (_currentTask.isFinished()) {
+				System.out.println("started task finished immediately.");
 				finishTask(attributes, random, tick);
 			}
 		} else {

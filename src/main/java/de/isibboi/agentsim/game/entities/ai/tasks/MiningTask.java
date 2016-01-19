@@ -26,15 +26,19 @@ public class MiningTask extends MotionlessTimedTask {
 
 	/**
 	 * Creates a new mining task.
+	 * The mined material is set on creation, and the task is aborted if the material at the mining location changes.
 	 * 
 	 * @param miningLocation The location that should be mined.
 	 * @param entity The entity that performs the task.
 	 * @param entityLocationManager The entity location manager.
 	 */
 	public MiningTask(final Point miningLocation, final Entity entity, final EntityLocationManager entityLocationManager) {
+		super(entityLocationManager.getMap().getMaterialAt(miningLocation).getDurability());
+
 		_miningLocation = miningLocation;
 		_entity = entity;
 		_entityLocationManager = entityLocationManager;
+		_minedMaterial = _entityLocationManager.getMap().getMaterialAt(miningLocation);
 	}
 
 	@Override
@@ -53,15 +57,14 @@ public class MiningTask extends MotionlessTimedTask {
 	}
 
 	@Override
-	public void start() {
-		_minedMaterial = _entityLocationManager.getMap().getMaterialAt(_miningLocation);
+	public void eventStarted() {
+		if (_minedMaterial != _entityLocationManager.getMap().getMaterialAt(_miningLocation)) {
+			fail();
+		}
+
 		Point location = _entityLocationManager.getLocation(_entity);
-		int duration = _entityLocationManager.getMap().getMaterialAt(_miningLocation).getDurability();
 
-		setDuration(duration);
-		super.start();
-
-		if (!location.isNeighborOf(_miningLocation) || _minedMaterial == Environment.MATERIAL_AIR) {
+		if (!location.isNeighborOf(_miningLocation)) {
 			fail();
 			_log.trace("MiningTask failed: " + _entity + " tried to mine a " + _minedMaterial + " at " + _miningLocation + " from " + location);
 		}

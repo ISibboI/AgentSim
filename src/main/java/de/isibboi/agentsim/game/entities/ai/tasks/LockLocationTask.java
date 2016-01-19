@@ -1,10 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
-import java.util.Random;
-
-import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Entity;
-import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -14,7 +10,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class LockLocationTask extends InfiniteTask {
+public class LockLocationTask extends ZeroTimeTask {
 	private final GameMap _map;
 	private final Point _location;
 	private final Entity _entity;
@@ -35,30 +31,8 @@ public class LockLocationTask extends InfiniteTask {
 	}
 
 	@Override
-	public void update(final Random random, final int tick) throws GameUpdateException {
-		if (_map.tryLockLocation(_location, _entity)) {
-			_locked = true;
-		}
-	}
-
-	@Override
-	public boolean isFinished() {
-		return _locked;
-	}
-
-	@Override
-	public Movement getMovement() {
-		return Movement.NONE;
-	}
-
-	@Override
-	public void start() {
-		// Ignore
-	}
-
-	@Override
-	public int guessDuration() {
-		return 0; // Cannot ensure that location lock is removed at any time.
+	public void zeroTimeAction() {
+		setSuccessful(_map.tryLockLocation(_location, _entity));
 	}
 
 	/**

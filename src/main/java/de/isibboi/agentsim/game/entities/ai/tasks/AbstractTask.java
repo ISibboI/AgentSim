@@ -26,4 +26,9 @@ public abstract class AbstractTask implements Task {
 
 		_priority = priority;
 	}
+
+	@Override
+	public void zeroTimeAction() {
+		// Ignore.
+	}
 }

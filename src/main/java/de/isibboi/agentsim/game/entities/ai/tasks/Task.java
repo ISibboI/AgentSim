@@ -6,8 +6,8 @@ import de.isibboi.agentsim.game.entities.Updateable;
 
 /**
  * A task that can be executed by an entity.
- * The complete course of a task has to be known on creation.
- * The task must not change dynamically during its execution.
+ * The task has to be static after creation.
+ * That means, the course of the task must not change after creation.
  * The AI is the only one that decides about what is being done.
  * 
  * @author Sebastian Schmidt
@@ -44,17 +44,18 @@ public interface Task extends Updateable, PriorityOrdered {
 	void eventFailure();
 
 	/**
-	 * Called when there is new information available that could make the task faster.
+	 * Called when there is new information available that could make the task impossible.
+	 * No task optimizations should happen here, the task is static after creation.
 	 */
 	void eventInformationUpdated();
 
 	/**
-	 * Starts the task.
-	 * This method should do some preparations that have to be done just once.
-	 * After return of this method, the first movement should be ready.
+	 * Only to be used by {@link ZeroTimeTask}s.
+	 * Must define if the task was completed successful.
 	 */
-	void start();
+	void zeroTimeAction();
 
+	// TODO Move the following methods to planned task.
 	/**
 	 * Returns the priority of this task.
 	 * The higher the priority, the earlier the task will be executed.
