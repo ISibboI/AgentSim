@@ -1,5 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
+import de.isibboi.agentsim.game.entities.Movement;
+
 /**
  * Handles priorities.
  * 
@@ -8,6 +10,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
  */
 public abstract class AbstractTask implements Task {
 	private int _priority = -1;
+	private Movement _movement;
 
 	@Override
 	public int getPriority() {
@@ -30,5 +33,18 @@ public abstract class AbstractTask implements Task {
 	@Override
 	public void zeroTimeAction() {
 		// Ignore.
+	}
+
+	@Override
+	public Movement getMovement() {
+		return _movement;
+	}
+
+	/**
+	 * Sets the movement to be returned by {@code #getMovement()}.
+	 * @param movement The movement.
+	 */
+	protected void setMovement(final Movement movement) {
+		_movement = movement;
 	}
 }

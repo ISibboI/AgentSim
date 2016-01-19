@@ -65,4 +65,10 @@ public abstract class ZeroTimeTask extends AbstractTask {
 		_wasSuccessfulSet = true;
 		_wasSuccessful = successful;
 	}
+
+	@Override
+	public double getProgress() {
+		// A zero time task is always finished.
+		return 1;
+	}
 }

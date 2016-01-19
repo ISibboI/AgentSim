@@ -37,11 +37,8 @@ public abstract class TimedTask extends AbstractTask {
 		return _timeLeft;
 	}
 
-	/**
-	 * Returns the progress of the task as value between 0 and 1. 0 means no work has been done, 1 means the task is completed.
-	 * @return The progress of the task.
-	 */
-	protected double getProgress() {
+	@Override
+	public double getProgress() {
 		return 1 - ((double) _timeLeft) / _duration;
 	}
 

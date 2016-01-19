@@ -51,23 +51,13 @@ public abstract class TaskExecutingAI implements AI {
 	 */
 	@Override
 	public void update(final Attributes attributes, final Random random, final int tick) throws GameUpdateException {
-		System.out.println(" ================= Updating AI");
-
 		if (_currentTask != null) {
-			// Handle zero time tasks.
 			if (_currentTask.isFinished()) {
 				finishTask(attributes, random, tick);
-				System.out.println("Handle zero time task");
 			}
 
-			System.out.println("updating current task");
 			_currentTask.update(random, tick);
-
-			if (_currentTask.isFinished()) {
-				finishTask(attributes, random, tick);
-			}
 		} else {
-			System.out.println("starting next task");
 			startNextTask(_taskSelector.select(), attributes, random, tick);
 		}
 	}
@@ -122,13 +112,7 @@ public abstract class TaskExecutingAI implements AI {
 		if (_currentTask != null) {
 			_firedExecutionFinished = false;
 			_currentTask.zeroTimeAction();
-			System.out.println("executed zero time action");
-
-			// If the task finishes immediately.
-			if (_currentTask.isFinished()) {
-				System.out.println("started task finished immediately.");
-				finishTask(attributes, random, tick);
-			}
+			update(attributes, random, tick);
 		} else {
 			if (!_firedExecutionFinished) {
 				eventExecutionFinished();

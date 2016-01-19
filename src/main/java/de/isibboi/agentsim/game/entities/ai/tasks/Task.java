@@ -9,6 +9,9 @@ import de.isibboi.agentsim.game.entities.Updateable;
  * The task has to be static after creation.
  * That means, the course of the task must not change after creation.
  * The AI is the only one that decides about what is being done.
+ * Tasks have to generate movements, except if their duration is zero.
+ * As soon as a task can not generate any new {@link Movement}s, it is finished.
+ * When {@link #isFinished()} returns true, the final {@code Movement} can be retrieved by {@code #getMovement()}. 
  * 
  * @author Sebastian Schmidt
  * @since 0.2.0
@@ -54,6 +57,12 @@ public interface Task extends Updateable, PriorityOrdered {
 	 * Must define if the task was completed successful.
 	 */
 	void zeroTimeAction();
+
+	/**
+	 * Returns the progress of the task as value between 0 and 1. 0 means no work has been done, 1 means the task is completed.
+	 * @return The progress of the task.
+	 */
+	double getProgress();
 
 	// TODO Move the following methods to planned task.
 	/**

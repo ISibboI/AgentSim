@@ -19,5 +19,7 @@
 			level="info"></Logger>
 		<Logger name="de.isibboi.agentsim.game.entities.ai.tasks.MiningTask"
 			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.algorithm.LockManager"
+			level="info"></Logger>
 	</Loggers>
 </Configuration>
