@@ -105,14 +105,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	public void eventCollideWithWall(final Point location) {
 		explorePoint(location);
 
-		// TODO Remove this, and instead make goblin mine actively.
-		//		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-		//			Iterable<? extends Task> miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
-		//			//			miningTask.setPriority(1);
-		//			tryEnqueueTasks(miningTask);
-		//		}
-
-		// TODO Try restarting the current intend
+		// TODO Try restarting the current intend?
 		abort();
 	}
 
@@ -140,7 +133,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithMapBorder(final Point location) {
-		// TODO Try restarting the current intend
+		// TODO Try restarting the current intend?
 		abort();
 	}
 
@@ -181,7 +174,22 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	 * Selects the next task that should be executed, keeping the goblin from starving.
 	 */
 	private void selectNextTask() {
-		moveToSpawnIfNecessary(1);
+		Intend nextIntend = _intendSelector.select();
+
+		if (nextIntend == null) {
+			moveToSpawnIfNecessary(1);
+		} else {
+			Task task = nextIntend.execute(_goblin);
+
+			if (task != null) {
+				if (!moveToSpawnIfNecessary(task.guessDuration())) {
+					enqueueTask(task);
+				}
+			} else {
+				_intendSelector.add(nextIntend);
+				moveToSpawnIfNecessary(1);
+			}
+		}
 	}
 
 	/**
@@ -205,50 +213,6 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Tries to enqueue the given task.
-	 * The task is only enqueued, if its execution does not make the goblin starve.
-	 * @param task The task to enqueue.
-	 * @return True if the task was enqueued, false otherwise.
-	 */
-	protected boolean tryEnqueueTask(final Task task) {
-		int currentDuration = guessDurationToFinishQueue();
-		int additionalDuration = task.guessDuration();
-		int moveHomeDuration = _entityLocationManager.getMap().getSpawnPoint().manhattanDistance(_goblin.getLocation());
-
-		if (currentDuration + additionalDuration + moveHomeDuration < _goblin.getAttributes().getSaturation()) {
-			enqueueTask(task);
-			return true;
-		} else {
-			moveToSpawnIfNecessary(1);
-			return false;
-		}
-	}
-
-	/**
-	 * Tries to enqueue the given tasks.
-	 * The tasks are only enqueued, if their execution does not make the goblin starve.
-	 * @param tasks The tasks to enqueue.
-	 * @return True if the task was enqueued, false otherwise.
-	 */
-	protected boolean tryEnqueueTasks(final Iterable<? extends Task> tasks) {
-		int currentDuration = guessDurationToFinishQueue();
-		int moveHomeDuration = _entityLocationManager.getMap().getSpawnPoint().manhattanDistance(_goblin.getLocation());
-		int additionalDuration = 0;
-
-		for (Task task : tasks) {
-			additionalDuration += task.guessDuration();
-		}
-
-		if (currentDuration + additionalDuration + moveHomeDuration < _goblin.getAttributes().getSaturation()) {
-			enqueueTasks(tasks);
-			return true;
-		} else {
-			moveToSpawnIfNecessary(1);
-			return false;
-		}
 	}
 
 	/**

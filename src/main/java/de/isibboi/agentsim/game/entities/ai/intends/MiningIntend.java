@@ -1,8 +1,5 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.LockLocationTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.MiningTask;
@@ -35,10 +32,10 @@ public class MiningIntend extends AbstractIntend {
 	}
 
 	@Override
-	public Iterable<Task> execute(final Goblin goblin) {
+	public Task execute(final Goblin goblin) {
 		final Point currentPoint = goblin.getLocation();
 		final Point miningPoint = goblin.getAI().getMapKnowledge().searchNearestEqualKnowledge(currentPoint, _material);
-		final List<Task> tasks = new LinkedList<>();
+		final CompositeTask tasks = new CompositeTask();
 
 		final MoveToTask movement = searchAccessPoint(currentPoint, miningPoint, goblin);
 		final LockLocationTask lock = new LockLocationTask(goblin.getMap(), miningPoint, goblin);

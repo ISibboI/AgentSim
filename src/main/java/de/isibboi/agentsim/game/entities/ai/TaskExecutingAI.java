@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
+import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 
 /**
@@ -150,7 +151,11 @@ public abstract class TaskExecutingAI implements AI {
 	public void enqueueTask(final Task task) {
 		Objects.requireNonNull(task);
 
-		_taskQueue.add(task);
+		if (task instanceof CompositeTask) {
+			enqueueTasks(((CompositeTask) task).getTasks());
+		} else {
+			_taskQueue.add(task);
+		}
 	}
 
 	/**
