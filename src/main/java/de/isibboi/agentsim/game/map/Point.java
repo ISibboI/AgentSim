@@ -141,7 +141,7 @@ public class Point {
 
 	@Override
 	public int hashCode() {
-		return _x ^ (_y << 16);
+		return _x ^ (_y << 16) ^ ((_y >> 16) & 0xFFFF);
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.LockLocationTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.MiningTask;
@@ -10,13 +13,14 @@ import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
- * The intend to mine a specific block.
+ * The intend to mine a specific block type.
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
- *
  */
 public class MiningIntend extends AbstractIntend {
+	private static final Logger LOG = LogManager.getLogger(MiningIntend.class);
+
 	private final Material _material;
 
 	/**
@@ -44,6 +48,8 @@ public class MiningIntend extends AbstractIntend {
 		tasks.add(lock);
 		tasks.add(new MiningTask(miningPoint, goblin, goblin.getEntityLocationManager()));
 		tasks.add(new UnlockLocationTask(lock));
+
+		LOG.trace("Created mining task moving from " + currentPoint + " to " + movement.getTarget() + " mining " + _material + " at " + miningPoint);
 
 		return tasks;
 	}

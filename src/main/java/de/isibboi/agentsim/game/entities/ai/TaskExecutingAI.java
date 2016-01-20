@@ -77,6 +77,8 @@ public abstract class TaskExecutingAI implements AI {
 		_currentTask = null;
 
 		if (lastTask.wasSuccessful()) {
+			LOG.trace("Task was executed successfully: " + lastTask);
+
 			if (_taskQueue.isEmpty()) {
 				eventTaskFinished(lastTask, 1);
 				update(attributes, random, tick);
@@ -88,7 +90,7 @@ public abstract class TaskExecutingAI implements AI {
 		} else {
 			LOG.trace("Task was not executed successfully: " + lastTask);
 
-			eventExecutionAborted();
+			abort();
 			update(attributes, random, tick);
 		}
 	}
@@ -124,6 +126,7 @@ public abstract class TaskExecutingAI implements AI {
 
 			// If a task was added due to events, it should be started instead of updating the idle task.
 			if (_taskQueue.isEmpty()) {
+				LOG.trace("Executing idle task");
 				_idleTask.update(random, tick);
 			} else {
 				update(attributes, random, tick);
@@ -230,11 +233,17 @@ public abstract class TaskExecutingAI implements AI {
 	 * Aborts the execution of all tasks.
 	 */
 	public void abort() {
+		boolean abort = _taskQueue.size() > 0;
 		_taskQueue.clear();
 
 		if (_currentTask != null) {
 			_currentTask.eventFailure();
 			_currentTask = null;
+			abort = true;
+		}
+
+		if (abort) {
+			eventExecutionAborted();
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -24,6 +25,8 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Sel
 
 	@Override
 	public void add(final T element) {
+		Objects.requireNonNull(element);
+
 		if (element.getPriority() < 0) {
 			throw new IllegalArgumentException("Priority is negative.");
 		}

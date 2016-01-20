@@ -59,7 +59,7 @@ public abstract class TimedTask extends AbstractTask {
 		}
 
 		if (_timeLeft <= 0 && !_eventFinishedFired) {
-			eventFinished();
+			eventFinished(tick);
 			_eventFinishedFired = true;
 		}
 	}
@@ -74,8 +74,9 @@ public abstract class TimedTask extends AbstractTask {
 
 	/**
 	 * Called when the task is finished.
+	 * @param tick The current tick.
 	 */
-	protected abstract void eventFinished();
+	protected abstract void eventFinished(int tick);
 
 	/**
 	 * Called when the task is started.

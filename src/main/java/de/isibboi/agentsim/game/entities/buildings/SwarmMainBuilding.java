@@ -47,6 +47,6 @@ public class SwarmMainBuilding extends Building {
 
 	@Override
 	public Iterable<? extends Intend> getIntends(final int tick) {
-		return Collections.singleton(new MiningIntend(tick, 1, Environment.MATERIAL_AIR));
+		return Collections.singleton(new MiningIntend(tick, 1, Environment.MATERIAL_DIRT));
 	}
 }

@@ -48,7 +48,7 @@ public abstract class AbstractIntend implements Intend {
 				continue;
 			}
 
-			MoveToTask path = new MoveToTask(start, target, goblin, goblin.getAI().getBlockadeMap());
+			MoveToTask path = new MoveToTask(start, neighbour, goblin, goblin.getAI().getBlockadeMap());
 
 			if (path.hasPath()) {
 				return path;

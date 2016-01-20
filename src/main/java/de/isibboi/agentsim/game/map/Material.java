@@ -77,4 +77,9 @@ public class Material {
 	public boolean inRange(final double sample) {
 		return _generationParameters.inRange(sample);
 	}
+
+	@Override
+	public String toString() {
+		return _name;
+	}
 }

@@ -111,7 +111,7 @@ public class Settings {
 		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
 		_defaults.setProperty(UI_SELECTION_MODE, EntitySelectionManager.SelectionMode.TOUCH.toString());
 
-		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "1");
+		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "2");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 

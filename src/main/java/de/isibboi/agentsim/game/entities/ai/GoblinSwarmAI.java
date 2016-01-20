@@ -47,8 +47,10 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	private final float _saturationBufferDistanceFactor;
 	private final int _saturationBufferMinimum;
+	private final List<Point> _viewingPattern;
 
 	private final PrioritizedRandomSelector<Intend> _intendSelector = new PrioritizedRandomSelector<>();
+	private Intend _currentIntend;
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
@@ -95,6 +97,15 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		_mapKnowledge.updateLocation(entityLocationManager.getMap().getSpawnPoint(), spawnPattern);
 		// ---- Learned path to spawn
 
+		// ---- Create viewing pattern
+		_viewingPattern = new ArrayList<>();
+		_viewingPattern.add(new Point(0, 0));
+		_viewingPattern.add(new Point(1, 0));
+		_viewingPattern.add(new Point(-1, 0));
+		_viewingPattern.add(new Point(0, 1));
+		_viewingPattern.add(new Point(0, -1));
+		// ---- Created viewing pattern
+
 		_saturationBufferDistanceFactor = settings.getFloat(Settings.GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR);
 		_saturationBufferMinimum = settings.getInt(Settings.GAME_AI_SATURATION_BUFFER_MINIMUM);
 
@@ -103,6 +114,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithWall(final Point location) {
+		LOG.trace("Collided with wall");
+
 		explorePoint(location);
 
 		// TODO Try restarting the current intend?
@@ -133,6 +146,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithMapBorder(final Point location) {
+		LOG.trace("Collided with map border");
+
 		// TODO Try restarting the current intend?
 		abort();
 	}
@@ -147,7 +162,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	 * @param location The location to explore.
 	 */
 	private void explorePoint(final Point location) {
-		_mapKnowledge.updateLocation(location);
+		_mapKnowledge.updateLocation(location, _viewingPattern);
 	}
 
 	@Override
@@ -159,18 +174,19 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	protected void eventExecutionAborted() {
 		LOG.trace("Execution aborted");
 
+		_intendSelector.add(_currentIntend);
+		_currentIntend = null;
+
 		selectNextTask();
 	}
 
 	@Override
 	protected void eventExecutionFinished() {
-		// Ignore
+		LOG.trace("Execution finished");
 	}
 
 	@Override
 	protected void eventExecutingIdleTask() {
-		LOG.trace("Executing idle task");
-
 		selectNextTask();
 	}
 
@@ -178,20 +194,20 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	 * Selects the next task that should be executed, keeping the goblin from starving.
 	 */
 	private void selectNextTask() {
-		Intend nextIntend = _intendSelector.select();
+		_currentIntend = _intendSelector.select();
 
-		if (nextIntend == null) {
+		if (_currentIntend == null) {
 			moveToSpawnIfNecessary(1);
 		} else {
-			Task task = nextIntend.execute(_goblin);
+			Task task = _currentIntend.execute(_goblin);
 
 			if (task != null) {
 				if (!moveToSpawnIfNecessary(task.guessDuration())) {
 					enqueueTask(task);
-					LOG.trace("Executing: " + nextIntend);
+					LOG.trace("Executing: " + _currentIntend);
 				}
 			} else {
-				_intendSelector.add(nextIntend);
+				_intendSelector.add(_currentIntend);
 				moveToSpawnIfNecessary(1);
 			}
 		}

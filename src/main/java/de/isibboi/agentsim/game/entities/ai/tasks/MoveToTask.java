@@ -117,4 +117,20 @@ public class MoveToTask extends AbstractTask {
 	public boolean hasPath() {
 		return _movementQueue != null;
 	}
+
+	/**
+	 * Returns the target of the movement.
+	 * @return The target.
+	 */
+	public Point getTarget() {
+		return _target;
+	}
+
+	/**
+	 * Returns the start of the movement.
+	 * @return The start.
+	 */
+	public Point getStart() {
+		return _start;
+	}
 }

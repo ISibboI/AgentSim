@@ -14,7 +14,6 @@ public class LockLocationTask extends ZeroTimeTask {
 	private final GameMap _map;
 	private final Point _location;
 	private final Entity _entity;
-	private boolean _locked;
 
 	/**
 	 * Locks the given location.
@@ -27,7 +26,6 @@ public class LockLocationTask extends ZeroTimeTask {
 		_map = map;
 		_location = location;
 		_entity = entity;
-		_locked = false;
 	}
 
 	@Override
@@ -57,10 +55,5 @@ public class LockLocationTask extends ZeroTimeTask {
 	 */
 	public Entity getEntity() {
 		return _entity;
-	}
-
-	@Override
-	public boolean wasSuccessful() {
-		return true;
 	}
 }

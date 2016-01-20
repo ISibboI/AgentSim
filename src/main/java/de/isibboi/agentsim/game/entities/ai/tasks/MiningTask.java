@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.EntityLocationManager;
-import de.isibboi.agentsim.game.entities.Entity;
+import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
 
@@ -16,10 +16,10 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.2.0 
  */
 public class MiningTask extends MotionlessTimedTask {
-	private final Logger _log = LogManager.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(MiningTask.class);
 
 	private final Point _miningLocation;
-	private final Entity _entity;
+	private final Goblin _goblin;
 	private final EntityLocationManager _entityLocationManager;
 
 	private Material _minedMaterial;
@@ -29,14 +29,14 @@ public class MiningTask extends MotionlessTimedTask {
 	 * The mined material is set on creation, and the task is aborted if the material at the mining location changes.
 	 * 
 	 * @param miningLocation The location that should be mined.
-	 * @param entity The entity that performs the task.
+	 * @param goblin The goblin that performs the task.
 	 * @param entityLocationManager The entity location manager.
 	 */
-	public MiningTask(final Point miningLocation, final Entity entity, final EntityLocationManager entityLocationManager) {
+	public MiningTask(final Point miningLocation, final Goblin goblin, final EntityLocationManager entityLocationManager) {
 		super(entityLocationManager.getMap().getMaterialAt(miningLocation).getDurability());
 
 		_miningLocation = miningLocation;
-		_entity = entity;
+		_goblin = goblin;
 		_entityLocationManager = entityLocationManager;
 		_minedMaterial = _entityLocationManager.getMap().getMaterialAt(miningLocation);
 	}
@@ -47,13 +47,11 @@ public class MiningTask extends MotionlessTimedTask {
 	}
 
 	@Override
-	protected void eventFinished() {
+	protected void eventFinished(final int tick) {
 		_entityLocationManager.getMap().setMaterial(_miningLocation, Environment.MATERIAL_AIR);
+		_goblin.getAI().getMapKnowledge().updateLocation(_miningLocation, Environment.MATERIAL_AIR, tick);
 
-		// Goblin newGoblin = _entityLocationManager.getGoblinSpawner().spawnGoblin(_miningLocation);
-		// newGoblin.collideWith(_entity);
-
-		_log.trace("MiningTask finished: " + _entity + " mined a " + _minedMaterial + " at " + _miningLocation);
+		LOG.trace("MiningTask finished: " + _goblin + " mined a " + _minedMaterial + " at " + _miningLocation);
 	}
 
 	@Override
@@ -62,11 +60,11 @@ public class MiningTask extends MotionlessTimedTask {
 			fail();
 		}
 
-		Point location = _entityLocationManager.getLocation(_entity);
+		Point location = _entityLocationManager.getLocation(_goblin);
 
 		if (!location.isNeighborOf(_miningLocation)) {
 			fail();
-			_log.trace("MiningTask failed: " + _entity + " tried to mine a " + _minedMaterial + " at " + _miningLocation + " from " + location);
+			LOG.trace("MiningTask failed: " + _goblin + " tried to mine a " + _minedMaterial + " at " + _miningLocation + " from " + location);
 		}
 	}
 }
