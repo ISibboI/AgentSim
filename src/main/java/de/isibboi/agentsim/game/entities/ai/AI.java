@@ -25,9 +25,10 @@ public interface AI {
 
 	/**
 	 * If the entity steps on the location of another entity, this event is fired.
+	 * @param tick The current tick.
 	 * @param entity The other entity.
 	 */
-	void eventCollideWithEntity(Entity entity);
+	void eventCollideWithEntity(Entity entity, int tick);
 
 	/**
 	 * If the entity tries to walk out of the map, this event is fired.

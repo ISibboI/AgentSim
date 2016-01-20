@@ -23,23 +23,26 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	private static class CollisionExecutor implements Runnable {
 		private final Entity _a;
 		private final Entity _b;
+		private final int _currentTick;
 
 		/**
 		 * Creates a new {@link CollisionExecutor} to evaluate the collision between the given entities.
 		 * 
 		 * @param a The first entity.
 		 * @param b The second entity.
+		 * @param currentTick The current tick.
 		 */
-		CollisionExecutor(final Entity a, final Entity b) {
+		CollisionExecutor(final Entity a, final Entity b, final int currentTick) {
 			_a = a;
 			_b = b;
+			_currentTick = currentTick;
 		}
 
 		@Override
 		public void run() {
 			synchronized (_a) {
 				synchronized (_b) {
-					_a.collideWith(_b);
+					_a.collideWith(_b, _currentTick);
 				}
 			}
 		}
@@ -52,6 +55,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 
 	private volatile boolean _shutdown = false;
 	private volatile boolean _isColliding = false;
+	private volatile int _currentTick;
 
 	/**
 	 * Creates a new {@link MultiThreadedEntityCollider}.
@@ -69,13 +73,14 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	}
 
 	@Override
-	public synchronized void startCollision() {
+	public synchronized void startCollision(final int tick) {
 		_isColliding = true;
+		_currentTick = tick;
 	}
 
 	@Override
 	public void collide(final Entity a, final Entity b) {
-		_futures.add(_executor.submit(new CollisionExecutor(a, b)));
+		_futures.add(_executor.submit(new CollisionExecutor(a, b, _currentTick)));
 	}
 
 	@Override

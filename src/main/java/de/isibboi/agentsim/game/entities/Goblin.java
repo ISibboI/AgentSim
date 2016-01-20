@@ -113,8 +113,8 @@ public class Goblin extends MapEntity {
 	}
 
 	@Override
-	public void collideWith(final Entity entity) {
-		_ai.eventCollideWithEntity(entity);
+	public void collideWith(final Entity entity, final int tick) {
+		_ai.eventCollideWithEntity(entity, tick);
 	}
 
 	/**

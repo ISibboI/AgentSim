@@ -2,8 +2,12 @@ package de.isibboi.agentsim.game.entities.buildings;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Collections;
 
+import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.EntityLocationManager;
+import de.isibboi.agentsim.game.entities.ai.intends.Intend;
+import de.isibboi.agentsim.game.entities.ai.intends.MiningIntend;
 
 /**
  * The main building of the swarm.
@@ -39,5 +43,10 @@ public class SwarmMainBuilding extends Building {
 	@Override
 	public boolean blocksBuildings() {
 		return true;
+	}
+
+	@Override
+	public Iterable<? extends Intend> getIntends(final int tick) {
+		return Collections.singleton(new MiningIntend(tick, 1, Environment.MATERIAL_AIR));
 	}
 }

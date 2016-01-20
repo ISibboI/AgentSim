@@ -2,10 +2,9 @@ package de.isibboi.agentsim.algorithm;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-
-import com.google.common.collect.SortedMultiset;
-import com.google.common.collect.TreeMultiset;
 
 /**
  * A priority based random selector.
@@ -17,8 +16,8 @@ import com.google.common.collect.TreeMultiset;
  * @since 0.3.0
  * @param <T> The element type.
  */
-public class PrioritizedRandomSelector<T extends PriorityOrdered> implements PrioritySelector<T> {
-	private final SortedMultiset<T> _data = TreeMultiset.create(new PriorityComparator());
+public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Selector<T> {
+	private final Map<T, T> _data = new HashMap<>();
 	private final Random _random = new Random();
 
 	private int _prioritySum;
@@ -36,7 +35,7 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Pri
 		}
 
 		_prioritySum = newPrioritySum;
-		_data.add(element);
+		_data.put(element, element);
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Pri
 		int ticket = _random.nextInt(_prioritySum);
 		int currentSum = 0;
 
-		for (T o : _data) {
+		for (T o : _data.keySet()) {
 			currentSum += o.getPriority();
 
 			if (currentSum > ticket) {
@@ -69,21 +68,19 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Pri
 
 	@Override
 	public Collection<T> getData() {
-		return Collections.unmodifiableCollection(_data);
+		return Collections.unmodifiableCollection(_data.keySet());
 	}
 
 	@Override
-	public void updatePriority(final T element, final int priority) {
-		if (!_data.contains(element)) {
-			throw new IllegalArgumentException("The given element is not in this data structure.");
-		}
+	public void update(final Iterable<? extends T> elements) {
+		for (T element : elements) {
+			final T oldElement = _data.get(element);
 
-		if (priority < 0) {
-			throw new IllegalArgumentException("The priority must not be negative.");
+			if (element.getLastUpdateTime() > oldElement.getLastUpdateTime()) {
+				_prioritySum -= _data.remove(oldElement).getPriority();
+				_data.put(element, element);
+				_prioritySum += element.getPriority();
+			}
 		}
-
-		int currentPriority = element.getPriority();
-		_prioritySum += priority - currentPriority;
-		element.setPriority(priority);
 	}
 }

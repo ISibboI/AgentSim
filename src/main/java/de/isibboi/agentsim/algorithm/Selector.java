@@ -34,4 +34,14 @@ public interface Selector<T> {
 	 * @return An immutable collection.
 	 */
 	Collection<T> getData();
+
+	/**
+	 * Updates all given elements.
+	 * An element that doesn't exist is added to the selector.
+	 * The newer element is always kept, the older one thrown away.
+	 * If both elements are equally old, the given one is thrown away.
+	 * 
+	 * @param elements The elements to update.
+	 */
+	void update(Iterable<? extends T> elements);
 }

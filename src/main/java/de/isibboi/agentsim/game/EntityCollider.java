@@ -13,8 +13,9 @@ public interface EntityCollider {
 	/**
 	 * Starts the collision process.
 	 * After calling this, the {@link EntityCollider} is ready to accept calls to {@link #collide(Entity, Entity)}.
+	 * @param tick The current tick.
 	 */
-	void startCollision();
+	void startCollision(int tick);
 
 	/**
 	 * Calculates the collision between the given entities.

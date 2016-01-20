@@ -15,8 +15,8 @@ public interface PriorityOrdered {
 	int getPriority();
 
 	/**
-	 * Sets the priority of this object.
-	 * @param priority The priority between {@code 0} and {@code Integer.MAX_VALUE}.
+	 * Returns the last time the information encoded in this object was updated.
+	 * @return The last update.
 	 */
-	void setPriority(int priority);
+	int getLastUpdateTime();
 }

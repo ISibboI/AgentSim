@@ -9,7 +9,7 @@ import java.util.Collection;
  * @since 0.3.0
  * @param <T> The element type.
  */
-public class PrioritizedTreeRandomSelector<T extends PriorityOrdered & Comparable<T>> implements PrioritySelector<T> {
+public class PrioritizedTreeRandomSelector<T extends PriorityOrdered & Comparable<T>> implements Selector<T> {
 	@Override
 	public void add(final T element) {
 		// TODO Auto-generated method stub
@@ -32,12 +32,6 @@ public class PrioritizedTreeRandomSelector<T extends PriorityOrdered & Comparabl
 	public Collection<T> getData() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void updatePriority(final T element, final int priority) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private final class Node {
@@ -78,5 +72,11 @@ public class PrioritizedTreeRandomSelector<T extends PriorityOrdered & Comparabl
 		public Node getRightChild() {
 			return _rightChild;
 		}
+	}
+
+	@Override
+	public void update(final Iterable<? extends T> elements) {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -11,6 +11,8 @@ import de.isibboi.agentsim.game.entities.Entity;
  *
  */
 public class SimpleEntityCollider implements EntityCollider {
+	private int _currentTick;
+
 	/**
 	 * @param settings Ignored.
 	 */
@@ -19,13 +21,13 @@ public class SimpleEntityCollider implements EntityCollider {
 	}
 
 	@Override
-	public void startCollision() {
-		// Do nothing.
+	public void startCollision(final int tick) {
+		_currentTick = tick;
 	}
 
 	@Override
 	public void collide(final Entity a, final Entity b) {
-		a.collideWith(b);
+		a.collideWith(b, _currentTick);
 	}
 
 	@Override

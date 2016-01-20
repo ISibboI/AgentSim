@@ -11,9 +11,11 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.BlockadeMap;
 import de.isibboi.agentsim.algorithm.KnowledgeBasedBlockadeMap;
+import de.isibboi.agentsim.algorithm.PrioritizedRandomSelector;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.ai.intends.Intend;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
@@ -45,6 +47,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	private final float _saturationBufferDistanceFactor;
 	private final int _saturationBufferMinimum;
+
+	private final PrioritizedRandomSelector<Intend> _intendSelector = new PrioritizedRandomSelector<>();
 
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
@@ -113,14 +117,15 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	}
 
 	@Override
-	public void eventCollideWithEntity(final Entity entity) {
+	public void eventCollideWithEntity(final Entity entity, final int tick) {
 		// Those downcasts should be removed and replaced with proper object oriented code.
 		if (entity instanceof Goblin) {
 			Goblin g = (Goblin) entity;
-			GoblinSwarmAI ai = (GoblinSwarmAI) g.getAI();
+			GoblinSwarmAI ai = g.getAI();
 			exchangeInformation(ai);
 		} else if (entity instanceof SwarmMainBuilding) {
 			int feedAmount = _goblin.getAttributes().feedCompletely();
+			_intendSelector.update(((SwarmMainBuilding) entity).getIntends(tick));
 			LOG.trace("A goblin was fed at main building. It ate " + feedAmount + " units.");
 		}
 	}
