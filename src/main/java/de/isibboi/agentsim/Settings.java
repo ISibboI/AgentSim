@@ -111,11 +111,11 @@ public class Settings {
 		_defaults.setProperty(UI_FONT_FAMILY, Font.MONOSPACED);
 		_defaults.setProperty(UI_SELECTION_MODE, EntitySelectionManager.SelectionMode.TOUCH.toString());
 
-		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "10");
+		_defaults.setProperty(GAME_INITIAL_GOBLIN_COUNT, "1");
 		_defaults.setProperty(GAME_SPAWN_RADIUS, "10");
 		_defaults.setProperty(GAME_SCALE, "4");
 
-		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "50");
+		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_SATURATION, "20");
 		_defaults.setProperty(GAME_ENTITIES_GOBLIN_INITIAL_MAX_SATURATION, "100");
 
 		_defaults.setProperty(GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR, "1.05");

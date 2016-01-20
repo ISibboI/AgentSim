@@ -157,6 +157,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	protected void eventExecutionAborted() {
+		LOG.trace("Execution aborted");
+
 		selectNextTask();
 	}
 
@@ -167,6 +169,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	protected void eventExecutingIdleTask() {
+		LOG.trace("Executing idle task");
+
 		selectNextTask();
 	}
 
@@ -184,6 +188,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 			if (task != null) {
 				if (!moveToSpawnIfNecessary(task.guessDuration())) {
 					enqueueTask(task);
+					LOG.trace("Executing: " + nextIntend);
 				}
 			} else {
 				_intendSelector.add(nextIntend);
