@@ -63,8 +63,8 @@ public class MoveToTask extends AbstractTask {
 
 		setMovement(_movementQueue.poll());
 
-		if (_movementQueue.isEmpty() && !wasSuccessful()) {
-			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
+		if (_movementQueue.isEmpty() && !_entity.getLocation().isNeighborOf(_target)) {
+			LOG.trace("Nearly finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be next to " + _target + ".");
 		}
 	}
 
@@ -90,7 +90,13 @@ public class MoveToTask extends AbstractTask {
 
 	@Override
 	public boolean wasSuccessful() {
-		return _entity.getLocation().equals(_target);
+		boolean result = _entity.getLocation().equals(_target);
+
+		if (!result) {
+			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
+		}
+
+		return result;
 	}
 
 	@Override

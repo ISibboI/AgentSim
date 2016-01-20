@@ -46,8 +46,6 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	private final float _saturationBufferDistanceFactor;
 	private final int _saturationBufferMinimum;
 
-	private Task _moveToSpawnTask = null;
-
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
 	 * @param entityLocationManager The entity location manager.
@@ -104,11 +102,11 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		explorePoint(location);
 
 		// TODO Remove this, and instead make goblin mine actively.
-		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
-			Iterable<? extends Task> miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
-			//			miningTask.setPriority(1);
-			tryEnqueueTasks(miningTask);
-		}
+		//		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
+		//			Iterable<? extends Task> miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
+		//			//			miningTask.setPriority(1);
+		//			tryEnqueueTasks(miningTask);
+		//		}
 
 		// TODO Try restarting the current intend
 		abort();
@@ -160,8 +158,13 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	}
 
 	@Override
+	protected void eventExecutionAborted() {
+		selectNextTask();
+	}
+
+	@Override
 	protected void eventExecutionFinished() {
-		// Ignored
+		// Ignore
 	}
 
 	@Override

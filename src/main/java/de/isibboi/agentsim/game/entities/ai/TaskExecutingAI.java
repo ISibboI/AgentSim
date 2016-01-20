@@ -54,10 +54,9 @@ public abstract class TaskExecutingAI implements AI {
 		if (_currentTask != null) {
 			if (_currentTask.isFinished()) {
 				finishTask(attributes, random, tick);
+			} else {
+				_currentTask.update(random, tick);
 			}
-
-			// TODO: Put this into else?
-			_currentTask.update(random, tick);
 		} else {
 			startNextTask(_taskQueue.poll(), attributes, random, tick);
 		}
@@ -88,8 +87,8 @@ public abstract class TaskExecutingAI implements AI {
 		} else {
 			LOG.trace("Task was not executed successfully: " + lastTask);
 
-			eventTaskFinished(lastTask, 1);
-			_idleTask.update(random, tick);
+			eventExecutionAborted();
+			update(attributes, random, tick);
 		}
 	}
 
@@ -121,7 +120,13 @@ public abstract class TaskExecutingAI implements AI {
 			}
 
 			eventExecutingIdleTask();
-			_idleTask.update(random, tick);
+
+			// If a task was added due to events, it should be started instead of updating the idle task.
+			if (_taskQueue.isEmpty()) {
+				_idleTask.update(random, tick);
+			} else {
+				update(attributes, random, tick);
+			}
 		}
 	}
 
@@ -182,13 +187,19 @@ public abstract class TaskExecutingAI implements AI {
 	protected abstract void eventTaskFinished(Task task, int nextTaskDuration);
 
 	/**
+	 * Fired when the execution is aborted due to a failed task.
+	 */
+	protected abstract void eventExecutionAborted();
+
+	/**
 	 * Fired when all tasks have been executed.
 	 */
 	protected abstract void eventExecutionFinished();
 
 	/**
-	 * Fired when the idle task is executing.
-	 * It it fired once per update, until another task is executing.
+	 * Fired when the idle task would be executing.
+	 * To prevent this, add another task to the queue before this method returns.
+	 * It is fired once per update, until another task is executing.
 	 */
 	protected abstract void eventExecutingIdleTask();
 
