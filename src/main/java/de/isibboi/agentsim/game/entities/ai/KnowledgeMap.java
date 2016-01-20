@@ -56,4 +56,12 @@ public interface KnowledgeMap<Knowledge> {
 	 * @return A set containing all known locations.
 	 */
 	Set<Point> getKnownLocationSet();
+
+	/**
+	 * Searches for the nearest location whose knowledge is equal to the given one.
+	 * @param location The search location.
+	 * @param knowledge The knowledge to search for.
+	 * @return The location of the nearest knowledge.
+	 */
+	Point searchNearestEqualKnowledge(Point location, Knowledge knowledge);
 }

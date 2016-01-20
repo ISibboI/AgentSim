@@ -21,7 +21,7 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 public abstract class TaskExecutingAI implements AI {
 	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
 
-	private final Queue<Task> _taskSelector = new LinkedList<>();
+	private final Queue<Task> _taskQueue = new LinkedList<>();
 	private Task _currentTask;
 
 	/**
@@ -56,9 +56,10 @@ public abstract class TaskExecutingAI implements AI {
 				finishTask(attributes, random, tick);
 			}
 
+			// TODO: Put this into else?
 			_currentTask.update(random, tick);
 		} else {
-			startNextTask(_taskSelector.poll(), attributes, random, tick);
+			startNextTask(_taskQueue.poll(), attributes, random, tick);
 		}
 	}
 
@@ -76,11 +77,11 @@ public abstract class TaskExecutingAI implements AI {
 		_currentTask = null;
 
 		if (lastTask.wasSuccessful()) {
-			if (_taskSelector.isEmpty()) {
+			if (_taskQueue.isEmpty()) {
 				eventTaskFinished(lastTask, 1);
 				update(attributes, random, tick);
 			} else {
-				Task nextTask = _taskSelector.poll();
+				Task nextTask = _taskQueue.poll();
 				eventTaskFinished(lastTask, nextTask.guessDuration());
 				startNextTask(nextTask, attributes, random, tick);
 			}
@@ -144,14 +145,14 @@ public abstract class TaskExecutingAI implements AI {
 	public void enqueueTask(final Task task) {
 		Objects.requireNonNull(task);
 
-		_taskSelector.add(task);
+		_taskQueue.add(task);
 	}
 
 	/**
 	 * Enqueues the given tasks.
 	 * @param tasks The tasks.
 	 */
-	public void enqueueTasks(final Iterable<Task> tasks) {
+	public void enqueueTasks(final Iterable<? extends Task> tasks) {
 		for (Task task : tasks) {
 			enqueueTask(task);
 		}
@@ -198,7 +199,7 @@ public abstract class TaskExecutingAI implements AI {
 	public int guessDurationToFinishQueue() {
 		int duration = 0;
 
-		for (Task task : _taskSelector) {
+		for (Task task : _taskQueue) {
 			duration += task.guessDuration();
 		}
 
@@ -207,5 +208,17 @@ public abstract class TaskExecutingAI implements AI {
 		}
 
 		return duration;
+	}
+
+	/**
+	 * Aborts the execution of all tasks.
+	 */
+	public void abort() {
+		_taskQueue.clear();
+
+		if (_currentTask != null) {
+			_currentTask.eventFailure();
+			_currentTask = null;
+		}
 	}
 }

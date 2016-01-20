@@ -51,4 +51,20 @@ public abstract class AbstractKnowledgeMap<Knowledge> implements KnowledgeMap<Kn
 			other.updateLocation(location, getLocationKnowledge(location), thisAge);
 		}
 	}
+
+	@Override
+	public Point searchNearestEqualKnowledge(final Point location, final Knowledge knowledge) {
+		Set<Point> knownLocations = getKnownLocationSet();
+		int lowestDistance = Integer.MAX_VALUE;
+		Point result = null;
+
+		for (Point p : knownLocations) {
+			if (getLocationKnowledge(p).equals(knowledge) && location.manhattanDistance(p) < lowestDistance) {
+				lowestDistance = location.manhattanDistance(p);
+				result = p;
+			}
+		}
+
+		return result;
+	}
 }

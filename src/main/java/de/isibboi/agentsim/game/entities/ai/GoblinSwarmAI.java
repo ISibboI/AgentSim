@@ -25,7 +25,9 @@ import de.isibboi.agentsim.game.map.Point;
  * Agents can share knowledge if they meet another agent.
  * 
  * The goblin automaton.
- * 
+ * If it has no task, select next task.
+ * If the selected task can be completed without starving, do it.
+ * Otherwise, get food.
  * 
  * @author Sebastian Schmidt
  * @since 0.2.0
@@ -101,11 +103,15 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	public void eventCollideWithWall(final Point location) {
 		explorePoint(location);
 
+		// TODO Remove this, and instead make goblin mine actively.
 		if (!_entityLocationManager.getMap().isLocationLocked(location)) {
 			Iterable<? extends Task> miningTask = _goblinTaskFactory.createMiningTask(location, _goblin, _entityLocationManager);
 			//			miningTask.setPriority(1);
-			tryEnqueueTask(miningTask);
+			tryEnqueueTasks(miningTask);
 		}
+
+		// TODO Try restarting the current intend
+		abort();
 	}
 
 	@Override
@@ -131,7 +137,8 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	public void eventCollideWithMapBorder(final Point location) {
-		// Ignored
+		// TODO Try restarting the current intend
+		abort();
 	}
 
 	@Override
@@ -150,14 +157,6 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	@Override
 	public void eventTaskFinished(final Task task, final int nextTaskDuration) {
 		Objects.requireNonNull(task);
-
-		// Make entities move to spawn point if saturation is low.
-		moveToSpawnIfNecessary(nextTaskDuration);
-
-		// Goblin has reached spawn.
-		if (task == _moveToSpawnTask) {
-			_moveToSpawnTask = null;
-		}
 	}
 
 	@Override
@@ -167,6 +166,13 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 	@Override
 	protected void eventExecutingIdleTask() {
+		selectNextTask();
+	}
+
+	/**
+	 * Selects the next task that should be executed, keeping the goblin from starving.
+	 */
+	private void selectNextTask() {
 		moveToSpawnIfNecessary(1);
 	}
 
@@ -176,20 +182,14 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	 * @return True if the goblin is moving to spawn as a result of calling this method, false otherwise.
 	 */
 	protected boolean moveToSpawnIfNecessary(final int nextTaskDuration) {
-		// Prevent moving to spawn more than once.
-		if (_moveToSpawnTask != null) {
-			return false;
-		}
-
 		int distanceToHome = _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint());
 		int saturation = _goblin.getAttributes().getSaturation();
 		saturation /= _saturationBufferDistanceFactor;
 		saturation -= _saturationBufferMinimum;
 
 		if (saturation <= distanceToHome + nextTaskDuration) {
-			_moveToSpawnTask = _goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin);
-			_moveToSpawnTask.setPriority(10_000); // TODO replace with enqueueTaskImmediately, create a decorator for the selector.
-			enqueueTask(_moveToSpawnTask);
+			Iterable<? extends Task> _moveToSpawnTask = _goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin);
+			enqueueTasks(_moveToSpawnTask);
 
 			LOG.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
 					+ " ticks, and the current adjusted saturation is " + saturation + ".");
@@ -212,6 +212,30 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 
 		if (currentDuration + additionalDuration + moveHomeDuration < _goblin.getAttributes().getSaturation()) {
 			enqueueTask(task);
+			return true;
+		} else {
+			moveToSpawnIfNecessary(1);
+			return false;
+		}
+	}
+
+	/**
+	 * Tries to enqueue the given tasks.
+	 * The tasks are only enqueued, if their execution does not make the goblin starve.
+	 * @param tasks The tasks to enqueue.
+	 * @return True if the task was enqueued, false otherwise.
+	 */
+	protected boolean tryEnqueueTasks(final Iterable<? extends Task> tasks) {
+		int currentDuration = guessDurationToFinishQueue();
+		int moveHomeDuration = _entityLocationManager.getMap().getSpawnPoint().manhattanDistance(_goblin.getLocation());
+		int additionalDuration = 0;
+
+		for (Task task : tasks) {
+			additionalDuration += task.guessDuration();
+		}
+
+		if (currentDuration + additionalDuration + moveHomeDuration < _goblin.getAttributes().getSaturation()) {
+			enqueueTasks(tasks);
 			return true;
 		} else {
 			moveToSpawnIfNecessary(1);

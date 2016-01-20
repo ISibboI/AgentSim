@@ -82,4 +82,9 @@ public class ProviderBackedKnowledgeMap<Knowledge> implements KnowledgeMap<Knowl
 	public KnowledgeMap<Knowledge> getDecoratedKnowledgeMap() {
 		return _knowledgeMap;
 	}
+
+	@Override
+	public Point searchNearestEqualKnowledge(Point location, Knowledge knowledge) {
+		return _knowledgeMap.searchNearestEqualKnowledge(location, knowledge);
+	}
 }
