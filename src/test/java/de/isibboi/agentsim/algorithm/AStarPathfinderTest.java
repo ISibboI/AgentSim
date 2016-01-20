@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.List;
+import java.util.Queue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class AStarPathfinderTest {
 	 */
 	@Test
 	public void testUnreachable() {
-		List<Movement> path = _pathfinder.findPath(new Point(3, 0), new Point(4, 4), _map);
+		Queue<Movement> path = _pathfinder.findPath(new Point(3, 0), new Point(4, 4), _map);
 		assertNull("Path is not null.", path);
 	}
 
@@ -50,7 +50,7 @@ public class AStarPathfinderTest {
 	 */
 	@Test
 	public void testShortestPath() {
-		List<Movement> path = _pathfinder.findPath(new Point(0, 0), new Point(4, 4), _map);
+		Queue<Movement> path = _pathfinder.findPath(new Point(0, 0), new Point(4, 4), _map);
 		assertNotNull("Path is null.", path);
 		assertEquals("Path is not the shortest one.", 8, path.size());
 	}

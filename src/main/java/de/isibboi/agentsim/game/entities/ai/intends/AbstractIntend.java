@@ -1,5 +1,9 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
+import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
+import de.isibboi.agentsim.game.map.Point;
+
 /**
  * Handles priorities and the age of an intend.
  * 
@@ -28,5 +32,29 @@ public abstract class AbstractIntend implements Intend {
 	@Override
 	public int getLastUpdateTime() {
 		return _creationTime;
+	}
+
+	/**
+	 * Returns the path to a point that can be reached from start and that is right next to target.
+	 * 
+	 * @param start The point to start walking from.
+	 * @param target The point to access.
+	 * @param goblin The goblin to move.
+	 * @return The path to a point that can be reached from start and is right next to target, or null, if no such point exists.
+	 */
+	protected MoveToTask searchAccessPoint(final Point start, final Point target, final Goblin goblin) {
+		for (Point neighbour : target.getNeighbours()) {
+			if (goblin.getAI().getBlockadeMap().isBlocked(neighbour)) {
+				continue;
+			}
+
+			MoveToTask path = new MoveToTask(start, target, goblin, goblin.getAI().getBlockadeMap());
+
+			if (path.hasPath()) {
+				return path;
+			}
+		}
+
+		return null;
 	}
 }

@@ -1,6 +1,6 @@
 package de.isibboi.agentsim.algorithm;
 
-import java.util.List;
+import java.util.Queue;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
@@ -19,5 +19,5 @@ public interface PathfindingAlgorithm {
 	 * @param map The map.
 	 * @return The shortest path from start to target, or null, if target is not reachable from start.
 	 */
-	List<Movement> findPath(Point start, Point target, BlockadeMap map);
+	Queue<Movement> findPath(Point start, Point target, BlockadeMap map);
 }

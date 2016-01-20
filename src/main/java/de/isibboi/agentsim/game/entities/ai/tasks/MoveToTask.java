@@ -1,7 +1,5 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
@@ -29,7 +27,7 @@ public class MoveToTask extends AbstractTask {
 	private final Point _target;
 	private final MapEntity _entity;
 
-	private final Queue<Movement> _movementQueue = new LinkedList<>();
+	private final Queue<Movement> _movementQueue;
 	private final double _totalDuration;
 
 	/**
@@ -46,15 +44,14 @@ public class MoveToTask extends AbstractTask {
 		_entity = entity;
 
 		PathfindingAlgorithm pathfinder = new AStarPathfinder();
-		List<Movement> path = pathfinder.findPath(_start, _target, blockadeMap);
+		_movementQueue = pathfinder.findPath(_start, _target, blockadeMap);
 
-		if (path != null) {
-			_movementQueue.addAll(path);
+		if (_movementQueue != null) {
+			_totalDuration = _movementQueue.size();
 		} else {
 			LOG.trace("Could not find a valid path.");
+			_totalDuration = 0;
 		}
-
-		_totalDuration = _movementQueue.size();
 	}
 
 	@Override
@@ -104,6 +101,20 @@ public class MoveToTask extends AbstractTask {
 
 	@Override
 	public double getProgress() {
+		if (_totalDuration == 0) {
+			return 1;
+		}
+
 		return _movementQueue.size() / _totalDuration;
+	}
+
+	/**
+	 * Returns true if a path from start to target was found.
+	 * If this method returns false, the {@code MoveToTask} has no use.
+	 * 
+	 * @return True if a path from start to target was found, false otherwise.
+	 */
+	public boolean hasPath() {
+		return _movementQueue != null;
 	}
 }

@@ -1,8 +1,16 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.ai.tasks.LockLocationTask;
+import de.isibboi.agentsim.game.entities.ai.tasks.MiningTask;
+import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
+import de.isibboi.agentsim.game.entities.ai.tasks.UnlockLocationTask;
 import de.isibboi.agentsim.game.map.Material;
+import de.isibboi.agentsim.game.map.Point;
 
 /**
  * The intend to mine a specific block.
@@ -28,7 +36,18 @@ public class MiningIntend extends AbstractIntend {
 
 	@Override
 	public Iterable<Task> execute(final Goblin goblin) {
-		// TODO Auto-generated method stub
-		return null;
+		final Point currentPoint = goblin.getLocation();
+		final Point miningPoint = goblin.getAI().getMapKnowledge().searchNearestEqualKnowledge(currentPoint, _material);
+		final List<Task> tasks = new LinkedList<>();
+
+		final MoveToTask movement = searchAccessPoint(currentPoint, miningPoint, goblin);
+		final LockLocationTask lock = new LockLocationTask(goblin.getMap(), miningPoint, goblin);
+
+		tasks.add(movement);
+		tasks.add(lock);
+		tasks.add(new MiningTask(miningPoint, goblin, goblin.getEntityLocationManager()));
+		tasks.add(new UnlockLocationTask(lock));
+
+		return tasks;
 	}
 }

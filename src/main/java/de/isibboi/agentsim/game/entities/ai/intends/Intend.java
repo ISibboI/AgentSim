@@ -20,7 +20,7 @@ public interface Intend extends PriorityOrdered {
 	 * Generates a task sequence for executing this intend.
 	 * The task sequence is only valid if it is executed immediately.
 	 * @param goblin The goblin that should execute the intend.
-	 * @return A task sequence.
+	 * @return A task sequence, or null, if the intend cannot be executed.
 	 */
 	Iterable<Task> execute(Goblin goblin);
 }

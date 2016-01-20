@@ -260,4 +260,20 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	public BlockadeMap getBlockadeMap() {
 		return new KnowledgeBasedBlockadeMap(_mapKnowledge);
 	}
+
+	/**
+	 * Returns the {@link EntityLocationManager}.
+	 * @return The EntityLocationManager.
+	 */
+	public EntityLocationManager getEntityLocationManager() {
+		return _entityLocationManager;
+	}
+
+	/**
+	 * Returns the map knowledge of this AI.
+	 * @return The map knowledge.
+	 */
+	public KnowledgeMap<Material> getMapKnowledge() {
+		return _mapKnowledge;
+	}
 }

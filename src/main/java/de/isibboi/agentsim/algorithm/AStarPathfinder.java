@@ -1,10 +1,10 @@
 package de.isibboi.agentsim.algorithm;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
@@ -84,7 +84,7 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 	}
 
 	@Override
-	public List<Movement> findPath(final Point start, final Point target, final BlockadeMap map) {
+	public Queue<Movement> findPath(final Point start, final Point target, final BlockadeMap map) {
 		// 11 is taken from the OpenJDK implementation.
 		_openList = new PriorityQueue<AStarNode>(11, new AStarNodeComparator());
 		_graph = new GridGraph<>(map, new VertexDataFactory<AStarNode>() {
@@ -116,8 +116,8 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 	 * @param start The start vertex location.
 	 * @return The path from start to target.
 	 */
-	private List<Movement> getPath(final Point start) {
-		List<Movement> path = new ArrayList<>();
+	private Queue<Movement> getPath(final Point start) {
+		Queue<Movement> path = new LinkedList<>();
 
 		AStarNode last = _graph.getData(start);
 
