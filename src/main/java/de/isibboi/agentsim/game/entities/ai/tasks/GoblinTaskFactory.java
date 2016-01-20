@@ -3,6 +3,7 @@
  */
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -34,7 +35,7 @@ public class GoblinTaskFactory {
 	 * @param entityLocationManager The entity location manager.
 	 * @return A mining task.
 	 */
-	public Task createMiningTask(final Point location, final Goblin goblin, final EntityLocationManager entityLocationManager) {
+	public Iterable<? extends Task> createMiningTask(final Point location, final Goblin goblin, final EntityLocationManager entityLocationManager) {
 		Queue<Task> _taskQueue = new LinkedList<>();
 		LockLocationTask lockLocationTask = new LockLocationTask(entityLocationManager.getMap(), location, goblin);
 
@@ -42,7 +43,7 @@ public class GoblinTaskFactory {
 		_taskQueue.add(new MiningTask(location, goblin, entityLocationManager));
 		_taskQueue.add(new UnlockLocationTask(lockLocationTask));
 
-		return new CompositeTask(_taskQueue);
+		return _taskQueue;
 	}
 
 	/**
@@ -52,9 +53,9 @@ public class GoblinTaskFactory {
 	 * @param goblin The goblin that should move to the target.
 	 * @return A task that moves the given goblin to the given target.
 	 */
-	public Task createMoveToTask(final Point target, final Goblin goblin) {
+	public Iterable<? extends Task> createMoveToTask(final Point target, final Goblin goblin) {
 		BlockadeMap blockadeMap = goblin.getAI().getBlockadeMap();
 
-		return new MoveToTask(target, goblin, blockadeMap);
+		return Collections.singleton(new MoveToTask(target, goblin, blockadeMap));
 	}
 }

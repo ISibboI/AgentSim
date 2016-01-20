@@ -31,4 +31,10 @@ public abstract class InfiniteTask extends AbstractTask {
 		// Doesn't matter what is returned here, because infinite tasks are never completed.
 		return true;
 	}
+
+	@Override
+	public double getProgress() {
+		// An infinite task never makes progress.
+		return 0;
+	}
 }

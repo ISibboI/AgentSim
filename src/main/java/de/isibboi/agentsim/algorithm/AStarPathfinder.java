@@ -36,7 +36,7 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 		 * @param distanceFromStart The distance from the start vertex to this vertex.
 		 * @param predecessor The predecessor of this node.
 		 */
-		public AStarNode(final Point location, final int distanceToTarget, final int distanceFromStart, final AStarNode predecessor) {
+		AStarNode(final Point location, final int distanceToTarget, final int distanceFromStart, final AStarNode predecessor) {
 			_location = location;
 			_distanceToTarget = distanceToTarget;
 			_distanceFromStart = distanceFromStart;

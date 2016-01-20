@@ -27,26 +27,41 @@ public class MoveToTask extends AbstractTask {
 
 	private final Point _target;
 	private final MapEntity _entity;
-	private final BlockadeMap _blockadeMap;
 
 	private final Queue<Movement> _movementQueue = new LinkedList<>();
+	private final double _totalDuration;
 
 	/**
 	 * Creates an new task that moves the given Entity to the given target.
 	 * 
 	 * @param target The target point on the map.
 	 * @param entity The entity to move.
-	 * @param blockadeMap The map as seen by the entity.
+	 * @param blockadeMap The map of obstacles as seen by the entity.
 	 */
+	// TODO Add starting point for static task execution.
 	public MoveToTask(final Point target, final MapEntity entity, final BlockadeMap blockadeMap) {
 		_target = target;
 		_entity = entity;
-		_blockadeMap = blockadeMap;
+
+		PathfindingAlgorithm pathfinder = new AStarPathfinder();
+		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, blockadeMap);
+
+		if (path != null) {
+			_movementQueue.addAll(path);
+		} else {
+			LOG.trace("Could not find a valid path.");
+		}
+
+		_totalDuration = _movementQueue.size();
 	}
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
-		_movementQueue.remove();
+		if (isFinished()) {
+			throw new IllegalStateException("Cannot update finished task!");
+		}
+
+		setMovement(_movementQueue.poll());
 
 		if (_movementQueue.isEmpty() && !wasSuccessful()) {
 			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
@@ -59,13 +74,7 @@ public class MoveToTask extends AbstractTask {
 	}
 
 	@Override
-	public Movement getMovement() {
-		return _movementQueue.element();
-	}
-
-	@Override
 	public int guessDuration() {
-		// TODO add guess if task was not started yet.
 		return _movementQueue.size();
 	}
 
@@ -76,28 +85,16 @@ public class MoveToTask extends AbstractTask {
 
 	@Override
 	public void eventInformationUpdated() {
-		_movementQueue.clear();
-		PathfindingAlgorithm pathfinder = new AStarPathfinder();
-		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, _blockadeMap);
-
-		if (path != null) {
-			_movementQueue.addAll(path);
-		} else {
-			LOG.trace("Could not find a valid path.");
-		}
-
-		if (_movementQueue.isEmpty()) {
-			_movementQueue.add(Movement.NONE);
-		}
-	}
-
-	@Override
-	public void start() {
-		eventInformationUpdated();
+		// Ignore.
 	}
 
 	@Override
 	public boolean wasSuccessful() {
 		return _entity.getLocation().equals(_target);
+	}
+
+	@Override
+	public double getProgress() {
+		return _movementQueue.size() / _totalDuration;
 	}
 }
