@@ -42,6 +42,11 @@ public class MiningIntend extends AbstractIntend {
 		final CompositeTask tasks = new CompositeTask();
 
 		final MoveToTask movement = searchAccessPoint(currentPoint, miningPoint, goblin);
+
+		if (movement == null) {
+			return null;
+		}
+
 		final LockLocationTask lock = new LockLocationTask(goblin.getMap(), miningPoint, goblin);
 
 		tasks.add(movement);
