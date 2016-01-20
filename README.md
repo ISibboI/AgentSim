@@ -14,3 +14,4 @@ Simulate a small goblin population in a cave. The population should slowly build
 
 ### Understanding the code
 If you want to read the code, you should start with the [AgentSim](https://github.com/ISibboI/AgentSim/blob/master/src/main/java/de/isibboi/agentsim/AgentSim.java) class. It contains the main method.
+Of course, I should add some more information here, but I probably won't until someone requests it.
