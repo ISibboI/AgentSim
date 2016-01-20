@@ -21,5 +21,13 @@
 			level="info"></Logger>
 		<Logger name="de.isibboi.agentsim.algorithm.LockManager"
 			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI"
+			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.ai.TaskExecutingAI"
+			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.ai.intends.MiningIntend"
+			level="info"></Logger>
+		<Logger name="de.isibboi.agentsim.game.entities.ai.tasks.ZeroTimeTask"
+			level="info"></Logger>
 	</Loggers>
 </Configuration>
