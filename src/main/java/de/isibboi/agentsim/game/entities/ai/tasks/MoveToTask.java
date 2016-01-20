@@ -25,6 +25,7 @@ import de.isibboi.agentsim.game.map.Point;
 public class MoveToTask extends AbstractTask {
 	private static final Logger LOG = LogManager.getLogger(MoveToTask.class);
 
+	private final Point _start;
 	private final Point _target;
 	private final MapEntity _entity;
 
@@ -34,17 +35,18 @@ public class MoveToTask extends AbstractTask {
 	/**
 	 * Creates an new task that moves the given Entity to the given target.
 	 * 
+	 * @param start The starting point on the map.
 	 * @param target The target point on the map.
 	 * @param entity The entity to move.
 	 * @param blockadeMap The map of obstacles as seen by the entity.
 	 */
-	// TODO Add starting point for static task execution.
-	public MoveToTask(final Point target, final MapEntity entity, final BlockadeMap blockadeMap) {
+	public MoveToTask(final Point start, final Point target, final MapEntity entity, final BlockadeMap blockadeMap) {
+		_start = start;
 		_target = target;
 		_entity = entity;
 
 		PathfindingAlgorithm pathfinder = new AStarPathfinder();
-		List<Movement> path = pathfinder.findPath(_entity.getLocation(), _target, blockadeMap);
+		List<Movement> path = pathfinder.findPath(_start, _target, blockadeMap);
 
 		if (path != null) {
 			_movementQueue.addAll(path);
@@ -61,11 +63,11 @@ public class MoveToTask extends AbstractTask {
 			throw new IllegalStateException("Cannot update finished task!");
 		}
 
-		setMovement(_movementQueue.poll());
-
-		if (_movementQueue.isEmpty() && !_entity.getLocation().isNeighborOf(_target)) {
-			LOG.trace("Nearly finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be next to " + _target + ".");
+		if (_movementQueue.size() == _totalDuration && !_entity.getLocation().equals(_start)) {
+			throw new IllegalStateException("MoveToTask started, but entity is not at starting position!");
 		}
+
+		setMovement(_movementQueue.poll());
 	}
 
 	@Override
@@ -94,6 +96,7 @@ public class MoveToTask extends AbstractTask {
 
 		if (!result) {
 			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
+			throw new IllegalStateException("Movement finished, but entity is at wrong position!");
 		}
 
 		return result;

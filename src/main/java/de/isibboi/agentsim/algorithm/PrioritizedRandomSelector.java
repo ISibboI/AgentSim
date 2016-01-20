@@ -76,7 +76,10 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Sel
 		for (T element : elements) {
 			final T oldElement = _data.get(element);
 
-			if (element.getLastUpdateTime() > oldElement.getLastUpdateTime()) {
+			if (oldElement == null) {
+				_data.put(element, element);
+				_prioritySum += element.getPriority();
+			} else if (element.getLastUpdateTime() > oldElement.getLastUpdateTime()) {
 				_prioritySum -= _data.remove(oldElement).getPriority();
 				_data.put(element, element);
 				_prioritySum += element.getPriority();

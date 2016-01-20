@@ -56,6 +56,6 @@ public class GoblinTaskFactory {
 	public Iterable<? extends Task> createMoveToTask(final Point target, final Goblin goblin) {
 		BlockadeMap blockadeMap = goblin.getAI().getBlockadeMap();
 
-		return Collections.singleton(new MoveToTask(target, goblin, blockadeMap));
+		return Collections.singleton(new MoveToTask(goblin.getLocation(), target, goblin, blockadeMap));
 	}
 }
