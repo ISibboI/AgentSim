@@ -1,3 +1,5 @@
 #!/bin/bash
 
-java -jar target/Goblins-jar-with-dependencies.jar
+git pull
+scripts/install.sh
+scripts/run.sh
