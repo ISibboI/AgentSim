@@ -15,6 +15,7 @@ import de.isibboi.agentsim.algorithm.PrioritizedRandomSelector;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.intends.Intend;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
@@ -197,29 +198,41 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		_currentIntend = _intendSelector.select();
 
 		if (_currentIntend == null) {
-			moveToSpawnIfNecessary(1);
+			moveToSpawnIfNecessary(2);
 		} else {
-			Task task = _currentIntend.execute(_goblin);
+			CompositeTask task = _currentIntend.execute(_goblin);
 
 			if (task != null) {
-				if (!moveToSpawnIfNecessary(task.guessDuration())) {
-					enqueueTask(task);
+				if (!moveToSpawnIfNecessary(task.getDuration())) {
+					enqueueCompositeTask(task);
 					LOG.trace("Executing: " + _currentIntend);
 				}
 			} else {
 				_intendSelector.add(_currentIntend);
-				moveToSpawnIfNecessary(1);
+				moveToSpawnIfNecessary(2);
 			}
 		}
 	}
 
 	/**
 	 * Moves the goblin back to the spawn point, if it would be starving otherwise.
-	 * @param nextTaskDuration The guesstimated duration of the next task.
+	 * @param nextTaskDuration The duration of the next task.
+	 * 
 	 * @return True if the goblin is moving to spawn as a result of calling this method, false otherwise.
 	 */
 	protected boolean moveToSpawnIfNecessary(final int nextTaskDuration) {
-		int distanceToHome = _goblin.getLocation().manhattanDistance(_entityLocationManager.getMap().getSpawnPoint());
+		return moveToSpawnIfNecessary(nextTaskDuration, _goblin.getLocation());
+	}
+
+	/**
+	 * Moves the goblin back to the spawn point, if it would be starving otherwise.
+	 * @param nextTaskDuration The duration of the next task.
+	 * @param nextTaskFinishingPoint The finishing point of the next task.
+	 * 
+	 * @return True if the goblin is moving to spawn as a result of calling this method, false otherwise.
+	 */
+	protected boolean moveToSpawnIfNecessary(final int nextTaskDuration, final Point nextTaskFinishingPoint) {
+		int distanceToHome = nextTaskFinishingPoint.manhattanDistance(_entityLocationManager.getMap().getSpawnPoint());
 		int saturation = _goblin.getAttributes().getSaturation();
 		saturation /= _saturationBufferDistanceFactor;
 		saturation -= _saturationBufferMinimum;

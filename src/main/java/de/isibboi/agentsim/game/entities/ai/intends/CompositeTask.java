@@ -3,35 +3,80 @@ package de.isibboi.agentsim.game.entities.ai.intends;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
-import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
+import de.isibboi.agentsim.game.map.Point;
 
 /**
- * A list of tasks.
- * Cannot be executed, should only be used for planning.
+ * Represents a task execution sequence to solve an intend.
+ * Create objects using the {@link CompositeTask.Builder} inner class.
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class CompositeTask implements Task {
-	private final List<Task> _tasks = new LinkedList<>();
-	private int _duration = 0;
-
+public final class CompositeTask {
 	/**
-	 * Adds a task to the end of this composite task.
-	 * @param task The task.
+	 * A builder that constructs a {@code CompositeTask}.
+	 * 
+	 * @author Sebastian Schmidt
+	 * @since 0.3.0
 	 */
-	public void add(final Task task) {
-		_tasks.add(task);
-		_duration += task.guessDuration();
+	public static class Builder {
+		private final List<Task> _tasks = new LinkedList<>();
+		private int _duration = 0;
+		private Point _finishingPoint;
+
+		/**
+		 * Creates a new builder for creating a {@link CompositeTask}.
+		 */
+		public Builder() {
+		}
+
+		/**
+		 * Adds a task to the end of the composite task.
+		 * @param task The task.
+		 */
+		public void add(final Task task) {
+			_tasks.add(task);
+			_duration += task.guessDuration();
+		}
+
+		/**
+		 * Sets the finishing point of the composite task.
+		 * That is the point the goblin will be at when the task is finished.
+		 * @param finishingPoint The finishing point.
+		 */
+		public void setFinishingPoint(final Point finishingPoint) {
+			_finishingPoint = finishingPoint;
+		}
+
+		/**
+		 * Creates a composite task from this builder.
+		 * @return A new composite task.
+		 */
+		public CompositeTask build() {
+			Objects.requireNonNull(_finishingPoint, "Finishing point was not set!");
+
+			return new CompositeTask(_tasks, _duration, _finishingPoint);
+		}
 	}
 
-	@Override
-	public int guessDuration() {
-		return _duration;
+	private final List<Task> _tasks;
+	private final int _duration;
+
+	private final Point _finishingPoint;
+
+	/**
+	 * Creates a new composite task.
+	 * @param tasks The task list.
+	 * @param duration The duration of all tasks.
+	 * @param finishingPoint The finishing point of the task.
+	 */
+	private CompositeTask(final List<Task> tasks, final int duration, final Point finishingPoint) {
+		_tasks = tasks;
+		_duration = duration;
+		_finishingPoint = finishingPoint;
 	}
 
 	/**
@@ -42,43 +87,19 @@ public class CompositeTask implements Task {
 		return Collections.unmodifiableList(_tasks);
 	}
 
-	@Override
-	public void update(final Random random, final int tick) throws GameUpdateException {
-		throw new UnsupportedOperationException();
+	/**
+	 * Returns the duration of this execution sequence.
+	 * @return The duration.
+	 */
+	public int getDuration() {
+		return _duration;
 	}
 
-	@Override
-	public boolean isFinished() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean wasSuccessful() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Movement getMovement() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void eventFailure() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void eventInformationUpdated() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void zeroTimeAction() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public double getProgress() {
-		throw new UnsupportedOperationException();
+	/**
+	 * Returns the point the goblin will be at after the task finished.
+	 * @return The finishing point.
+	 */
+	public Point getFinishingPoint() {
+		return _finishingPoint;
 	}
 }

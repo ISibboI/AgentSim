@@ -7,7 +7,6 @@ import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.LockLocationTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.MiningTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
-import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 import de.isibboi.agentsim.game.entities.ai.tasks.UnlockLocationTask;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
@@ -36,10 +35,10 @@ public class MiningIntend extends AbstractIntend {
 	}
 
 	@Override
-	public Task execute(final Goblin goblin) {
+	public CompositeTask execute(final Goblin goblin) {
 		final Point currentPoint = goblin.getLocation();
 		final Point miningPoint = goblin.getAI().getMapKnowledge().searchNearestEqualKnowledge(currentPoint, _material);
-		final CompositeTask tasks = new CompositeTask();
+		final CompositeTask.Builder taskBuilder = new CompositeTask.Builder();
 
 		final MoveToTask movement = searchAccessPoint(currentPoint, miningPoint, goblin);
 
@@ -49,13 +48,15 @@ public class MiningIntend extends AbstractIntend {
 
 		final LockLocationTask lock = new LockLocationTask(goblin.getMap(), miningPoint, goblin);
 
-		tasks.add(movement);
-		tasks.add(lock);
-		tasks.add(new MiningTask(miningPoint, goblin, goblin.getEntityLocationManager()));
-		tasks.add(new UnlockLocationTask(lock));
+		taskBuilder.add(movement);
+		taskBuilder.add(lock);
+		taskBuilder.add(new MiningTask(miningPoint, goblin, goblin.getEntityLocationManager()));
+		taskBuilder.add(new UnlockLocationTask(lock));
+
+		taskBuilder.setFinishingPoint(movement.getTarget());
 
 		LOG.trace("Created mining task moving from " + currentPoint + " to " + movement.getTarget() + " mining " + _material + " at " + miningPoint);
 
-		return tasks;
+		return taskBuilder.build();
 	}
 }

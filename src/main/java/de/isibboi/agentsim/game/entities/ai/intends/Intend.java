@@ -2,7 +2,6 @@ package de.isibboi.agentsim.game.entities.ai.intends;
 
 import de.isibboi.agentsim.algorithm.PriorityOrdered;
 import de.isibboi.agentsim.game.entities.Goblin;
-import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 
 /**
  * Intends are the layer above the tasks.
@@ -22,5 +21,5 @@ public interface Intend extends PriorityOrdered {
 	 * @param goblin The goblin that should execute the intend.
 	 * @return A task sequence, or null, if the intend cannot be executed.
 	 */
-	Task execute(Goblin goblin);
+	CompositeTask execute(Goblin goblin);
 }

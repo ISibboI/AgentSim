@@ -154,11 +154,17 @@ public abstract class TaskExecutingAI implements AI {
 	public void enqueueTask(final Task task) {
 		Objects.requireNonNull(task);
 
-		if (task instanceof CompositeTask) {
-			enqueueTasks(((CompositeTask) task).getTasks());
-		} else {
-			_taskQueue.add(task);
-		}
+		_taskQueue.add(task);
+	}
+
+	/**
+	 * Enqueues the given composite task.
+	 * @param compositeTask The composite task.
+	 */
+	public void enqueueCompositeTask(final CompositeTask compositeTask) {
+		Objects.requireNonNull(compositeTask);
+
+		enqueueTasks(compositeTask.getTasks());
 	}
 
 	/**
@@ -166,6 +172,8 @@ public abstract class TaskExecutingAI implements AI {
 	 * @param tasks The tasks.
 	 */
 	public void enqueueTasks(final Iterable<? extends Task> tasks) {
+		Objects.requireNonNull(tasks);
+
 		for (Task task : tasks) {
 			enqueueTask(task);
 		}
