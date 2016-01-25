@@ -122,7 +122,7 @@ public class Settings {
 		_defaults.setProperty(GAME_AI_SATURATION_BUFFER_MINIMUM, "5");
 
 		_defaults.setProperty(CORE_TARGET_FRAME_RATE, "60");
-		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "1");
+		_defaults.setProperty(CORE_TARGET_UPDATE_RATE, "6");
 		_defaults.setProperty(CORE_MAX_UPDATES_PER_FRAME, "2");
 
 		_defaults.setProperty(CORE_RENDER_TRANSITION_AMOUNT, "1");
