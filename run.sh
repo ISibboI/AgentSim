@@ -1,5 +1,5 @@
 #!/bin/bash
 
 git pull
-scripts/install.sh
-scripts/run.sh
+mvn -DskipTests package
+java -jar target/Goblins-jar-with-dependencies.jar
