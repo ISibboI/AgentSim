@@ -2,5 +2,4 @@
 
 echo "Installing AgentSim"
 
-cd ..
 mvn -DskipTests package
