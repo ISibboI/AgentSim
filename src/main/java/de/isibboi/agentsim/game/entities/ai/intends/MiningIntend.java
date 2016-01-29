@@ -38,6 +38,11 @@ public class MiningIntend extends AbstractIntend {
 	public CompositeTask execute(final Goblin goblin) {
 		final Point currentPoint = goblin.getLocation();
 		final Point miningPoint = goblin.getAI().getMapKnowledge().searchNearestEqualKnowledge(currentPoint, _material);
+
+		if (miningPoint == null) {
+			return null;
+		}
+
 		final CompositeTask.Builder taskBuilder = new CompositeTask.Builder();
 
 		final MoveToTask movement = searchAccessPoint(currentPoint, miningPoint, goblin);

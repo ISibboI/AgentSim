@@ -1,5 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
+import java.util.Objects;
+
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
 import de.isibboi.agentsim.game.map.Point;
@@ -43,6 +45,10 @@ public abstract class AbstractIntend implements Intend {
 	 * @return The path to a point that can be reached from start and is right next to target, or null, if no such point exists.
 	 */
 	protected MoveToTask searchAccessPoint(final Point start, final Point target, final Goblin goblin) {
+		Objects.requireNonNull(start, "start must not be null!");
+		Objects.requireNonNull(target, "target must not be null!");
+		Objects.requireNonNull(goblin, "goblin must not be null!");
+
 		for (Point neighbour : target.getNeighbours()) {
 			if (goblin.getAI().getBlockadeMap().isBlocked(neighbour)) {
 				continue;
