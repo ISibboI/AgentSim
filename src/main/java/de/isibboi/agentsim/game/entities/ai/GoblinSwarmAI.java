@@ -18,6 +18,7 @@ import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.intends.Intend;
 import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
+import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
 import de.isibboi.agentsim.game.map.Material;
@@ -238,8 +239,14 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		saturation -= _saturationBufferMinimum;
 
 		if (saturation <= distanceToHome + nextTaskDuration) {
-			Iterable<? extends Task> _moveToSpawnTask = _goblinTaskFactory.createMoveToTask(_entityLocationManager.getMap().getSpawnPoint(), _goblin);
-			enqueueTasks(_moveToSpawnTask);
+			MoveToTask moveToSpawnTask = new MoveToTask(_goblin.getLocation(), _entityLocationManager.getMap().getSpawnPoint(), _goblin, getBlockadeMap());
+
+			if (!moveToSpawnTask.hasPath()) {
+				LOG.trace("Goblin cannot find path back to spawn.");
+				return false;
+			}
+
+			enqueueTask(moveToSpawnTask);
 
 			LOG.trace("Goblin moving back to spawn to prevent starvation. Distance to home is " + distanceToHome + ", the next task takes " + nextTaskDuration
 					+ " ticks, and the current adjusted saturation is " + saturation + ".");
