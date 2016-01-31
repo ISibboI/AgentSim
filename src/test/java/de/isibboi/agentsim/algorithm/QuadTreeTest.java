@@ -63,6 +63,22 @@ public class QuadTreeTest {
 	}
 
 	/**
+	 * Tests if the tree throws the correct exception if a location is out of bounds.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testOutOfBounds() {
+		_smallTree.insert(new Point(-1, -1), 3);
+	}
+
+	/**
+	 * Tests if the tree forbids null values by exception.
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testForbidNullValues() {
+		_smallTree.insert(new Point(0, 0), null);
+	}
+
+	/**
 	 * Generates random points.
 	 * @param amount The amount of points to generate.
 	 * @param r Source of randomness used for generation.
