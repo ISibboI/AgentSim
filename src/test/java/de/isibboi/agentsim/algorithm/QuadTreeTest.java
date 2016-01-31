@@ -63,11 +63,19 @@ public class QuadTreeTest {
 	}
 
 	/**
-	 * Tests if the tree throws the correct exception if a location is out of bounds.
+	 * Tests if the tree throws the correct exception if a insert location is out of bounds.
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testOutOfBounds() {
+	public void testInsertOutOfBounds() {
 		_smallTree.insert(new Point(-1, -1), 3);
+	}
+
+	/**
+	 * Tests if the tree throws the correct exception if a get location is out of bounds.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetOutOfBounds() {
+		_smallTree.get(new Point(-1, -1));
 	}
 
 	/**
