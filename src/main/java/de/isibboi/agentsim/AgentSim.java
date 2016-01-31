@@ -74,6 +74,7 @@ public class AgentSim implements Runnable, WindowListener {
 
 	@Override
 	public void windowClosed(final WindowEvent e) {
+		_log.info("Frame closed");
 	}
 
 	@Override
