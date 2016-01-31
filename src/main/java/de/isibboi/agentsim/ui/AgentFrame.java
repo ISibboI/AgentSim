@@ -159,6 +159,7 @@ public class AgentFrame implements GameStatusMessageListener {
 
 		_game.stop();
 
+		_drawFrame.setVisible(false);
 		_drawFrame.close();
 		_drawFrame.dispose();
 		_log.debug("Frame disposed");
