@@ -1,5 +1,7 @@
 package de.isibboi.agentsim.algorithm;
 
+import java.util.Objects;
+
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -27,6 +29,11 @@ public class QuadTree<T> {
 		public MutablePoint(final Point location, final Point transformation) {
 			_x = location.getX() + transformation.getX();
 			_y = location.getY() + transformation.getY();
+		}
+
+		@Override
+		public String toString() {
+			return "[" + _x + "/" + _y + "]";
 		}
 	}
 
@@ -256,7 +263,11 @@ public class QuadTree<T> {
 	 * @return The element that was stored at this location before insertion, or {@code null}, if the location was empty before.
 	 */
 	public T insert(final Point location, final T element) {
+		Objects.requireNonNull(element);
+
 		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		checkLocation(transformedLocation);
+
 		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
 		return leaf.insert(transformedLocation, element);
 	}
@@ -268,6 +279,8 @@ public class QuadTree<T> {
 	 */
 	public T get(final Point location) {
 		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		checkLocation(transformedLocation);
+
 		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
 		return leaf.get(transformedLocation);
 	}
@@ -308,6 +321,19 @@ public class QuadTree<T> {
 			return new InnerNode<T>(quadrantSideLength);
 		} else {
 			return new Leaf<T>(quadrantSideLength);
+		}
+	}
+
+	/**
+	 * Checks if the given location is in bounds.
+	 * @param location The location.
+	 * @throws IllegalArgumentException If the location is out of bounds.
+	 */
+	private void checkLocation(final MutablePoint location) {
+		final int sideLengthHalf = _sideLength / 2;
+
+		if (location._x < -sideLengthHalf || location._y < -sideLengthHalf || location._x >= sideLengthHalf || location._y >= sideLengthHalf) {
+			throw new IllegalArgumentException("Location " + location + " is out of bounds!");
 		}
 	}
 
