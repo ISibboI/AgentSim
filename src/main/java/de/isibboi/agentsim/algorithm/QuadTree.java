@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.algorithm;
 
 import java.util.Objects;
+import java.util.Random;
 
 import de.isibboi.agentsim.game.map.Point;
 
@@ -36,9 +37,63 @@ public class QuadTree<T> {
 			_y = location.getY() + transformation.getY();
 		}
 
+		/**
+		 * Creates a new mutable point at location (0/0).
+		 */
+		public MutablePoint() {
+			_x = 0;
+			_y = 0;
+		}
+
 		@Override
 		public String toString() {
 			return "[" + _x + "/" + _y + "]";
+		}
+
+		/**
+		 * Returns a {@link Point} representing this {@link MutablePoint}.
+		 * @return A {@link Point} representing this {@link MutablePoint}.
+		 */
+		public Point toPoint() {
+			return new Point(_x, _y);
+		}
+	}
+
+	/**
+	 * An entry of a {@link QuadTree}.
+	 * @author Sebastian Schmidt
+	 * @since 0.3.0
+	 *
+	 * @param <T> The element type.
+	 */
+	public static final class Entry<T> {
+		private final Point _location;
+		private final T _element;
+
+		/**
+		 * Creates a new entry.
+		 * @param location The location.
+		 * @param element The element.
+		 */
+		public Entry(final Point location, final T element) {
+			_location = location;
+			_element = element;
+		}
+
+		/**
+		 * Returns the location of the entry.
+		 * @return The location of the entry.
+		 */
+		public Point getLocation() {
+			return _location;
+		}
+
+		/**
+		 * Returns the element of the entry.
+		 * @return The element of the entry.
+		 */
+		public T getElement() {
+			return _element;
 		}
 	}
 
@@ -75,6 +130,13 @@ public class QuadTree<T> {
 		 * @return The element that was at the given location, or null, if no such element exists.
 		 */
 		T delete(MutablePoint location);
+
+		/**
+		 * Selects the element number n from this tree.
+		 * @param n The element number.
+		 * @return The element number n.
+		 */
+		Entry<T> select(int n);
 
 		/**
 		 * Returns the amount of elements in this subtree.
@@ -162,6 +224,45 @@ public class QuadTree<T> {
 			clearEmptySubNodes();
 
 			return result;
+		}
+
+		@Override
+		public Entry<T> select(final int n) {
+			int index = n;
+
+			if (_upperLeft != null) {
+				if (index < _upperLeft.size()) {
+					return _upperLeft.select(index);
+				} else {
+					index -= _upperLeft.size();
+				}
+			}
+
+			if (_upperRight != null) {
+				if (index < _upperRight.size()) {
+					return _upperRight.select(index);
+				} else {
+					index -= _upperRight.size();
+				}
+			}
+
+			if (_lowerLeft != null) {
+				if (index < _lowerLeft.size()) {
+					return _lowerLeft.select(index);
+				} else {
+					index -= _lowerLeft.size();
+				}
+			}
+
+			if (_lowerRight != null) {
+				if (index < _lowerRight.size()) {
+					return _lowerRight.select(index);
+				} else {
+					index -= _lowerRight.size();
+				}
+			}
+
+			throw new IndexOutOfBoundsException(n + " is out of bounds.");
 		}
 
 		/**
@@ -314,6 +415,23 @@ public class QuadTree<T> {
 			return before;
 		}
 
+		@Override
+		public Entry<T> select(final int n) {
+			int index = 0;
+
+			for (T element : _elements) {
+				if (element != null) {
+					if (index == n) {
+						return new Entry<>(indexToLocation(index).toPoint(), element);
+					} else {
+						index++;
+					}
+				}
+			}
+
+			throw new IndexOutOfBoundsException(n + " is out of bounds.");
+		}
+
 		/**
 		 * Returns the element at the given location.
 		 * @param location The location.
@@ -333,6 +451,21 @@ public class QuadTree<T> {
 			index += (location._y + _quadrantSideLength) * 2 * _quadrantSideLength;
 
 			return index;
+		}
+
+		/**
+		 * Transforms the given array index to a location.
+		 * @param index The array index.
+		 * @return The location that points to the given array index.
+		 */
+		private MutablePoint indexToLocation(final int index) {
+			final int doubleQuadrantSideLength = _quadrantSideLength * 2;
+			final MutablePoint result = new MutablePoint();
+
+			result._x = index % doubleQuadrantSideLength - _quadrantSideLength;
+			result._y = index / doubleQuadrantSideLength - _quadrantSideLength;
+
+			return result;
 		}
 	}
 
@@ -395,6 +528,26 @@ public class QuadTree<T> {
 		checkLocation(transformedLocation);
 
 		return _root.delete(transformedLocation);
+	}
+
+	/**
+	 * Selects a random entry from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * @return A random entry.
+	 */
+	public Entry<T> selectRandomElement() {
+		return selectRandomElement(new Random());
+	}
+
+	/**
+	 * Selects a random entry from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param random The source of randomness.
+	 * @return A random entry.
+	 */
+	public Entry<T> selectRandomElement(final Random random) {
+		return _root.select(random.nextInt(size()));
 	}
 
 	/**

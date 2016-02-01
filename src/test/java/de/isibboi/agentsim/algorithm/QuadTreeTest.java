@@ -1,6 +1,8 @@
 package de.isibboi.agentsim.algorithm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,6 +93,41 @@ public class QuadTreeTest {
 			_smallTree.delete(point);
 			_referenceMap.remove(point);
 			assertEquals(_referenceMap.size(), _smallTree.size());
+		}
+	}
+
+	/**
+	 * Tests if the {@link QuadTree#selectRandomElement(Random)} method works.
+	 */
+	@Test
+	public void testSelectRandomElement() {
+		Random r = new Random(0x7367de42);
+
+		// Random points
+		List<Point> points = generateRandomPoints(1000, r, _smallTree.getSideLength(), _smallTree.getSideLength());
+
+		// Edge cases
+		points.addAll(generateCornerPoints(_smallTree.getSideLength(), _smallTree.getSideLength()));
+
+		// Overwriting
+		for (int i = 0; i < 10; i++) {
+			points.add(points.get(r.nextInt(points.size())));
+		}
+
+		for (Point point : points) {
+			int element = r.nextInt();
+			_smallTree.insert(point, element);
+			_referenceMap.put(point, element);
+		}
+
+		DeterministicRandom deterministicRandom = new DeterministicRandom();
+
+		for (int i = 0; i < _smallTree.size(); i++) {
+			deterministicRandom.setNextInt(i);
+			Point selected = _smallTree.selectRandomElement(deterministicRandom).getLocation();
+			assertNotNull(selected);
+			assertNotEquals("i = " + i, null, _referenceMap.remove(selected));
+			// Probably the indexToLocation method is wrong.
 		}
 	}
 
