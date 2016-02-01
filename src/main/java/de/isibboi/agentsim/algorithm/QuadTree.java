@@ -57,6 +57,7 @@ public class QuadTree<T> {
 		 * Inserts the given element at the given location.
 		 * @param location The location.
 		 * @param element The element.
+		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The element that was at the given position before, or null.
 		 */
 		T insert(MutablePoint location, T element, int minQuadrantSideLength);
@@ -71,7 +72,6 @@ public class QuadTree<T> {
 	private abstract static class AbstractNode<T> implements Node<T> {
 		protected final int _quadrantSideLength;
 		protected int _size = 0;
-		protected boolean _sizeModified = false;
 
 		/**
 		 * Creates a new abstract node.
@@ -80,6 +80,11 @@ public class QuadTree<T> {
 		 */
 		public AbstractNode(final int quadrantSideLength) {
 			_quadrantSideLength = quadrantSideLength;
+		}
+
+		@Override
+		public int size() {
+			return _size;
 		}
 	}
 
@@ -113,9 +118,16 @@ public class QuadTree<T> {
 		}
 
 		@Override
-		public T insert(MutablePoint location, T element, int minQuadrantSideLength) {
-			// TODO Auto-generated method stub
-			return null;
+		public T insert(final MutablePoint location, final T element, final int minQuadrantSideLength) {
+			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
+			transformToSubNodeSpace(location);
+			T result = subNode.insert(location, element, minQuadrantSideLength);
+
+			if (result == null) {
+				_size++;
+			}
+
+			return result;
 		}
 
 		/**
@@ -177,15 +189,6 @@ public class QuadTree<T> {
 				}
 			}
 		}
-
-		@Override
-		public int size() {
-			if (_upperLeft._sizeModified || _upperRight._sizeModified || _lowerLeft._sizeModified || _lowerRight._sizeModified) {
-				_size = _upperLeft.size() + _upperRight.size() + _lowerLeft.size() + _lowerRight.size();
-			}
-
-			return _size;
-		}
 	}
 
 	private static final class Leaf<T> extends AbstractNode<T> {
@@ -210,19 +213,13 @@ public class QuadTree<T> {
 		}
 
 		@Override
-		public int size() {
-			return _size;
-		}
-
-		@Override
 		public T insert(final MutablePoint location, final T element, final int minQuadrantSideLength) {
 			final int index = locationToIndex(location);
 			final T before = _elements[index];
 			_elements[index] = element;
 
-			if (before != null) {
+			if (before == null) {
 				_size++;
-				_sizeModified = true;
 			}
 
 			return before;
