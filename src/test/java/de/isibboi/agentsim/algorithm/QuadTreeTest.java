@@ -63,6 +63,32 @@ public class QuadTreeTest {
 	}
 
 	/**
+	 * Tests the size method of the quad tree.
+	 */
+	@Test
+	public void testSize() {
+		Random r = new Random(0x7367de42);
+
+		// Random points
+		List<Point> points = generateRandomPoints(1000, r, _smallTree.getSideLength(), _smallTree.getSideLength());
+
+		// Edge cases
+		points.addAll(generateCornerPoints(_smallTree.getSideLength(), _smallTree.getSideLength()));
+
+		// Overwriting
+		for (int i = 0; i < 10; i++) {
+			points.add(points.get(r.nextInt(points.size())));
+		}
+
+		for (Point point : points) {
+			int element = r.nextInt();
+			_smallTree.insert(point, element);
+			_referenceMap.put(point, element);
+			assertEquals(_referenceMap.size(), _smallTree.size());
+		}
+	}
+
+	/**
 	 * Tests if the tree throws the correct exception if a insert location is out of bounds.
 	 */
 	@Test(expected = IllegalArgumentException.class)

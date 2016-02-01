@@ -54,6 +54,14 @@ public class QuadTree<T> {
 		Leaf<T> getOrCreateLeaf(MutablePoint location, int minQuadrantSideLength);
 
 		/**
+		 * Inserts the given element at the given location.
+		 * @param location The location.
+		 * @param element The element.
+		 * @return The element that was at the given position before, or null.
+		 */
+		T insert(MutablePoint location, T element, int minQuadrantSideLength);
+
+		/**
 		 * Returns the amount of elements in this subtree.
 		 * @return The size.
 		 */
@@ -102,6 +110,12 @@ public class QuadTree<T> {
 			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
 			transformToSubNodeSpace(location);
 			return subNode.getOrCreateLeaf(location, minQuadrantSideLength);
+		}
+
+		@Override
+		public T insert(MutablePoint location, T element, int minQuadrantSideLength) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		/**
@@ -200,16 +214,17 @@ public class QuadTree<T> {
 			return _size;
 		}
 
-		/**
-		 * Inserts the given element at the given location.
-		 * @param location The location.
-		 * @param element The element.
-		 * @return The element that was at the given position before, or null.
-		 */
-		public T insert(final MutablePoint location, final T element) {
+		@Override
+		public T insert(final MutablePoint location, final T element, final int minQuadrantSideLength) {
 			final int index = locationToIndex(location);
 			final T before = _elements[index];
 			_elements[index] = element;
+
+			if (before != null) {
+				_size++;
+				_sizeModified = true;
+			}
+
 			return before;
 		}
 
@@ -268,8 +283,7 @@ public class QuadTree<T> {
 		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
 		checkLocation(transformedLocation);
 
-		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
-		return leaf.insert(transformedLocation, element);
+		return _root.insert(transformedLocation, element, _minQuadrantSideLength);
 	}
 
 	/**
@@ -283,6 +297,18 @@ public class QuadTree<T> {
 
 		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
 		return leaf.get(transformedLocation);
+	}
+
+	public T delete(final Point location) {
+		return null;
+	}
+
+	/**
+	 * Returns the amount of elements that is stored in the tree.
+	 * @return The size of the tree.
+	 */
+	public int size() {
+		return _root.size();
 	}
 
 	/**
