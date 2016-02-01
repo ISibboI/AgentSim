@@ -2,6 +2,7 @@ package de.isibboi.agentsim;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,6 +61,42 @@ public class AgentSim implements Runnable, WindowListener {
 
 		_frame.dispose();
 		_settings.close();
+
+		//Set of current Threads
+		Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+
+		//Iterate over set to find yours
+		for (Thread thread : setOfThread) {
+			if (thread.getName().equals("Thread-2")) {
+				thread.interrupt();
+
+				_log.info("Interrupted Thread-2");
+
+				for (StackTraceElement e : thread.getStackTrace()) {
+					System.out.println(e);
+				}
+
+				_log.info("Printed stack trace of Thread-2");
+
+				_log.info("Thread-2 is " + (thread.isAlive() ? "" : "NOT ") + "alive.");
+
+				synchronized (thread) {
+					thread.notifyAll();
+				}
+
+				try {
+					thread.join(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				thread.setPriority(Thread.MAX_PRIORITY);
+				thread.stop();
+
+				break;
+			}
+		}
 	}
 
 	@Override
