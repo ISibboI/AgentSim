@@ -8,11 +8,16 @@ import de.isibboi.agentsim.game.map.Point;
  * A quad tree.
  * Always a square of side length power of two.
  * 
+ * It should be space efficient and fast. I hope it will be.
+ * 
  * @author Sebastian Schmidt
  * @since 0.3.0
  *	
- *@param <T> The element type.
+ * @param <T> The element type.
  */
+// Ideas for optimisation:
+//  * Replace recursion with loops. Dirty, but causes less stack operations.
+//  * Implement the data structure in C and use JNI. Probably a big bunch of work.
 public class QuadTree<T> {
 	private static final class MutablePoint {
 		//CHECKSTYLE:OFF: VisibilityModifier
@@ -55,12 +60,21 @@ public class QuadTree<T> {
 
 		/**
 		 * Inserts the given element at the given location.
+		 * 
 		 * @param location The location.
 		 * @param element The element.
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The element that was at the given position before, or null.
 		 */
 		T insert(MutablePoint location, T element, int minQuadrantSideLength);
+
+		/**
+		 * Removes the element at the given location.
+		 * 
+		 * @param location The location.
+		 * @return The element that was at the given location, or null, if no such element exists.
+		 */
+		T delete(MutablePoint location);
 
 		/**
 		 * Returns the amount of elements in this subtree.
@@ -130,6 +144,26 @@ public class QuadTree<T> {
 			return result;
 		}
 
+		@Override
+		public T delete(final MutablePoint location) {
+			AbstractNode<T> subNode = getSubNode(location);
+
+			if (subNode == null) {
+				return null;
+			}
+
+			transformToSubNodeSpace(location);
+			T result = subNode.delete(location);
+
+			if (result != null) {
+				_size--;
+			}
+
+			clearEmptySubNodes();
+
+			return result;
+		}
+
 		/**
 		 * Transforms the given mutable point to the space of its respective sub node.
 		 * The transformation is made in place, no new objects are created, and the former state of location is lost.
@@ -189,6 +223,48 @@ public class QuadTree<T> {
 				}
 			}
 		}
+
+		/**
+		 * Gets the sub node that handles the given location.
+		 * @param location The location.
+		 * @return The sub node that handles the given location.
+		 */
+		private AbstractNode<T> getSubNode(final MutablePoint location) {
+			if (location._y < 0) {
+				if (location._x < 0) {
+					return _lowerLeft;
+				} else {
+					return _lowerRight;
+				}
+			} else {
+				if (location._x < 0) {
+					return _upperLeft;
+				} else {
+					return _upperRight;
+				}
+			}
+		}
+
+		/**
+		 * Removes sub nodes that are empty.
+		 */
+		private void clearEmptySubNodes() {
+			if (_lowerLeft != null && _lowerLeft.size() == 0) {
+				_lowerLeft = null;
+			}
+
+			if (_lowerRight != null && _lowerRight.size() == 0) {
+				_lowerRight = null;
+			}
+
+			if (_upperLeft != null && _upperLeft.size() == 0) {
+				_upperLeft = null;
+			}
+
+			if (_upperRight != null && _upperRight.size() == 0) {
+				_upperRight = null;
+			}
+		}
 	}
 
 	private static final class Leaf<T> extends AbstractNode<T> {
@@ -220,6 +296,19 @@ public class QuadTree<T> {
 
 			if (before == null) {
 				_size++;
+			}
+
+			return before;
+		}
+
+		@Override
+		public T delete(final MutablePoint location) {
+			final int index = locationToIndex(location);
+			final T before = _elements[index];
+			_elements[index] = null;
+
+			if (before != null) {
+				_size--;
 			}
 
 			return before;
@@ -296,8 +385,16 @@ public class QuadTree<T> {
 		return leaf.get(transformedLocation);
 	}
 
+	/**
+	 * Deletes the element at the given location.
+	 * @param location The location.
+	 * @return The deleted element, or null, if no such element exists.
+	 */
 	public T delete(final Point location) {
-		return null;
+		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		checkLocation(transformedLocation);
+
+		return _root.delete(transformedLocation);
 	}
 
 	/**

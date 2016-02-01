@@ -86,6 +86,12 @@ public class QuadTreeTest {
 			_referenceMap.put(point, element);
 			assertEquals(_referenceMap.size(), _smallTree.size());
 		}
+
+		for (Point point : points) {
+			_smallTree.delete(point);
+			_referenceMap.remove(point);
+			assertEquals(_referenceMap.size(), _smallTree.size());
+		}
 	}
 
 	/**
