@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.BlockadeMap;
 import de.isibboi.agentsim.algorithm.KnowledgeBasedBlockadeMap;
-import de.isibboi.agentsim.algorithm.PrioritizedRandomSelector;
+import de.isibboi.agentsim.algorithm.randomized.PrioritizedRandomSelector;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;

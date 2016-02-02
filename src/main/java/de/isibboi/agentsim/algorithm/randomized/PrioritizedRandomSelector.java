@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.algorithm;
+package de.isibboi.agentsim.algorithm.randomized;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+
+import de.isibboi.agentsim.algorithm.PriorityOrdered;
+import de.isibboi.agentsim.algorithm.Selector;
 
 /**
  * A priority based random selector.
