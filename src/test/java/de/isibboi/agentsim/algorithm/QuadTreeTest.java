@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,6 +130,37 @@ public class QuadTreeTest {
 			assertNotNull(selected);
 			assertNotEquals("i = " + i, null, _referenceMap.remove(selected));
 			// Probably the indexToLocation method is wrong.
+		}
+	}
+
+	/**
+	 * Tests if the location to index and reverse conversion works.
+	 * @throws ClassNotFoundException If the leaf class name has changed.
+	 * @throws SecurityException Should not be thrown.
+	 * @throws NoSuchMethodException If the constructor of leaf has changed.
+	 * @throws InvocationTargetException Don't
+	 * @throws IllegalArgumentException want
+	 * @throws IllegalAccessException to
+	 * @throws InstantiationException document
+	 */
+	@Test
+	public void testLocationToIndexAndReverse() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		final Class<?> leafClass = Class.forName(QuadTree.class.getCanonicalName() + "$Leaf");
+
+		// side length of 16, half side length of 8
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE).newInstance(8);
+
+		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Class.forName(QuadTree.class.getCanonicalName() + "$MutablePoint"));
+		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
+
+		locationToIndex.setAccessible(true);
+		indexToLocation.setAccessible(true);
+
+		// -> [0, 16*16) to check.
+		for (int i = 0; i < 256; i++) {
+			Object result = indexToLocation.invoke(leafObject, i);
+			assertEquals(i, locationToIndex.invoke(leafObject, result));
 		}
 	}
 
