@@ -2,6 +2,7 @@ package de.isibboi.agentsim;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.Field;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -62,10 +63,10 @@ public class AgentSim implements Runnable, WindowListener {
 		_frame.dispose();
 		_settings.close();
 
-		//Set of current Threads
+		// Set of current Threads
 		Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
 
-		//Iterate over set to find yours
+		// Iterate over set to find yours
 		for (Thread thread : setOfThread) {
 			if (thread.getName().equals("Thread-2")) {
 				thread.interrupt();
@@ -80,19 +81,21 @@ public class AgentSim implements Runnable, WindowListener {
 
 				_log.info("Thread-2 is " + (thread.isAlive() ? "" : "NOT ") + "alive.");
 
-				synchronized (thread) {
-					thread.notifyAll();
-				}
-
 				try {
-					thread.join(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
+					System.out.println("======= Threads fields =======");
+
+					for (Field field : thread.getClass().getDeclaredFields()) {
+						field.setAccessible(true);
+						System.out.println("    " + field.getName() + ": " + field.get(thread));
+					}
+
+					System.out.println("Threads class: " + thread.getClass());
+					System.out.println("Thread group: " + thread.getThreadGroup());
+					System.out.println("Main thread thread group: " + Thread.currentThread().getThreadGroup());
+					System.out.println("Thread tid: " + thread.getId());
+				} catch (SecurityException | IllegalAccessException e1) {
 					e1.printStackTrace();
 				}
-
-				thread.setPriority(Thread.MAX_PRIORITY);
-				thread.stop();
 
 				break;
 			}
