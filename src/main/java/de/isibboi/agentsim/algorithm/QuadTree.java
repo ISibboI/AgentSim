@@ -208,8 +208,6 @@ public class QuadTree<T> {
 
 		@Override
 		public Entry<T> select(final int n) {
-			// TODO transform from sub node space.
-
 			int index = n;
 			final int subQuadrantSideLength = _quadrantSideLength / 2;
 
