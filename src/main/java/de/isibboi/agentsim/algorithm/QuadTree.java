@@ -296,7 +296,7 @@ public class QuadTree<T> {
 				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperLeft.size());
 
 				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = select(subSet, offset, result);
+					List<Entry<T>> addedElements = _upperLeft.select(subSet, modifiedOffset, result);
 
 					for (Entry<T> entry : addedElements) {
 						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
@@ -311,7 +311,7 @@ public class QuadTree<T> {
 				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperRight.size());
 
 				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = select(subSet, offset, result);
+					List<Entry<T>> addedElements = _upperRight.select(subSet, modifiedOffset, result);
 
 					for (Entry<T> entry : addedElements) {
 						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
@@ -326,7 +326,7 @@ public class QuadTree<T> {
 				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerLeft.size());
 
 				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = select(subSet, offset, result);
+					List<Entry<T>> addedElements = _lowerLeft.select(subSet, modifiedOffset, result);
 
 					for (Entry<T> entry : addedElements) {
 						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
@@ -341,7 +341,7 @@ public class QuadTree<T> {
 				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerRight.size());
 
 				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = select(subSet, offset, result);
+					List<Entry<T>> addedElements = _lowerRight.select(subSet, modifiedOffset, result);
 
 					for (Entry<T> entry : addedElements) {
 						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
@@ -352,8 +352,8 @@ public class QuadTree<T> {
 				modifiedOffset += _lowerLeft.size();
 			}
 
-			if (!indices.tailSet(modifiedOffset).isEmpty()) {
-				throw new IndexOutOfBoundsException(indices.tailSet(modifiedOffset).first() + " is out of bounds.");
+			if (indices.last() > modifiedOffset) {
+				throw new IndexOutOfBoundsException(indices.last() + " is out of bounds.");
 			}
 
 			return result.subList(firstAddedElement, result.size());
@@ -552,6 +552,9 @@ public class QuadTree<T> {
 					if (_elements[currentArrayIndex] != null) {
 						if (currentElementIndex == searchIndex) {
 							result.add(new Entry<>(indexToLocation(currentArrayIndex), _elements[currentArrayIndex]));
+							currentElementIndex++;
+							currentArrayIndex++;
+							break;
 						}
 
 						currentElementIndex++;
