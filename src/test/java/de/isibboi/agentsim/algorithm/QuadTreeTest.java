@@ -151,7 +151,7 @@ public class QuadTreeTest {
 		// side length of 16, half side length of 8
 		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE).newInstance(8);
 
-		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Class.forName(QuadTree.class.getCanonicalName() + "$MutablePoint"));
+		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
 		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
 
 		locationToIndex.setAccessible(true);
