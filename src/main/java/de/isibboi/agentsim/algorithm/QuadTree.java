@@ -85,6 +85,13 @@ public class QuadTree<T> {
 		T insert(Point.Builder location, T element, int minQuadrantSideLength);
 
 		/**
+		 * Returns the element at the given location
+		 * @param location The location.
+		 * @return The element at the given location, or null, if no such element exists.
+		 */
+		T get(Point.Builder location);
+
+		/**
 		 * Removes the element at the given location.
 		 * 
 		 * @param location The location.
@@ -165,6 +172,18 @@ public class QuadTree<T> {
 			}
 
 			return result;
+		}
+
+		@Override
+		public T get(final Point.Builder location) {
+			AbstractNode<T> subNode = getSubNode(location);
+
+			if (subNode == null) {
+				return null;
+			}
+
+			transformToSubNodeSpace(location);
+			return subNode.get(location);
 		}
 
 		@Override
@@ -365,6 +384,17 @@ public class QuadTree<T> {
 			return before;
 		}
 
+		/**
+		 * Returns the element at the given location.
+		 * 
+		 * @param location The location.
+		 * @return The element at the given location.
+		 */
+		@Override
+		public T get(final Point.Builder location) {
+			return _elements[locationToIndex(location)];
+		}
+
 		@Override
 		public T delete(final Point.Builder location) {
 			final int index = locationToIndex(location);
@@ -393,15 +423,6 @@ public class QuadTree<T> {
 			}
 
 			throw new IndexOutOfBoundsException(n + " is out of bounds.");
-		}
-
-		/**
-		 * Returns the element at the given location.
-		 * @param location The location.
-		 * @return The element at the given location.
-		 */
-		public T get(final Point.Builder location) {
-			return _elements[locationToIndex(location)];
 		}
 
 		/**
@@ -480,8 +501,7 @@ public class QuadTree<T> {
 		final Point.Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
-		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
-		return leaf.get(transformedLocation);
+		return _root.get(transformedLocation);
 	}
 
 	/**
