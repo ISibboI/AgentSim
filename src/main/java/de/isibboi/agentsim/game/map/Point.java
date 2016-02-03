@@ -50,7 +50,8 @@ public class Point {
 		 * @param point The initial coordinates.
 		 */
 		public Builder(final Point point) {
-
+			_x = point.getX();
+			_y = point.getY();
 		}
 
 		/**
