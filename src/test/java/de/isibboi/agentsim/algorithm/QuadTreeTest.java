@@ -142,7 +142,7 @@ public class QuadTreeTest {
 		assertEquals(100, selected.size());
 
 		for (QuadTree.Entry<Integer> entry : selected) {
-			map.remove(entry.getLocation());
+			assertNotNull(map.remove(entry.getLocation()));
 		}
 
 		assertEquals(100, _referenceMap.size() - map.size());

@@ -345,11 +345,11 @@ public class QuadTree<T> {
 
 					for (Entry<T> entry : addedElements) {
 						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
-						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
 					}
 				}
 
-				modifiedOffset += _lowerLeft.size();
+				modifiedOffset += _lowerRight.size();
 			}
 
 			if (indices.last() > modifiedOffset) {
