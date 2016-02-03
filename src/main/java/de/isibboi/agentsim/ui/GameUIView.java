@@ -3,9 +3,6 @@ package de.isibboi.agentsim.ui;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
@@ -22,7 +19,6 @@ import de.isibboi.agentsim.ui.meter.FrequencyMeter;
  * @since 0.2.0
  */
 public class GameUIView extends UIView {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Settings _settings;
 	private final Game _game;
@@ -136,7 +132,6 @@ public class GameUIView extends UIView {
 
 	@Override
 	public void userAction(final UserActionEvent e) {
-		_log.debug("Received UserActionEvent");
 
 		if (e.getSource() == _settingsButton && _settingsFrame == null) {
 			_settingsFrame = new UISettingsFrame(_settings, this);

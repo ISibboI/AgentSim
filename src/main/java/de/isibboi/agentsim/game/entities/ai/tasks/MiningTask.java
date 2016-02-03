@@ -1,8 +1,5 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Goblin;
@@ -16,7 +13,6 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.2.0 
  */
 public class MiningTask extends MotionlessTimedTask {
-	private static final Logger LOG = LogManager.getLogger(MiningTask.class);
 
 	private final Point _miningLocation;
 	private final Goblin _goblin;
@@ -51,7 +47,6 @@ public class MiningTask extends MotionlessTimedTask {
 		_entityLocationManager.getMap().setMaterial(_miningLocation, Environment.MATERIAL_AIR);
 		_goblin.getAI().getMapKnowledge().updateLocation(_miningLocation, Environment.MATERIAL_AIR, tick);
 
-		LOG.trace("MiningTask finished: " + _goblin + " mined a " + _minedMaterial + " at " + _miningLocation);
 	}
 
 	@Override
@@ -64,7 +59,6 @@ public class MiningTask extends MotionlessTimedTask {
 
 		if (!location.isNeighborOf(_miningLocation)) {
 			fail();
-			LOG.trace("MiningTask failed: " + _goblin + " tried to mine a " + _minedMaterial + " at " + _miningLocation + " from " + location);
 		}
 	}
 }

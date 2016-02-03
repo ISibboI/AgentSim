@@ -3,9 +3,6 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 import java.util.Queue;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.algorithm.AStarPathfinder;
 import de.isibboi.agentsim.algorithm.BlockadeMap;
 import de.isibboi.agentsim.algorithm.PathfindingAlgorithm;
@@ -21,7 +18,6 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  */
 public class MoveToTask extends AbstractTask {
-	private static final Logger LOG = LogManager.getLogger(MoveToTask.class);
 
 	private final Point _start;
 	private final Point _target;
@@ -49,7 +45,6 @@ public class MoveToTask extends AbstractTask {
 		if (_movementQueue != null) {
 			_totalDuration = _movementQueue.size();
 		} else {
-			LOG.trace("Could not find a valid path.");
 			_totalDuration = 0;
 		}
 	}
@@ -92,7 +87,6 @@ public class MoveToTask extends AbstractTask {
 		boolean result = _entity.getLocation().equals(_target);
 
 		if (!result) {
-			LOG.trace("Finished " + this + ". Enitity is at " + _entity.getLocation() + ", but should be at " + _target + ".");
 			throw new IllegalStateException("Movement finished, but entity is at wrong position!");
 		}
 

@@ -5,9 +5,6 @@ import java.awt.event.WindowListener;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.ui.AgentFrame;
 
 /**
@@ -24,8 +21,6 @@ public class AgentSim implements Runnable, WindowListener {
 		AgentSim sim = new AgentSim();
 		sim.run(); // Don't need to start a new thread here, as we don't need the main thread anymore.
 	}
-
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final AgentFrame _frame;
 	private final Settings _settings;
@@ -71,15 +66,9 @@ public class AgentSim implements Runnable, WindowListener {
 			if (thread.getName().equals("Thread-2")) {
 				thread.interrupt();
 
-				_log.info("Interrupted Thread-2");
-
 				for (StackTraceElement e : thread.getStackTrace()) {
 					System.out.println(e);
 				}
-
-				_log.info("Printed stack trace of Thread-2");
-
-				_log.info("Thread-2 is " + (thread.isAlive() ? "" : "NOT ") + "alive.");
 
 				try {
 					System.out.println("======= Threads fields =======");
@@ -108,13 +97,11 @@ public class AgentSim implements Runnable, WindowListener {
 
 	@Override
 	public void windowClosing(final WindowEvent e) {
-		_log.info("Exit requested");
 		_exit = true;
 	}
 
 	@Override
 	public void windowClosed(final WindowEvent e) {
-		_log.info("Frame closed");
 	}
 
 	@Override

@@ -2,9 +2,6 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Handles task duration.
  * 
@@ -12,7 +9,6 @@ import org.apache.logging.log4j.Logger;
  * @since 0.2.0 
  */
 public abstract class TimedTask extends AbstractTask {
-	private static final Logger LOG = LogManager.getLogger(TimedTask.class);
 
 	private int _duration;
 	private int _timeLeft;

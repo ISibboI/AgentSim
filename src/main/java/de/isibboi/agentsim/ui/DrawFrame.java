@@ -11,9 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * A JPanel implementation that supports drawing on it's background.
  * @author Sebastian Schmidt
@@ -21,7 +18,6 @@ import org.apache.logging.log4j.Logger;
  */
 @SuppressWarnings("serial")
 public class DrawFrame extends JFrame {
-	private final Logger _log = LogManager.getLogger(DrawFrame.class);
 
 	private boolean _isRendering = false;
 	private Graphics2D _renderGraphics;
@@ -125,10 +121,7 @@ public class DrawFrame extends JFrame {
 	private void logBufferInfo() {
 		BufferCapabilities capabilities = _bufferStrategy.getCapabilities();
 
-		_log.info("Page flipping supported: " + capabilities.isPageFlipping());
-
 		if (capabilities.isPageFlipping()) {
-			_log.info("Requires full screen for page flipping: " + capabilities.isFullScreenRequired());
 		}
 	}
 

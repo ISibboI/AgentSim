@@ -2,9 +2,6 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Movement;
 
@@ -18,7 +15,6 @@ import de.isibboi.agentsim.game.entities.Movement;
  *
  */
 public abstract class ZeroTimeTask extends AbstractTask {
-	private static final Logger LOG = LogManager.getLogger(ZeroTimeTask.class);
 
 	private boolean _wasSuccessful = false;
 	private boolean _wasSuccessfulSet = false;
@@ -69,7 +65,6 @@ public abstract class ZeroTimeTask extends AbstractTask {
 	protected void setSuccessful(final boolean successful) {
 		_wasSuccessfulSet = true;
 		_wasSuccessful = successful;
-		LOG.trace(this + " was " + (_wasSuccessful ? "" : " NOT ") + "successful");
 	}
 
 	@Override

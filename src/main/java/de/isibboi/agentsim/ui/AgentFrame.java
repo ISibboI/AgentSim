@@ -4,9 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.event.WindowListener;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.DefaultGameInitializer;
@@ -21,8 +18,6 @@ import de.isibboi.agentsim.ui.event.MouseEventTranslator;
  */
 public class AgentFrame implements GameStatusMessageListener {
 	private static final int START_TICK = 0;
-
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final DrawFrame _drawFrame;
 	private final Settings _settings;
@@ -111,7 +106,6 @@ public class AgentFrame implements GameStatusMessageListener {
 			_view.update(_random, _tick);
 			_tick++;
 		} catch (GameUpdateException e) {
-			_log.error("Could not update game!", e);
 		}
 	}
 
@@ -162,7 +156,6 @@ public class AgentFrame implements GameStatusMessageListener {
 		_drawFrame.setVisible(false);
 		_drawFrame.close();
 		_drawFrame.dispose();
-		_log.debug("Frame disposed");
 	}
 
 	@Override

@@ -1,8 +1,5 @@
 package de.isibboi.agentsim;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * A simple stabilizer for the frame rate.
  * Does not calculate the correct transition.
@@ -12,7 +9,6 @@ import org.apache.logging.log4j.Logger;
  * @since 0.2.0
  */
 public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private long _lastFrameTime;
 	private double _updatesBeforeNextFrame;
@@ -48,7 +44,6 @@ public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
 				try {
 					Thread.sleep(waitingTime / 1_000_000, (int) (waitingTime % 1_000_000));
 				} catch (InterruptedException e) {
-					_log.fatal("Waiting interrupted!", e);
 				}
 			}
 

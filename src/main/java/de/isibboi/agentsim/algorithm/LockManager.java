@@ -3,9 +3,6 @@ package de.isibboi.agentsim.algorithm;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -19,7 +16,6 @@ import com.google.common.collect.Multimap;
  * @param <Holder> The type of the lock holders.
  */
 public class LockManager<Lock, Holder> {
-	private static final Logger LOG = LogManager.getLogger(LockManager.class);
 
 	private final Multimap<Holder, Lock> _lockHolders = HashMultimap.create();
 	private final Set<Lock> _locks = new HashSet<>();
@@ -32,14 +28,11 @@ public class LockManager<Lock, Holder> {
 	 */
 	public boolean tryLock(final Lock lock, final Holder holder) {
 		if (_locks.contains(lock)) {
-			LOG.trace("Lock " + lock + " could not be locked by " + holder + ".");
 			return false;
 		}
 
 		_locks.add(lock);
 		_lockHolders.put(holder, lock);
-
-		LOG.trace("Lock " + lock + " was locked by " + holder + ".");
 
 		return true;
 	}
@@ -62,8 +55,6 @@ public class LockManager<Lock, Holder> {
 		_lockHolders.remove(holder, lock);
 		_locks.remove(lock);
 
-		LOG.trace("Lock " + lock + " was unlocked by " + holder + ".");
-
 	}
 
 	/**
@@ -74,7 +65,6 @@ public class LockManager<Lock, Holder> {
 		for (Lock lock : _lockHolders.removeAll(holder)) {
 			_locks.remove(lock);
 
-			LOG.trace("Lock " + lock + " was bulk-unlocked by " + holder + ".");
 		}
 	}
 

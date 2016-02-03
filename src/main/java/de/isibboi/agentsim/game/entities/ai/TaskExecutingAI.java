@@ -5,9 +5,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
@@ -20,7 +17,6 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
  * @since 0.3.0
  */
 public abstract class TaskExecutingAI implements AI {
-	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
 
 	private final Queue<Task> _taskQueue = new LinkedList<>();
 	private Task _currentTask;
@@ -77,7 +73,6 @@ public abstract class TaskExecutingAI implements AI {
 		_currentTask = null;
 
 		if (lastTask.wasSuccessful()) {
-			LOG.trace("Task was executed successfully: " + lastTask);
 
 			if (_taskQueue.isEmpty()) {
 				eventTaskFinished(lastTask, 1);
@@ -88,7 +83,6 @@ public abstract class TaskExecutingAI implements AI {
 				startNextTask(nextTask, attributes, random, tick);
 			}
 		} else {
-			LOG.trace("Task was not executed successfully: " + lastTask);
 
 			abort();
 			update(attributes, random, tick);
@@ -126,7 +120,6 @@ public abstract class TaskExecutingAI implements AI {
 
 			// If a task was added due to events, it should be started instead of updating the idle task.
 			if (_taskQueue.isEmpty()) {
-				LOG.trace("Executing idle task");
 				_idleTask.update(random, tick);
 			} else {
 				update(attributes, random, tick);

@@ -4,9 +4,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.noise.BorderFunction;
@@ -22,11 +19,10 @@ import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
  * @since 0.0.0
  */
 public class MapGenerator {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final int _width;
 	private final int _height;
-	
+
 	private final Settings _settings;
 
 	/**
@@ -85,7 +81,6 @@ public class MapGenerator {
 				}
 
 				if (!foundMaterial) {
-					_log.error("Missing material for density sample value: " + sample);
 				}
 			}
 		}

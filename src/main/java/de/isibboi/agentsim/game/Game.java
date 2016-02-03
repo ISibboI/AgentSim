@@ -2,9 +2,6 @@ package de.isibboi.agentsim.game;
 
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Entities;
 import de.isibboi.agentsim.game.entities.Updateable;
@@ -17,7 +14,6 @@ import de.isibboi.agentsim.ui.GameStatusMessageListener;
  * @since 0.3.0
  */
 public class Game implements Updateable {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final GameInitializer _gameInitializer;
 	private final Settings _settings;
@@ -69,7 +65,6 @@ public class Game implements Updateable {
 		_gameStatusMessageListener.receiveGameOverMessage("Game over :(");
 		setPaused(true);
 
-		_log.info("Game over");
 	}
 
 	/**
@@ -108,7 +103,6 @@ public class Game implements Updateable {
 
 		_paused = false;
 
-		_log.info("Game started");
 	}
 
 	/**
@@ -133,14 +127,11 @@ public class Game implements Updateable {
 	 */
 	public void setPaused(final boolean paused) {
 		if (paused == _paused) {
-			_log.warn("Game is already " + (paused ? "paused" : "unpaused"));
 			return;
 		}
 
 		if (paused) {
-			_log.info("Game paused");
 		} else {
-			_log.info("Game unpaused");
 		}
 
 		this._paused = paused;

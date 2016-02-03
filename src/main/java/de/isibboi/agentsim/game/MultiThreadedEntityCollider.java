@@ -8,9 +8,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.entities.Entity;
 
@@ -48,8 +45,6 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		}
 	}
 
-	private final Logger _log = LogManager.getLogger(getClass());
-
 	private final ThreadPoolExecutor _executor;
 	private final Collection<Future<?>> _futures;
 
@@ -69,7 +64,6 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		_executor.prestartAllCoreThreads();
 		_futures = new LinkedList<>();
 
-		_log.info("Entity collider threads started");
 	}
 
 	@Override
@@ -95,7 +89,6 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 				future.get();
 			}
 		} catch (InterruptedException | ExecutionException e) {
-			_log.error("Could not finish collision evaluation", e);
 		}
 
 		if (_shutdown) {
@@ -110,13 +103,11 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	 */
 	private void shutdownExecutor() {
 		_executor.shutdown();
-		_log.info("Entity collider thread pool is shutting down");
 	}
 
 	@Override
 	public synchronized void shutdown() {
 		_shutdown = true;
-		_log.info("Entity collider received shutdown request");
 
 		if (!_isColliding) {
 			shutdownExecutor();

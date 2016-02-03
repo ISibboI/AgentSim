@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.ui.EntitySelectionManager;
 
 /**
@@ -62,8 +59,6 @@ public class Settings {
 			CORE_UPDATE_COLLISION_THREAD_COUNT,
 			CORE_AI_KNOWLEDGE_REPRESENTATION));
 
-	private final Logger _log = LogManager.getLogger(getClass());
-
 	private final String _settingsFile;
 	private final Properties _defaults;
 	private final Properties _properties;
@@ -83,18 +78,14 @@ public class Settings {
 		if (f.isFile()) {
 			try (InputStream in = new FileInputStream(f)) {
 				_properties.load(in);
-				_log.info("Settings loaded");
 
 				for (String property : _properties.stringPropertyNames()) {
 					if (!ALL_SETTINGS.contains(property)) {
-						_log.warn("Unknown setting: " + property);
 					}
 				}
 			} catch (IOException e) {
-				_log.error("Error reading settings!", e);
 			}
 		} else {
-			_log.warn("Settings file not found: " + settingsFile);
 		}
 
 		createDefaults();
@@ -152,10 +143,8 @@ public class Settings {
 
 		if (value == null || value.trim().equals("")) {
 			String oldValue = (String) _properties.remove(key);
-			_log.info("Removed setting " + key + ". Old value: " + oldValue);
 		} else {
 			String oldValue = (String) _properties.setProperty(key, value);
-			_log.info("Changed setting " + key + " from " + oldValue + " to " + value);
 		}
 	}
 
@@ -213,7 +202,6 @@ public class Settings {
 		try {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
-			_log.error("Setting is not an int: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -229,7 +217,6 @@ public class Settings {
 		try {
 			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
-			_log.error("Setting is not a float: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -245,7 +232,6 @@ public class Settings {
 		try {
 			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
-			_log.error("Setting is not a double: (" + key + ": " + value + ")", e);
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -271,9 +257,7 @@ public class Settings {
 
 		try (FileOutputStream out = new FileOutputStream(f)) {
 			_properties.store(out, "Created by Agent Sim version " + Environment.VERSION);
-			_log.info("Settings saved");
 		} catch (IOException e) {
-			_log.error("Could not save settings: " + _settingsFile);
 		}
 	}
 

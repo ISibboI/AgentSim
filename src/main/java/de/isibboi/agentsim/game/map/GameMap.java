@@ -3,9 +3,6 @@ package de.isibboi.agentsim.game.map;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.Environment;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.algorithm.LockManager;
@@ -19,7 +16,6 @@ import de.isibboi.agentsim.game.entities.ai.KnowledgeProvider;
  * @since 0.0.0
  */
 public class GameMap implements Drawable, KnowledgeProvider<Material> {
-	private static final Logger LOG = LogManager.getLogger(GameMap.class);
 
 	private final BufferedImage _map;
 	private final MaterialFactory _materialFactory = Environment.MATERIAL_FACTORY;

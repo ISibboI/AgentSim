@@ -2,9 +2,6 @@ package de.isibboi.agentsim.ui.component;
 
 import java.awt.Graphics2D;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.Renderer;
 import de.isibboi.agentsim.ui.event.MouseButton;
@@ -19,7 +16,6 @@ import de.isibboi.agentsim.ui.event.UserActionEvent;
  * @since 0.3.0
  */
 public class UIButton extends UILabel implements UIMouseInputListener {
-	private static final Logger LOG = LogManager.getLogger(UIButton.class);
 
 	private boolean _mouseHovering = false;
 	private boolean _mouseDown = false;
@@ -79,7 +75,6 @@ public class UIButton extends UILabel implements UIMouseInputListener {
 	public void mouseMoved(final Point oldPosition, final Point newPosition) {
 		_mouseHovering = contains(newPosition);
 
-		LOG.debug("Mouse moved: Mouse hovering: " + _mouseHovering);
 	}
 
 	@Override
@@ -90,6 +85,5 @@ public class UIButton extends UILabel implements UIMouseInputListener {
 
 		_mouseDown = buttonDown;
 
-		LOG.debug("Mouse clicked: Mouse down: " + _mouseDown);
 	}
 }

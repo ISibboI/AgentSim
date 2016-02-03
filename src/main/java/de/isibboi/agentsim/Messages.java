@@ -3,9 +3,6 @@ package de.isibboi.agentsim;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Auto-generated string externalization class.
  * 
@@ -13,8 +10,7 @@ import org.apache.logging.log4j.Logger;
  * @since 0.3.0
  */
 public final class Messages {
-	private static final Logger LOG = LogManager.getLogger(Messages.class);
-	
+
 	private static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
@@ -42,7 +38,6 @@ public final class Messages {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {
-			LOG.warn("Could not find string for: " + key, e);
 			return '!' + key + '!';
 		}
 	}

@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.GameUpdateException;
 
 /**
@@ -17,7 +14,6 @@ import de.isibboi.agentsim.game.GameUpdateException;
  * @since 0.3.0
  */
 public class Entities implements Collection<Entity>, Updateable, Drawable {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Collection<Entity> _entities = new ArrayList<>();
 	private final Collection<Entity> _newEntities = new ArrayList<>();
@@ -110,7 +106,6 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 	public void update(final Random random, final int tick) throws GameUpdateException {
 		if (_newEntities.size() > 0) {
 			_entities.addAll(_newEntities);
-			_log.debug("Added " + _newEntities.size() + " entities");
 			_newEntities.clear();
 		}
 
@@ -118,13 +113,11 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 			try {
 				entity.update(random, tick);
 			} catch (GameUpdateException e) {
-				_log.error("Error updating entity!", e);
 			}
 		}
 
 		if (_removedEntities.size() > 0) {
 			_entities.removeAll(_removedEntities);
-			_log.debug("Removed " + _removedEntities.size() + " entities");
 			_removedEntities.clear();
 		}
 	}

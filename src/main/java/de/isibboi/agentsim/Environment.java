@@ -3,9 +3,6 @@ package de.isibboi.agentsim;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.map.GenerationParameters;
 import de.isibboi.agentsim.game.map.GenerationParameters.GenerationType;
 import de.isibboi.agentsim.game.map.Material;
@@ -17,7 +14,6 @@ import de.isibboi.agentsim.game.map.MaterialFactory;
  * @since 0.0.0
  */
 public final class Environment {
-	private static final Logger LOG = LogManager.getLogger(Environment.class);
 
 	public static final String VERSION;
 
@@ -35,7 +31,6 @@ public final class Environment {
 		try {
 			properties.load(Environment.class.getResourceAsStream("/.properties"));
 		} catch (IOException e) {
-			LOG.fatal("Could not load properties!", e);
 		}
 
 		VERSION = properties.getProperty("version");

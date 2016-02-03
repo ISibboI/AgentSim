@@ -6,9 +6,6 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -18,7 +15,6 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  */
 public class MouseEventTranslator implements MouseListener, MouseMotionListener {
-	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final List<UIMouseInputListener> _listeners = new ArrayList<>();
 
@@ -68,7 +64,6 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 			listener.mouseMoved(oldPosition, newPosition);
 		}
 
-		_log.debug("Fired mouse moved: Old position: " + oldPosition + " New position: " + newPosition);
 	}
 
 	/**
@@ -83,7 +78,6 @@ public class MouseEventTranslator implements MouseListener, MouseMotionListener 
 			listener.mouseClicked(position, button, buttonDown);
 		}
 
-		_log.debug("Fired mouse clicked: Position: " + position + " Button: " + button + " Button down: " + buttonDown);
 	}
 
 	/**
