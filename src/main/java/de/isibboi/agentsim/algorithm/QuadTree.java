@@ -1,8 +1,15 @@
 package de.isibboi.agentsim.algorithm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.SortedSet;
 
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.util.Util;
 
 /**
  * A quad tree.
@@ -19,26 +26,41 @@ import de.isibboi.agentsim.game.map.Point;
 //  * Replace recursion with loops. Dirty, but causes less stack operations.
 //  * Implement the data structure in C and use JNI. Probably a big bunch of work.
 public class QuadTree<T> {
-	private static final class MutablePoint {
-		//CHECKSTYLE:OFF: VisibilityModifier
-		public int _x;
-		public int _y;
-
-		//CHECKSTYLE:ON: VisibilityModifier
+	/**
+	 * An entry of a {@link QuadTree}.
+	 * @author Sebastian Schmidt
+	 * @since 0.3.0
+	 *
+	 * @param <T> The element type.
+	 */
+	public static final class Entry<T> {
+		private Point.Builder _location;
+		private final T _element;
 
 		/**
-		 * Creates a new mutable point with the given location and transforms it with the given transformation.
+		 * Creates a new entry.
 		 * @param location The location.
-		 * @param transformation The transformation.
+		 * @param element The element.
 		 */
-		public MutablePoint(final Point location, final Point transformation) {
-			_x = location.getX() + transformation.getX();
-			_y = location.getY() + transformation.getY();
+		public Entry(final Point.Builder location, final T element) {
+			_location = location;
+			_element = element;
 		}
 
-		@Override
-		public String toString() {
-			return "[" + _x + "/" + _y + "]";
+		/**
+		 * Returns the location of the entry.
+		 * @return The location of the entry.
+		 */
+		public Point getLocation() {
+			return _location.build();
+		}
+
+		/**
+		 * Returns the element of the entry.
+		 * @return The element of the entry.
+		 */
+		public T getElement() {
+			return _element;
 		}
 	}
 
@@ -47,7 +69,7 @@ public class QuadTree<T> {
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	protected interface Node<T> {
+	private interface Node<T> {
 		/**
 		 * Returns the node that stores the data for the given location.
 		 * If the node doesn't exist, a new one is created.
@@ -56,7 +78,7 @@ public class QuadTree<T> {
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return A node.
 		 */
-		Leaf<T> getOrCreateLeaf(MutablePoint location, int minQuadrantSideLength);
+		Leaf<T> getOrCreateLeaf(Point.Builder location, int minQuadrantSideLength);
 
 		/**
 		 * Inserts the given element at the given location.
@@ -66,7 +88,14 @@ public class QuadTree<T> {
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The element that was at the given position before, or null.
 		 */
-		T insert(MutablePoint location, T element, int minQuadrantSideLength);
+		T insert(Point.Builder location, T element, int minQuadrantSideLength);
+
+		/**
+		 * Returns the element at the given location
+		 * @param location The location.
+		 * @return The element at the given location, or null, if no such element exists.
+		 */
+		T get(Point.Builder location);
 
 		/**
 		 * Removes the element at the given location.
@@ -74,7 +103,24 @@ public class QuadTree<T> {
 		 * @param location The location.
 		 * @return The element that was at the given location, or null, if no such element exists.
 		 */
-		T delete(MutablePoint location);
+		T delete(Point.Builder location);
+
+		/**
+		 * Selects the element number n from this tree.
+		 * @param n The element number.
+		 * @return The element number n.
+		 */
+		Entry<T> select(int n);
+
+		/**
+		 * Selects the elements with the given indices from this tree.
+		 * 
+		 * @param indices The element indices.
+		 * @param offset The offset of the indices.
+		 * @param result The entries with the given indices. Output parameter.
+		 * @return A sublist view of result containing the added elements.
+		 */
+		List<Entry<T>> select(SortedSet<Integer> indices, int offset, List<Entry<T>> result);
 
 		/**
 		 * Returns the amount of elements in this subtree.
@@ -92,7 +138,7 @@ public class QuadTree<T> {
 		 * 
 		 * @param quadrantSideLength The side length of one quadrant of the node.
 		 */
-		public AbstractNode(final int quadrantSideLength) {
+		AbstractNode(final int quadrantSideLength) {
 			_quadrantSideLength = quadrantSideLength;
 		}
 
@@ -120,19 +166,19 @@ public class QuadTree<T> {
 		 * 
 		 * @param quadrantSideLength The side length of one quadrant of the node.
 		 */
-		public InnerNode(final int quadrantSideLength) {
+		InnerNode(final int quadrantSideLength) {
 			super(quadrantSideLength);
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final MutablePoint location, final int minQuadrantSideLength) {
+		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength) {
 			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
 			transformToSubNodeSpace(location);
 			return subNode.getOrCreateLeaf(location, minQuadrantSideLength);
 		}
 
 		@Override
-		public T insert(final MutablePoint location, final T element, final int minQuadrantSideLength) {
+		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
 			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
 			transformToSubNodeSpace(location);
 			T result = subNode.insert(location, element, minQuadrantSideLength);
@@ -145,7 +191,19 @@ public class QuadTree<T> {
 		}
 
 		@Override
-		public T delete(final MutablePoint location) {
+		public T get(final Point.Builder location) {
+			AbstractNode<T> subNode = getSubNode(location);
+
+			if (subNode == null) {
+				return null;
+			}
+
+			transformToSubNodeSpace(location);
+			return subNode.get(location);
+		}
+
+		@Override
+		public T delete(final Point.Builder location) {
 			AbstractNode<T> subNode = getSubNode(location);
 
 			if (subNode == null) {
@@ -164,25 +222,162 @@ public class QuadTree<T> {
 			return result;
 		}
 
+		@Override
+		public Entry<T> select(final int n) {
+			int index = n;
+			final int subQuadrantSideLength = _quadrantSideLength / 2;
+
+			if (_upperLeft != null) {
+				if (index < _upperLeft.size()) {
+					Entry<T> result = _upperLeft.select(index);
+
+					result._location.setX(result._location.getX() - subQuadrantSideLength);
+					result._location.setY(result._location.getY() + subQuadrantSideLength);
+
+					return result;
+				} else {
+					index -= _upperLeft.size();
+				}
+			}
+
+			if (_upperRight != null) {
+				if (index < _upperRight.size()) {
+					Entry<T> result = _upperRight.select(index);
+
+					result._location.setX(result._location.getX() + subQuadrantSideLength);
+					result._location.setY(result._location.getY() + subQuadrantSideLength);
+
+					return result;
+				} else {
+					index -= _upperRight.size();
+				}
+			}
+
+			if (_lowerLeft != null) {
+				if (index < _lowerLeft.size()) {
+					Entry<T> result = _lowerLeft.select(index);
+
+					result._location.setX(result._location.getX() - subQuadrantSideLength);
+					result._location.setY(result._location.getY() - subQuadrantSideLength);
+
+					return result;
+				} else {
+					index -= _lowerLeft.size();
+				}
+			}
+
+			if (_lowerRight != null) {
+				if (index < _lowerRight.size()) {
+					Entry<T> result = _lowerRight.select(index);
+
+					result._location.setX(result._location.getX() + subQuadrantSideLength);
+					result._location.setY(result._location.getY() - subQuadrantSideLength);
+
+					return result;
+				} else {
+					index -= _lowerRight.size();
+				}
+			}
+
+			throw new IndexOutOfBoundsException(n + " is out of bounds.");
+		}
+
+		@Override
+		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
+			if (indices.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			final int subQuadrantSideLength = _quadrantSideLength / 2;
+			int modifiedOffset = offset;
+			final int firstAddedElement = result.size();
+
+			if (_upperLeft != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperLeft.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = _upperLeft.select(subSet, modifiedOffset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _upperLeft.size();
+			}
+
+			if (_upperRight != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperRight.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = _upperRight.select(subSet, modifiedOffset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _upperRight.size();
+			}
+
+			if (_lowerLeft != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerLeft.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = _lowerLeft.select(subSet, modifiedOffset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _lowerLeft.size();
+			}
+
+			if (_lowerRight != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerRight.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = _lowerRight.select(subSet, modifiedOffset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _lowerRight.size();
+			}
+
+			if (indices.last() > modifiedOffset) {
+				throw new IndexOutOfBoundsException(indices.last() + " is out of bounds.");
+			}
+
+			return result.subList(firstAddedElement, result.size());
+		}
+
 		/**
 		 * Transforms the given mutable point to the space of its respective sub node.
 		 * The transformation is made in place, no new objects are created, and the former state of location is lost.
 		 * 
 		 * @param location The location to transform.
 		 */
-		private void transformToSubNodeSpace(final MutablePoint location) {
+		private void transformToSubNodeSpace(final Point.Builder location) {
 			final int subQuadrantSideLength = _quadrantSideLength / 2;
 
-			if (location._x >= 0) {
-				location._x -= subQuadrantSideLength;
+			if (location.getX() >= 0) {
+				location.setX(location.getX() - subQuadrantSideLength);
 			} else {
-				location._x += subQuadrantSideLength;
+				location.setX(location.getX() + subQuadrantSideLength);
 			}
 
-			if (location._y >= 0) {
-				location._y -= subQuadrantSideLength;
+			if (location.getY() >= 0) {
+				location.setY(location.getY() - subQuadrantSideLength);
 			} else {
-				location._y += subQuadrantSideLength;
+				location.setY(location.getY() + subQuadrantSideLength);
 			}
 		}
 
@@ -192,9 +387,9 @@ public class QuadTree<T> {
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The sub node that handles the given location.
 		 */
-		private AbstractNode<T> getOrCreateSubNode(final MutablePoint location, final int minQuadrantSideLength) {
-			if (location._y < 0) {
-				if (location._x < 0) {
+		private AbstractNode<T> getOrCreateSubNode(final Point.Builder location, final int minQuadrantSideLength) {
+			if (location.getY() < 0) {
+				if (location.getX() < 0) {
 					if (_lowerLeft == null) {
 						_lowerLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
 					}
@@ -208,7 +403,7 @@ public class QuadTree<T> {
 					return _lowerRight;
 				}
 			} else {
-				if (location._x < 0) {
+				if (location.getX() < 0) {
 					if (_upperLeft == null) {
 						_upperLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
 					}
@@ -229,15 +424,15 @@ public class QuadTree<T> {
 		 * @param location The location.
 		 * @return The sub node that handles the given location.
 		 */
-		private AbstractNode<T> getSubNode(final MutablePoint location) {
-			if (location._y < 0) {
-				if (location._x < 0) {
+		private AbstractNode<T> getSubNode(final Point.Builder location) {
+			if (location.getY() < 0) {
+				if (location.getX() < 0) {
 					return _lowerLeft;
 				} else {
 					return _lowerRight;
 				}
 			} else {
-				if (location._x < 0) {
+				if (location.getX() < 0) {
 					return _upperLeft;
 				} else {
 					return _upperRight;
@@ -276,7 +471,7 @@ public class QuadTree<T> {
 		 * @param quadrantSideLength The side length of a quadrant of the node.
 		 */
 		@SuppressWarnings("unchecked")
-		public Leaf(final int quadrantSideLength) {
+		Leaf(final int quadrantSideLength) {
 			super(quadrantSideLength);
 
 			final int sideLength = quadrantSideLength * 2;
@@ -284,12 +479,12 @@ public class QuadTree<T> {
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final MutablePoint location, final int minQuadrantSideLength) {
+		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength) {
 			return this;
 		}
 
 		@Override
-		public T insert(final MutablePoint location, final T element, final int minQuadrantSideLength) {
+		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
 			final int index = locationToIndex(location);
 			final T before = _elements[index];
 			_elements[index] = element;
@@ -301,8 +496,19 @@ public class QuadTree<T> {
 			return before;
 		}
 
+		/**
+		 * Returns the element at the given location.
+		 * 
+		 * @param location The location.
+		 * @return The element at the given location.
+		 */
 		@Override
-		public T delete(final MutablePoint location) {
+		public T get(final Point.Builder location) {
+			return _elements[locationToIndex(location)];
+		}
+
+		@Override
+		public T delete(final Point.Builder location) {
 			final int index = locationToIndex(location);
 			final T before = _elements[index];
 			_elements[index] = null;
@@ -314,13 +520,53 @@ public class QuadTree<T> {
 			return before;
 		}
 
-		/**
-		 * Returns the element at the given location.
-		 * @param location The location.
-		 * @return The element at the given location.
-		 */
-		public T get(final MutablePoint location) {
-			return _elements[locationToIndex(location)];
+		@Override
+		public Entry<T> select(final int n) {
+			int index = 0;
+
+			for (int i = 0; i < _elements.length; i++) {
+				if (_elements[i] != null) {
+					if (index == n) {
+						return new Entry<>(indexToLocation(i), _elements[i]);
+					} else {
+						index++;
+					}
+				}
+			}
+
+			throw new IndexOutOfBoundsException(n + " is out of bounds!");
+		}
+
+		@Override
+		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
+			if (indices.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			int currentArrayIndex = 0;
+			int currentElementIndex = offset;
+			final int firstAddedElement = result.size();
+
+			for (int searchIndex : indices) {
+				for (; currentArrayIndex < _elements.length; currentArrayIndex++) {
+					if (_elements[currentArrayIndex] != null) {
+						if (currentElementIndex == searchIndex) {
+							result.add(new Entry<>(indexToLocation(currentArrayIndex), _elements[currentArrayIndex]));
+							currentElementIndex++;
+							currentArrayIndex++;
+							break;
+						}
+
+						currentElementIndex++;
+					}
+				}
+
+				if (currentArrayIndex == _elements.length) {
+					throw new IndexOutOfBoundsException(searchIndex + " is out of bounds!");
+				}
+			}
+
+			return result.subList(firstAddedElement, result.size());
 		}
 
 		/**
@@ -328,11 +574,26 @@ public class QuadTree<T> {
 		 * @param location The location.
 		 * @return The array index that stores the data of the given location.
 		 */
-		private int locationToIndex(final MutablePoint location) {
-			int index = location._x + _quadrantSideLength;
-			index += (location._y + _quadrantSideLength) * 2 * _quadrantSideLength;
+		private int locationToIndex(final Point.Builder location) {
+			int index = location.getX() + _quadrantSideLength;
+			index += (location.getY() + _quadrantSideLength) * 2 * _quadrantSideLength;
 
 			return index;
+		}
+
+		/**
+		 * Transforms the given array index to a location.
+		 * @param index The array index.
+		 * @return The location that points to the given array index.
+		 */
+		private Point.Builder indexToLocation(final int index) {
+			final int doubleQuadrantSideLength = _quadrantSideLength * 2;
+			final Point.Builder result = new Point.Builder();
+
+			result.setX(index % doubleQuadrantSideLength - _quadrantSideLength);
+			result.setY(index / doubleQuadrantSideLength - _quadrantSideLength);
+
+			return result;
 		}
 	}
 
@@ -340,6 +601,9 @@ public class QuadTree<T> {
 	private final int _minQuadrantSideLength;
 	private final Node<T> _root;
 
+	/**
+	 * The transformation from the input coordinate space to the root nodes coordinate space.
+	 */
 	private final Point _rootLocationTransformation;
 
 	/**
@@ -366,7 +630,7 @@ public class QuadTree<T> {
 	public T insert(final Point location, final T element) {
 		Objects.requireNonNull(element);
 
-		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		final Point.Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
 		return _root.insert(transformedLocation, element, _minQuadrantSideLength);
@@ -378,11 +642,10 @@ public class QuadTree<T> {
 	 * @return The element at the given location.
 	 */
 	public T get(final Point location) {
-		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		final Point.Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
-		final Leaf<T> leaf = getOrCreateLeaf(transformedLocation);
-		return leaf.get(transformedLocation);
+		return _root.get(transformedLocation);
 	}
 
 	/**
@@ -391,10 +654,66 @@ public class QuadTree<T> {
 	 * @return The deleted element, or null, if no such element exists.
 	 */
 	public T delete(final Point location) {
-		final MutablePoint transformedLocation = new MutablePoint(location, _rootLocationTransformation);
+		final Point.Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
 		return _root.delete(transformedLocation);
+	}
+
+	/**
+	 * Selects a random entry from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * @return A random entry.
+	 */
+	public Entry<T> selectRandomElement() {
+		return selectRandomElement(new Random());
+	}
+
+	/**
+	 * Selects a random entry from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param random The source of randomness.
+	 * @return A random entry.
+	 */
+	public Entry<T> selectRandomElement(final Random random) {
+		Entry<T> result = _root.select(random.nextInt(size()));
+		result._location.sub(_rootLocationTransformation);
+		return result;
+	}
+
+	/**
+	 * Selects a collection of {@code n} distinct random entries from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param n The amount of entries to select.
+	 * @return A collection of {@code n} distinct random entries.
+	 */
+	public Collection<Entry<T>> selectDistinctRandomElements(final int n) {
+		return selectDistinctRandomElements(n, new Random());
+	}
+
+	/**
+	 * Selects a collection of {@code n} distinct random entries from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param n The amount of entries to select.
+	 * @param random The source of randomness.
+	 * @return A collection of {@code n} distinct random entries.
+	 */
+	public Collection<Entry<T>> selectDistinctRandomElements(final int n, final Random random) {
+		if (n > size()) {
+			throw new IllegalArgumentException("Cannot return more values than those that exist.");
+		}
+
+		List<Entry<T>> result = new ArrayList<>(n);
+		_root.select(Util.getSortedDistinctRandomNumbers(n, size()), 0, result);
+
+		for (Entry<T> entry : result) {
+			entry._location.sub(_rootLocationTransformation);
+		}
+
+		return result;
 	}
 
 	/**
@@ -412,7 +731,7 @@ public class QuadTree<T> {
 	 * @param location The location of the data.
 	 * @return A node.
 	 */
-	protected Leaf<T> getOrCreateLeaf(final MutablePoint location) {
+	protected Leaf<T> getOrCreateLeaf(final Point.Builder location) {
 		return _root.getOrCreateLeaf(location, _minQuadrantSideLength);
 	}
 
@@ -449,12 +768,23 @@ public class QuadTree<T> {
 	 * @param location The location.
 	 * @throws IllegalArgumentException If the location is out of bounds.
 	 */
-	private void checkLocation(final MutablePoint location) {
+	private void checkLocation(final Point.Builder location) {
 		final int sideLengthHalf = _sideLength / 2;
 
-		if (location._x < -sideLengthHalf || location._y < -sideLengthHalf || location._x >= sideLengthHalf || location._y >= sideLengthHalf) {
+		if (location.getX() < -sideLengthHalf || location.getY() < -sideLengthHalf || location.getX() >= sideLengthHalf || location.getY() >= sideLengthHalf) {
 			throw new IllegalArgumentException("Location " + location + " is out of bounds!");
 		}
+	}
+
+	/**
+	 * Transforms the given location to the root nodes coordinate space.
+	 * @param location The location.
+	 * @return The location transformed to the root nodes coordinate space.
+	 */
+	private Point.Builder getTransformedLocation(final Point location) {
+		Point.Builder result = new Point.Builder(location);
+		result.add(_rootLocationTransformation);
+		return result;
 	}
 
 	/**

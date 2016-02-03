@@ -3,6 +3,9 @@ package de.isibboi.agentsim.util;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.isibboi.agentsim.game.map.Point;
 
@@ -14,6 +17,8 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public final class Util {
+	private static long seedCount = 0;
+
 	/**
 	 * Utility class.
 	 */
@@ -40,5 +45,29 @@ public final class Util {
 	 */
 	public static Rectangle2D.Double createRectangle(final Point2D.Double a, final Point2D.Double b) {
 		return new Rectangle2D.Double(Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()), Math.abs(a.getX() - b.getX()), Math.abs(a.getY() - b.getY()));
+	}
+
+	/**
+	 * Generate {@code amount} distinct random numbers.
+	 * The resulting set is sorted.
+	 * 
+	 * @param amount The amount of numbers to generate.
+	 * @param max The exclusive maximum of the number range.
+	 * @return A sorted set of {@code amount} distinct equally distributed random numbers from [0, amount).
+	 */
+	public static SortedSet<Integer> getSortedDistinctRandomNumbers(final int amount, final int max) {
+		if (amount > max) {
+			throw new IllegalArgumentException("amount must be lower than or equal to max!");
+		}
+
+		SortedSet<Integer> result = new TreeSet<>();
+		Random r = new Random();
+		r.setSeed(seedCount++ + (amount << 20) + (max << 30));
+
+		while (result.size() < amount) {
+			result.add(r.nextInt(max));
+		}
+
+		return result;
 	}
 }

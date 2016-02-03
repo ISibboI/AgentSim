@@ -50,7 +50,8 @@ public class Point {
 		 * @param point The initial coordinates.
 		 */
 		public Builder(final Point point) {
-
+			_x = point.getX();
+			_y = point.getY();
 		}
 
 		/**
@@ -101,6 +102,24 @@ public class Point {
 		public void setXY(final int x, final int y) {
 			_x = x;
 			_y = y;
+		}
+
+		/**
+		 * Adds the given values to this point.
+		 * @param p The values.
+		 */
+		public void add(final Point p) {
+			_x += p.getX();
+			_y += p.getY();
+		}
+
+		/**
+		 * Subtracts the given values from this point.
+		 * @param p The values.
+		 */
+		public void sub(final Point p) {
+			_x -= p.getX();
+			_y -= p.getY();
 		}
 	}
 

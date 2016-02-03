@@ -1,8 +1,13 @@
 package de.isibboi.agentsim.algorithm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +24,37 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public class QuadTreeTest {
-	private QuadTree<Integer> _bigTree;
-	private QuadTree<Integer> _smallTree;
+	private QuadTree<Integer> _tree;
 	private Map<Point, Integer> _referenceMap;
+	private Random _r;
+	private List<Point> _points;
 
 	/**
 	 * Sets up the test cases.
 	 */
 	@Before
 	public void setUp() {
-		_bigTree = new QuadTree<>(1 << 20, 1 << 8, new Point(0, 0));
-		_smallTree = new QuadTree<>(1 << 5, 1 << 2, new Point(0, 0));
+		_tree = new QuadTree<>(1 << 5, 1 << 2, new Point(0, 0));
 		_referenceMap = new HashMap<>();
+
+		_r = new Random(0x7367de42);
+
+		// Random points
+		_points = generateRandomPoints(1000, _r, _tree.getSideLength(), _tree.getSideLength());
+
+		// Edge cases
+		_points.addAll(generateCornerPoints(_tree.getSideLength(), _tree.getSideLength()));
+
+		// Overwriting
+		for (int i = 0; i < 10; i++) {
+			_points.add(_points.get(_r.nextInt(_points.size())));
+		}
+
+		for (Point point : _points) {
+			int element = _r.nextInt();
+			_tree.insert(point, element);
+			_referenceMap.put(point, element);
+		}
 	}
 
 	/**
@@ -38,27 +62,14 @@ public class QuadTreeTest {
 	 */
 	@Test
 	public void testRandomInsertGet() {
-		Random r = new Random(0x7367de42);
-
-		// Random points
-		List<Point> points = generateRandomPoints(1000, r, _smallTree.getSideLength(), _smallTree.getSideLength());
-
-		// Edge cases
-		points.addAll(generateCornerPoints(_smallTree.getSideLength(), _smallTree.getSideLength()));
-
-		// Overwriting
-		for (int i = 0; i < 10; i++) {
-			points.add(points.get(r.nextInt(points.size())));
-		}
-
-		for (Point point : points) {
-			int element = r.nextInt();
-			_smallTree.insert(point, element);
+		for (Point point : _points) {
+			int element = _r.nextInt();
+			_tree.insert(point, element);
 			_referenceMap.put(point, element);
 		}
 
-		for (Point point : points) {
-			assertEquals(_referenceMap.get(point), _smallTree.get(point));
+		for (Point point : _points) {
+			assertEquals(_referenceMap.get(point), _tree.get(point));
 		}
 	}
 
@@ -67,30 +78,104 @@ public class QuadTreeTest {
 	 */
 	@Test
 	public void testSize() {
-		Random r = new Random(0x7367de42);
-
-		// Random points
-		List<Point> points = generateRandomPoints(1000, r, _smallTree.getSideLength(), _smallTree.getSideLength());
-
-		// Edge cases
-		points.addAll(generateCornerPoints(_smallTree.getSideLength(), _smallTree.getSideLength()));
-
-		// Overwriting
-		for (int i = 0; i < 10; i++) {
-			points.add(points.get(r.nextInt(points.size())));
-		}
-
-		for (Point point : points) {
-			int element = r.nextInt();
-			_smallTree.insert(point, element);
+		for (Point point : _points) {
+			int element = _r.nextInt();
+			_tree.insert(point, element);
 			_referenceMap.put(point, element);
-			assertEquals(_referenceMap.size(), _smallTree.size());
+			assertEquals(_referenceMap.size(), _tree.size());
 		}
 
-		for (Point point : points) {
-			_smallTree.delete(point);
+		for (Point point : _points) {
+			_tree.delete(point);
 			_referenceMap.remove(point);
-			assertEquals(_referenceMap.size(), _smallTree.size());
+			assertEquals(_referenceMap.size(), _tree.size());
+		}
+	}
+
+	/**
+	 * Tests if the {@link QuadTree#selectRandomElement(Random)} method works.
+	 */
+	@Test
+	public void testSelectRandomElement() {
+		for (Point point : _points) {
+			int element = _r.nextInt();
+			_tree.insert(point, element);
+			_referenceMap.put(point, element);
+		}
+
+		DeterministicRandom deterministicRandom = new DeterministicRandom();
+
+		for (int i = 0; i < _tree.size(); i++) {
+			deterministicRandom.setNextInt(i);
+			Point selected = _tree.selectRandomElement(deterministicRandom).getLocation();
+			assertNotNull(selected);
+			assertNotEquals("i = " + i, null, _referenceMap.remove(selected));
+		}
+	}
+
+	/**
+	 * Tests if the {@link QuadTree#selectDistinctRandomElements(int, Random)} method works.
+	 */
+	@Test
+	public void testSelectDistinctRandomElements() {
+		Random deterministicRandom = new Random() {
+			private static final long serialVersionUID = 1L;
+			private int _nextInt = 0;
+
+			@Override
+			public int nextInt() {
+				return _nextInt++;
+			}
+
+			@Override
+			public int nextInt(final int bound) {
+				return _nextInt++;
+			}
+		};
+
+		Map<Point, Integer> map = new HashMap<>();
+		map.putAll(_referenceMap);
+
+		Collection<QuadTree.Entry<Integer>> selected = _tree.selectDistinctRandomElements(100, deterministicRandom);
+
+		assertNotNull(selected);
+		assertEquals(100, selected.size());
+
+		for (QuadTree.Entry<Integer> entry : selected) {
+			assertNotNull(map.remove(entry.getLocation()));
+		}
+
+		assertEquals(100, _referenceMap.size() - map.size());
+	}
+
+	/**
+	 * Tests if the location to index and reverse conversion works.
+	 * @throws ClassNotFoundException If the leaf class name has changed.
+	 * @throws SecurityException Should not be thrown.
+	 * @throws NoSuchMethodException If the constructor of leaf has changed.
+	 * @throws InvocationTargetException Don't
+	 * @throws IllegalArgumentException want
+	 * @throws IllegalAccessException to
+	 * @throws InstantiationException document
+	 */
+	@Test
+	public void testLocationToIndexAndReverse() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		final Class<?> leafClass = Class.forName(QuadTree.class.getCanonicalName() + "$Leaf");
+
+		// side length of 16, half side length of 8
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE).newInstance(8);
+
+		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
+		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
+
+		locationToIndex.setAccessible(true);
+		indexToLocation.setAccessible(true);
+
+		// -> [0, 16*16) to check.
+		for (int i = 0; i < 256; i++) {
+			Object result = indexToLocation.invoke(leafObject, i);
+			assertEquals(i, locationToIndex.invoke(leafObject, result));
 		}
 	}
 
@@ -99,7 +184,7 @@ public class QuadTreeTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testInsertOutOfBounds() {
-		_smallTree.insert(new Point(-1, -1), 3);
+		_tree.insert(new Point(-1, -1), 3);
 	}
 
 	/**
@@ -107,7 +192,7 @@ public class QuadTreeTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetOutOfBounds() {
-		_smallTree.get(new Point(-1, -1));
+		_tree.get(new Point(-1, -1));
 	}
 
 	/**
@@ -115,7 +200,7 @@ public class QuadTreeTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testForbidNullValues() {
-		_smallTree.insert(new Point(0, 0), null);
+		_tree.insert(new Point(0, 0), null);
 	}
 
 	/**
