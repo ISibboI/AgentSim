@@ -211,10 +211,16 @@ public class QuadTree<T> {
 			// TODO transform from sub node space.
 
 			int index = n;
+			final int subQuadrantSideLength = _quadrantSideLength / 2;
 
 			if (_upperLeft != null) {
 				if (index < _upperLeft.size()) {
-					return _upperLeft.select(index);
+					Entry<T> result = _upperLeft.select(index);
+
+					result._location.setX(result._location.getX() - subQuadrantSideLength);
+					result._location.setY(result._location.getY() + subQuadrantSideLength);
+
+					return result;
 				} else {
 					index -= _upperLeft.size();
 				}
@@ -222,7 +228,12 @@ public class QuadTree<T> {
 
 			if (_upperRight != null) {
 				if (index < _upperRight.size()) {
-					return _upperRight.select(index);
+					Entry<T> result = _upperRight.select(index);
+
+					result._location.setX(result._location.getX() + subQuadrantSideLength);
+					result._location.setY(result._location.getY() + subQuadrantSideLength);
+
+					return result;
 				} else {
 					index -= _upperRight.size();
 				}
@@ -230,7 +241,12 @@ public class QuadTree<T> {
 
 			if (_lowerLeft != null) {
 				if (index < _lowerLeft.size()) {
-					return _lowerLeft.select(index);
+					Entry<T> result = _lowerLeft.select(index);
+
+					result._location.setX(result._location.getX() - subQuadrantSideLength);
+					result._location.setY(result._location.getY() - subQuadrantSideLength);
+
+					return result;
 				} else {
 					index -= _lowerLeft.size();
 				}
@@ -238,7 +254,12 @@ public class QuadTree<T> {
 
 			if (_lowerRight != null) {
 				if (index < _lowerRight.size()) {
-					return _lowerRight.select(index);
+					Entry<T> result = _lowerRight.select(index);
+
+					result._location.setX(result._location.getX() + subQuadrantSideLength);
+					result._location.setY(result._location.getY() - subQuadrantSideLength);
+
+					return result;
 				} else {
 					index -= _lowerRight.size();
 				}
