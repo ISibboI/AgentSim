@@ -1,9 +1,15 @@
 package de.isibboi.agentsim.algorithm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.SortedSet;
 
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.util.Util;
 
 /**
  * A quad tree.
@@ -105,6 +111,16 @@ public class QuadTree<T> {
 		 * @return The element number n.
 		 */
 		Entry<T> select(int n);
+
+		/**
+		 * Selects the elements with the given indices from this tree.
+		 * 
+		 * @param indices The element indices.
+		 * @param offset The offset of the indices.
+		 * @param result The entries with the given indices. Output parameter.
+		 * @return A sublist view of result containing the added elements.
+		 */
+		List<Entry<T>> select(SortedSet<Integer> indices, int offset, List<Entry<T>> result);
 
 		/**
 		 * Returns the amount of elements in this subtree.
@@ -264,6 +280,83 @@ public class QuadTree<T> {
 			}
 
 			throw new IndexOutOfBoundsException(n + " is out of bounds.");
+		}
+
+		@Override
+		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
+			if (indices.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			final int subQuadrantSideLength = _quadrantSideLength / 2;
+			int modifiedOffset = offset;
+			final int firstAddedElement = result.size();
+
+			if (_upperLeft != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperLeft.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = select(subSet, offset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _upperLeft.size();
+			}
+
+			if (_upperRight != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperRight.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = select(subSet, offset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _upperRight.size();
+			}
+
+			if (_lowerLeft != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerLeft.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = select(subSet, offset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _lowerLeft.size();
+			}
+
+			if (_lowerRight != null) {
+				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerRight.size());
+
+				if (subSet.size() > 0) {
+					List<Entry<T>> addedElements = select(subSet, offset, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+
+				modifiedOffset += _lowerLeft.size();
+			}
+
+			if (!indices.tailSet(modifiedOffset).isEmpty()) {
+				throw new IndexOutOfBoundsException(indices.tailSet(modifiedOffset).first() + " is out of bounds.");
+			}
+
+			return result.subList(firstAddedElement, result.size());
 		}
 
 		/**
@@ -431,17 +524,46 @@ public class QuadTree<T> {
 		public Entry<T> select(final int n) {
 			int index = 0;
 
-			for (T element : _elements) {
-				if (element != null) {
+			for (int i = 0; i < _elements.length; i++) {
+				if (_elements[i] != null) {
 					if (index == n) {
-						return new Entry<>(indexToLocation(index), element);
+						return new Entry<>(indexToLocation(i), _elements[i]);
 					} else {
 						index++;
 					}
 				}
 			}
 
-			throw new IndexOutOfBoundsException(n + " is out of bounds.");
+			throw new IndexOutOfBoundsException(n + " is out of bounds!");
+		}
+
+		@Override
+		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
+			if (indices.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			int currentArrayIndex = 0;
+			int currentElementIndex = offset;
+			final int firstAddedElement = result.size();
+
+			for (int searchIndex : indices) {
+				for (; currentArrayIndex < _elements.length; currentArrayIndex++) {
+					if (_elements[currentArrayIndex] != null) {
+						if (currentElementIndex == searchIndex) {
+							result.add(new Entry<>(indexToLocation(currentArrayIndex), _elements[currentArrayIndex]));
+						}
+
+						currentElementIndex++;
+					}
+				}
+
+				if (currentArrayIndex == _elements.length) {
+					throw new IndexOutOfBoundsException(searchIndex + " is out of bounds!");
+				}
+			}
+
+			return result.subList(firstAddedElement, result.size());
 		}
 
 		/**
@@ -554,6 +676,40 @@ public class QuadTree<T> {
 	public Entry<T> selectRandomElement(final Random random) {
 		Entry<T> result = _root.select(random.nextInt(size()));
 		result._location.sub(_rootLocationTransformation);
+		return result;
+	}
+
+	/**
+	 * Selects a collection of {@code n} distinct random entries from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param n The amount of entries to select.
+	 * @return A collection of {@code n} distinct random entries.
+	 */
+	public Collection<Entry<T>> selectDistinctRandomElements(final int n) {
+		return selectDistinctRandomElements(n, new Random());
+	}
+
+	/**
+	 * Selects a collection of {@code n} distinct random entries from this tree.
+	 * Each entry is returned with approximately the same probability.
+	 * 
+	 * @param n The amount of entries to select.
+	 * @param random The source of randomness.
+	 * @return A collection of {@code n} distinct random entries.
+	 */
+	public Collection<Entry<T>> selectDistinctRandomElements(final int n, final Random random) {
+		if (n > size()) {
+			throw new IllegalArgumentException("Cannot return more values than those that exist.");
+		}
+
+		List<Entry<T>> result = new ArrayList<>(n);
+		_root.select(Util.getSortedDistinctRandomNumbers(n, size()), 0, result);
+
+		for (Entry<T> entry : result) {
+			entry._location.sub(_rootLocationTransformation);
+		}
+
 		return result;
 	}
 
