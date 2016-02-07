@@ -11,5 +11,5 @@ public interface Categorized {
 	 * Returns the set of categories this object belongs to.
 	 * @return The set of categories this object belongs to.
 	 */
-	CategorySet getCategoryMultiset();
+	CategorySet getCategorySet();
 }

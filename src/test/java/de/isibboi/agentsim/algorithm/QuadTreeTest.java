@@ -41,7 +41,7 @@ public class QuadTreeTest {
 		}
 
 		@Override
-		public CategorySet getCategoryMultiset() {
+		public CategorySet getCategorySet() {
 			return new CategorySet();
 		}
 

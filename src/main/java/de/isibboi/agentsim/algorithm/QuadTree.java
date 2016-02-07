@@ -25,7 +25,7 @@ import de.isibboi.agentsim.util.Util;
 // Ideas for optimisation:
 //  * Replace recursion with loops. Dirty, but causes less stack operations.
 //  * Implement the data structure in C and use JNI. Probably a big bunch of work.
-public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
+public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> implements Prioritized, MultiCategorized {
 	/**
 	 * An entry of a {@link QuadTree}.
 	 * @author Sebastian Schmidt
@@ -153,7 +153,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		}
 
 		@Override
-		public CategoryMultiset getCategoryMultiset() {
+		public CategoryMultiset getCategorySet() {
 			return _categories;
 		}
 
@@ -195,13 +195,13 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 		@Override
 		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
-			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategoryMultiset().getCategoryGroup());
+			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategorySet().getCategoryGroup());
 			transformToSubNodeSpace(location);
 			T result = subNode.insert(location, element, minQuadrantSideLength);
 
 			if (result == null) {
 				_size++;
-				_categories.addAll(element.getCategoryMultiset());
+				_categories.addAll(element.getCategorySet());
 				_priority += element.getPriority();
 			}
 
@@ -233,7 +233,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 			if (deleted != null) {
 				_size--;
-				_categories.removeAll(deleted.getCategoryMultiset());
+				_categories.removeAll(deleted.getCategorySet());
 				_priority -= deleted.getPriority();
 			}
 
@@ -513,7 +513,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 			if (before == null) {
 				_size++;
-				_categories.addAll(element.getCategoryMultiset());
+				_categories.addAll(element.getCategorySet());
 				_priority += element.getPriority();
 			}
 
@@ -539,7 +539,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 			if (deleted != null) {
 				_size--;
-				_categories.removeAll(deleted.getCategoryMultiset());
+				_categories.removeAll(deleted.getCategorySet());
 				_priority -= deleted.getPriority();
 			}
 
@@ -856,5 +856,15 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 */
 	public int getSideLength() {
 		return _sideLength;
+	}
+
+	@Override
+	public int getPriority() {
+		return _root.getPriority();
+	}
+
+	@Override
+	public CategoryMultiset getCategorySet() {
+		return _root.getCategorySet();
 	}
 }

@@ -8,8 +8,8 @@ package de.isibboi.agentsim.algorithm;
  */
 public interface MultiCategorized extends Categorized {
 	/**
-	 * Returns the set of categories this object belongs to.
-	 * @return The set of categories this object belongs to.
+	 * Returns the multiset of categories this object belongs to.
+	 * @return The multiset of categories this object belongs to.
 	 */
-	CategoryMultiset getCategoryMultiset();
+	CategoryMultiset getCategorySet();
 }
