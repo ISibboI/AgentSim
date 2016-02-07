@@ -1,5 +1,6 @@
 package de.isibboi.agentsim;
 
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.lang.reflect.Field;
@@ -63,7 +64,7 @@ public class AgentSim implements Runnable, WindowListener {
 
 		// Iterate over set to find yours
 		for (Thread thread : setOfThread) {
-			if (thread.getName().equals("Thread-2")) {
+			if (thread.getName().equals("Thread-0")) {
 				thread.interrupt();
 
 				for (StackTraceElement e : thread.getStackTrace()) {
@@ -88,6 +89,17 @@ public class AgentSim implements Runnable, WindowListener {
 
 				break;
 			}
+		}
+
+		System.gc();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		for (Window w : Window.getWindows()) {
+			System.out.println(w);
 		}
 	}
 
