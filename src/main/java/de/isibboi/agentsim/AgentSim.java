@@ -26,7 +26,7 @@ public class AgentSim implements Runnable, WindowListener {
 	private final AgentFrame _frame;
 	private final Settings _settings;
 
-	private boolean _exit;
+	private volatile boolean _exit;
 
 	/**
 	 * Constructs the game.
