@@ -43,13 +43,13 @@ public class ArrayCategoryMultiset implements CategoryMultiset {
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <T> T[] toArray(final T[] a) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Category> c) {
+	public boolean addAll(final Collection<? extends Category> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -61,31 +61,31 @@ public class ArrayCategoryMultiset implements CategoryMultiset {
 	}
 
 	@Override
-	public int count(Object element) {
+	public int count(final Object element) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int add(Category element, int occurrences) {
+	public int add(final Category element, final int occurrences) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int remove(Object element, int occurrences) {
+	public int remove(final Object element, final int occurrences) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int setCount(Category element, int count) {
+	public int setCount(final Category element, final int count) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean setCount(Category element, int oldCount, int newCount) {
+	public boolean setCount(final Category element, final int oldCount, final int newCount) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -109,37 +109,37 @@ public class ArrayCategoryMultiset implements CategoryMultiset {
 	}
 
 	@Override
-	public boolean contains(Object element) {
+	public boolean contains(final Object element) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> elements) {
+	public boolean containsAll(final Collection<?> elements) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean add(Category element) {
+	public boolean add(final Category element) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean remove(Object element) {
+	public boolean remove(final Object element) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> c) {
+	public boolean removeAll(final Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll(final Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
