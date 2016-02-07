@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
  * @since 0.2.0 
  */
 public abstract class TimedTask extends AbstractTask {
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LogManager.getLogger(TimedTask.class);
 
 	private int _duration;

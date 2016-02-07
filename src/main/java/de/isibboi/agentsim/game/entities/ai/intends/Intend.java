@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
-import de.isibboi.agentsim.algorithm.PriorityOrdered;
+import de.isibboi.agentsim.algorithm.Prioritized;
+import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.entities.Goblin;
 
 /**
@@ -14,7 +15,7 @@ import de.isibboi.agentsim.game.entities.Goblin;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public interface Intend extends PriorityOrdered {
+public interface Intend extends Prioritized, TemporalVariant {
 	/**
 	 * Generates a task sequence for executing this intend.
 	 * The task sequence is only valid if it is executed immediately.

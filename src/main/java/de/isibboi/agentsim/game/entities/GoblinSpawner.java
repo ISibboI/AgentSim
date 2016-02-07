@@ -4,7 +4,6 @@ import java.util.Random;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.EntityLocationManager;
-import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -14,7 +13,6 @@ import de.isibboi.agentsim.game.map.Point;
  */
 public class GoblinSpawner {
 	private final EntityLocationManager _entityLocationManager;
-	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Settings _settings;
 
 	private final Random _random = new Random();
@@ -22,12 +20,10 @@ public class GoblinSpawner {
 	/**
 	 * Creates a new goblin spawner.
 	 * @param entityLocationManager The entity location manager to add the goblins to.
-	 * @param goblinTaskFactory The goblin task factory.
 	 * @param settings The settings.
 	 */
-	public GoblinSpawner(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Settings settings) {
+	public GoblinSpawner(final EntityLocationManager entityLocationManager, final Settings settings) {
 		_entityLocationManager = entityLocationManager;
-		_goblinTaskFactory = goblinTaskFactory;
 		_settings = settings;
 	}
 
@@ -37,7 +33,7 @@ public class GoblinSpawner {
 	 * @return The goblin that was spawned.
 	 */
 	public Goblin spawnGoblin(final Point location) {
-		Goblin goblin = new Goblin(_entityLocationManager, _goblinTaskFactory);
+		Goblin goblin = new Goblin(_entityLocationManager);
 		_entityLocationManager.getEntities().add(goblin);
 		_entityLocationManager.setLocation(goblin, location);
 

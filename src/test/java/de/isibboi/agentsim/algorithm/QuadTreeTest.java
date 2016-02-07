@@ -24,8 +24,51 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public class QuadTreeTest {
-	private QuadTree<Integer> _tree;
-	private Map<Point, Integer> _referenceMap;
+	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
+		int _value;
+
+		/**
+		 * Creates a new object.
+		 * @param value The value.
+		 */
+		IntTreeValue(final int value) {
+			_value = value;
+		}
+
+		@Override
+		public int getInformationRecordTime() {
+			return 0;
+		}
+
+		@Override
+		public CategorySet getCategorySet() {
+			return null;
+		}
+
+		@Override
+		public int getPriority() {
+			return 0;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (o instanceof IntTreeValue) {
+				IntTreeValue i = (IntTreeValue) o;
+
+				return i._value == _value;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			return _value;
+		}
+	}
+
+	private QuadTree<IntTreeValue> _tree;
+	private Map<Point, IntTreeValue> _referenceMap;
 	private Random _r;
 	private List<Point> _points;
 
@@ -52,8 +95,8 @@ public class QuadTreeTest {
 
 		for (Point point : _points) {
 			int element = _r.nextInt();
-			_tree.insert(point, element);
-			_referenceMap.put(point, element);
+			_tree.insert(point, new IntTreeValue(element));
+			_referenceMap.put(point, new IntTreeValue(element));
 		}
 	}
 
@@ -64,8 +107,8 @@ public class QuadTreeTest {
 	public void testRandomInsertGet() {
 		for (Point point : _points) {
 			int element = _r.nextInt();
-			_tree.insert(point, element);
-			_referenceMap.put(point, element);
+			_tree.insert(point, new IntTreeValue(element));
+			_referenceMap.put(point, new IntTreeValue(element));
 		}
 
 		for (Point point : _points) {
@@ -80,8 +123,8 @@ public class QuadTreeTest {
 	public void testSize() {
 		for (Point point : _points) {
 			int element = _r.nextInt();
-			_tree.insert(point, element);
-			_referenceMap.put(point, element);
+			_tree.insert(point, new IntTreeValue(element));
+			_referenceMap.put(point, new IntTreeValue(element));
 			assertEquals(_referenceMap.size(), _tree.size());
 		}
 
@@ -99,8 +142,8 @@ public class QuadTreeTest {
 	public void testSelectRandomElement() {
 		for (Point point : _points) {
 			int element = _r.nextInt();
-			_tree.insert(point, element);
-			_referenceMap.put(point, element);
+			_tree.insert(point, new IntTreeValue(element));
+			_referenceMap.put(point, new IntTreeValue(element));
 		}
 
 		DeterministicRandom deterministicRandom = new DeterministicRandom();
@@ -133,15 +176,15 @@ public class QuadTreeTest {
 			}
 		};
 
-		Map<Point, Integer> map = new HashMap<>();
+		Map<Point, IntTreeValue> map = new HashMap<>();
 		map.putAll(_referenceMap);
 
-		Collection<QuadTree.Entry<Integer>> selected = _tree.selectDistinctRandomElements(100, deterministicRandom);
+		Collection<QuadTree.Entry<IntTreeValue>> selected = _tree.selectDistinctRandomElements(100, deterministicRandom);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());
 
-		for (QuadTree.Entry<Integer> entry : selected) {
+		for (QuadTree.Entry<IntTreeValue> entry : selected) {
 			assertNotNull(map.remove(entry.getLocation()));
 		}
 
@@ -184,7 +227,7 @@ public class QuadTreeTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testInsertOutOfBounds() {
-		_tree.insert(new Point(-1, -1), 3);
+		_tree.insert(new Point(-1, -1), new IntTreeValue(3));
 	}
 
 	/**

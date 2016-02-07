@@ -25,7 +25,7 @@ import de.isibboi.agentsim.util.Util;
 // Ideas for optimisation:
 //  * Replace recursion with loops. Dirty, but causes less stack operations.
 //  * Implement the data structure in C and use JNI. Probably a big bunch of work.
-public class QuadTree<T> {
+public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	/**
 	 * An entry of a {@link QuadTree}.
 	 * @author Sebastian Schmidt

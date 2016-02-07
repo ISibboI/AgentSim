@@ -32,7 +32,7 @@ public abstract class AbstractIntend implements Intend {
 	}
 
 	@Override
-	public int getLastUpdateTime() {
+	public int getInformationRecordTime() {
 		return _creationTime;
 	}
 

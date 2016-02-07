@@ -3,14 +3,14 @@ package de.isibboi.agentsim.algorithm;
 import java.util.Comparator;
 
 /**
- * Compares {@link PriorityOrdered} objects.
+ * Compares {@link Prioritized} objects.
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class PriorityComparator implements Comparator<PriorityOrdered> {
+public class PriorityComparator implements Comparator<Prioritized> {
 	@Override
-	public int compare(final PriorityOrdered t1, final PriorityOrdered t2) {
+	public int compare(final Prioritized t1, final Prioritized t2) {
 		return t1.getPriority() - t2.getPriority();
 	}
 

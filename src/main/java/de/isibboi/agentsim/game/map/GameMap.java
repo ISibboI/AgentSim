@@ -19,6 +19,7 @@ import de.isibboi.agentsim.game.entities.ai.KnowledgeProvider;
  * @since 0.0.0
  */
 public class GameMap implements Drawable, KnowledgeProvider<Material> {
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LogManager.getLogger(GameMap.class);
 
 	private final BufferedImage _map;

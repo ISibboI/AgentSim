@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI;
-import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -31,13 +30,12 @@ public class Goblin extends MapEntity {
 	 * Creates a new goblin at the specified location.
 	 * 
 	 * @param entityLocationManager The entity location manager that manages the location of this goblin.
-	 * @param goblinTaskFactory The goblin task factory.
 	 */
-	public Goblin(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory) {
+	public Goblin(final EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
 
 		_attributes = new GoblinAttributes(entityLocationManager.getSettings());
-		_ai = new GoblinSwarmAI(entityLocationManager, goblinTaskFactory, this);
+		_ai = new GoblinSwarmAI(entityLocationManager, this);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import java.util.Random;
  * @since 0.3.0
  */
 public class DeterministicRandom extends Random {
+	private static final long serialVersionUID = 1L;
 	private int _nextInt;
 
 	/**

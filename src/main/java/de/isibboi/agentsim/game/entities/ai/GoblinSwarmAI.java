@@ -3,7 +3,6 @@ package de.isibboi.agentsim.game.entities.ai;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,8 +16,8 @@ import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.intends.Intend;
-import de.isibboi.agentsim.game.entities.ai.tasks.GoblinTaskFactory;
 import de.isibboi.agentsim.game.entities.ai.tasks.MoveToTask;
+import de.isibboi.agentsim.game.entities.ai.tasks.RandomMovementTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
 import de.isibboi.agentsim.game.entities.buildings.SwarmMainBuilding;
 import de.isibboi.agentsim.game.map.Material;
@@ -39,11 +38,7 @@ import de.isibboi.agentsim.game.map.Point;
 public class GoblinSwarmAI extends TaskExecutingAI {
 	private static final Logger LOG = LogManager.getLogger(GoblinSwarmAI.class);
 
-	private static AtomicInteger idCounter = new AtomicInteger(0);
-	private final int _id = idCounter.incrementAndGet();
-
 	private final EntityLocationManager _entityLocationManager;
-	private final GoblinTaskFactory _goblinTaskFactory;
 	private final Goblin _goblin;
 	private final ProviderBackedKnowledgeMap<Material> _mapKnowledge;
 
@@ -57,12 +52,10 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 	/**
 	 * Creates a new {@link GoblinSwarmAI}.
 	 * @param entityLocationManager The entity location manager.
-	 * @param goblinTaskFactory The goblin task factory.
 	 * @param goblin The entity that is controlled by this AI.
 	 */
-	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final GoblinTaskFactory goblinTaskFactory, final Goblin goblin) {
+	public GoblinSwarmAI(final EntityLocationManager entityLocationManager, final Goblin goblin) {
 		_entityLocationManager = entityLocationManager;
-		_goblinTaskFactory = goblinTaskFactory;
 		_goblin = goblin;
 
 		Settings settings = entityLocationManager.getSettings();
@@ -111,7 +104,7 @@ public class GoblinSwarmAI extends TaskExecutingAI {
 		_saturationBufferDistanceFactor = settings.getFloat(Settings.GAME_AI_SATURATION_BUFFER_DISTANCE_FACTOR);
 		_saturationBufferMinimum = settings.getInt(Settings.GAME_AI_SATURATION_BUFFER_MINIMUM);
 
-		setIdleTask(goblinTaskFactory.createIdleTask());
+		setIdleTask(new RandomMovementTask());
 	}
 
 	@Override

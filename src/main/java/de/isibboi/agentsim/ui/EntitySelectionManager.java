@@ -74,6 +74,7 @@ public class EntitySelectionManager implements UIMouseInputListener, Drawable {
 		 * Removes the given entity from the selected entities.
 		 * @param entity The entity.
 		 */
+		@SuppressWarnings("unused")
 		public void remove(final Entity entity) {
 			entity.setSelected(false);
 			_selectedEntities.remove(entity);

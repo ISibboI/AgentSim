@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-import de.isibboi.agentsim.algorithm.PriorityOrdered;
+import de.isibboi.agentsim.algorithm.Prioritized;
 import de.isibboi.agentsim.algorithm.Selector;
+import de.isibboi.agentsim.algorithm.TemporalVariant;
 
 /**
  * A priority based random selector.
@@ -20,7 +21,7 @@ import de.isibboi.agentsim.algorithm.Selector;
  * @since 0.3.0
  * @param <T> The element type.
  */
-public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Selector<T> {
+public class PrioritizedRandomSelector<T extends Prioritized & TemporalVariant> implements Selector<T> {
 	private final Map<T, T> _data = new HashMap<>();
 	private final Random _random = new Random();
 
@@ -85,7 +86,7 @@ public class PrioritizedRandomSelector<T extends PriorityOrdered> implements Sel
 			if (oldElement == null) {
 				_data.put(element, element);
 				_prioritySum += element.getPriority();
-			} else if (element.getLastUpdateTime() > oldElement.getLastUpdateTime()) {
+			} else if (element.getInformationRecordTime() > oldElement.getInformationRecordTime()) {
 				_prioritySum -= _data.remove(oldElement).getPriority();
 				_data.put(element, element);
 				_prioritySum += element.getPriority();
