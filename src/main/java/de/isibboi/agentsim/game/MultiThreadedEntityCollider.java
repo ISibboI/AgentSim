@@ -48,7 +48,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		}
 	}
 
-	private final Logger _log = LogManager.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(MultiThreadedEntityCollider.class);
 
 	private final ThreadPoolExecutor _executor;
 	private final Collection<Future<?>> _futures;
@@ -69,7 +69,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 		_executor.prestartAllCoreThreads();
 		_futures = new LinkedList<>();
 
-		_log.info("Entity collider threads started");
+		LOG.info("Entity collider threads started");
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 				future.get();
 			}
 		} catch (InterruptedException | ExecutionException e) {
-			_log.error("Could not finish collision evaluation", e);
+			LOG.error("Could not finish collision evaluation", e);
 		}
 
 		if (_shutdown) {
@@ -110,13 +110,13 @@ public class MultiThreadedEntityCollider implements EntityCollider {
 	 */
 	private void shutdownExecutor() {
 		_executor.shutdown();
-		_log.info("Entity collider thread pool is shutting down");
+		LOG.info("Entity collider thread pool is shutting down");
 	}
 
 	@Override
 	public synchronized void shutdown() {
 		_shutdown = true;
-		_log.info("Entity collider received shutdown request");
+		LOG.info("Entity collider received shutdown request");
 
 		if (!_isColliding) {
 			shutdownExecutor();
