@@ -150,6 +150,17 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		public int size() {
 			return _size;
 		}
+
+		@Override
+		public CategoryMultiset getCategoryMultiset() {
+			return _categories;
+		}
+
+		@Override
+		public int getPriority() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	}
 
 	/**
@@ -184,12 +195,13 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 		@Override
 		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
-			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategorySet().getCategoryGroup());
+			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategoryMultiset().getCategoryGroup());
 			transformToSubNodeSpace(location);
 			T result = subNode.insert(location, element, minQuadrantSideLength);
 
 			if (result == null) {
 				_size++;
+				_categories.addAll(element.getCategoryMultiset());
 			}
 
 			return result;
@@ -220,6 +232,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 			if (result != null) {
 				_size--;
+				_categories.removeAll(result.getCategoryMultiset());
 			}
 
 			clearEmptySubNodes();
@@ -465,22 +478,11 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 				_upperRight = null;
 			}
 		}
-
-		@Override
-		public CategoryMultiset getCategorySet() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public int getPriority() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final class Leaf<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
-		private final T[] _elements;
+		private final Object[] _elements;
 
 		/**
 		 * Creates a new empty node.
@@ -488,12 +490,11 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		 * @param quadrantSideLength The side length of a quadrant of the node.
 		 * @param categoryGroup The category group of the elements.
 		 */
-		@SuppressWarnings("unchecked")
 		Leaf(final int quadrantSideLength, final CategoryGroup categoryGroup) {
 			super(quadrantSideLength, categoryGroup);
 
 			final int sideLength = quadrantSideLength * 2;
-			_elements = (T[]) new Object[sideLength * sideLength];
+			_elements = new Object[sideLength * sideLength];
 		}
 
 		@Override
@@ -504,11 +505,12 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		@Override
 		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
 			final int index = locationToIndex(location);
-			final T before = _elements[index];
+			final T before = (T) _elements[index];
 			_elements[index] = element;
 
 			if (before == null) {
 				_size++;
+				_categories.addAll(element.getCategoryMultiset());
 			}
 
 			return before;
@@ -522,17 +524,18 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		 */
 		@Override
 		public T get(final Point.Builder location) {
-			return _elements[locationToIndex(location)];
+			return (T) _elements[locationToIndex(location)];
 		}
 
 		@Override
 		public T delete(final Point.Builder location) {
 			final int index = locationToIndex(location);
-			final T before = _elements[index];
+			final T before = (T) _elements[index];
 			_elements[index] = null;
 
 			if (before != null) {
 				_size--;
+				_categories.removeAll(before.getCategoryMultiset());
 			}
 
 			return before;
@@ -545,7 +548,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			for (int i = 0; i < _elements.length; i++) {
 				if (_elements[i] != null) {
 					if (index == n) {
-						return new Entry<>(indexToLocation(i), _elements[i]);
+						return new Entry<>(indexToLocation(i), (T) _elements[i]);
 					} else {
 						index++;
 					}
@@ -569,7 +572,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 				for (; currentArrayIndex < _elements.length; currentArrayIndex++) {
 					if (_elements[currentArrayIndex] != null) {
 						if (currentElementIndex == searchIndex) {
-							result.add(new Entry<>(indexToLocation(currentArrayIndex), _elements[currentArrayIndex]));
+							result.add(new Entry<>(indexToLocation(currentArrayIndex), (T) _elements[currentArrayIndex]));
 							currentElementIndex++;
 							currentArrayIndex++;
 							break;
@@ -612,18 +615,6 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			result.setY(index / doubleQuadrantSideLength - _quadrantSideLength);
 
 			return result;
-		}
-
-		@Override
-		public CategoryMultiset getCategorySet() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public int getPriority() {
-			// TODO Auto-generated method stub
-			return 0;
 		}
 	}
 

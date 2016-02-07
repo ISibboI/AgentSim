@@ -41,8 +41,8 @@ public class QuadTreeTest {
 		}
 
 		@Override
-		public CategorySet getCategorySet() {
-			return null;
+		public CategorySet getCategoryMultiset() {
+			return new CategorySet();
 		}
 
 		@Override
@@ -207,7 +207,7 @@ public class QuadTreeTest {
 		final Class<?> leafClass = Class.forName(QuadTree.class.getCanonicalName() + "$Leaf");
 
 		// side length of 16, half side length of 8
-		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE).newInstance(8);
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup());
 
 		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
 		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
