@@ -69,16 +69,17 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	private interface Node<T> {
+	private interface Node<T extends Categorized & Prioritized & TemporalVariant> extends MultiCategorized, Prioritized {
 		/**
 		 * Returns the node that stores the data for the given location.
 		 * If the node doesn't exist, a new one is created.
 		 * 
 		 * @param location The location of the data.
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
+		 * @param categoryGroup The category group of the elements.
 		 * @return A node.
 		 */
-		Leaf<T> getOrCreateLeaf(Point.Builder location, int minQuadrantSideLength);
+		Leaf<T> getOrCreateLeaf(Point.Builder location, int minQuadrantSideLength, CategoryGroup categoryGroup);
 
 		/**
 		 * Inserts the given element at the given location.
@@ -129,17 +130,20 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		int size();
 	}
 
-	private abstract static class AbstractNode<T> implements Node<T> {
+	private abstract static class AbstractNode<T extends Categorized & Prioritized & TemporalVariant> implements Node<T> {
 		protected final int _quadrantSideLength;
 		protected int _size = 0;
+		protected final CategoryMultiset _categories;
 
 		/**
 		 * Creates a new abstract node.
 		 * 
 		 * @param quadrantSideLength The side length of one quadrant of the node.
+		 * @param categoryGroup The category group of the elements.
 		 */
-		AbstractNode(final int quadrantSideLength) {
+		AbstractNode(final int quadrantSideLength, final CategoryGroup categoryGroup) {
 			_quadrantSideLength = quadrantSideLength;
+			_categories = new CategoryMultiset(categoryGroup);
 		}
 
 		@Override
@@ -155,7 +159,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	private static final class InnerNode<T> extends AbstractNode<T> {
+	private static final class InnerNode<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
 		private AbstractNode<T> _upperLeft;
 		private AbstractNode<T> _upperRight;
 		private AbstractNode<T> _lowerLeft;
@@ -165,21 +169,22 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		 * Creates a new empty node.
 		 * 
 		 * @param quadrantSideLength The side length of one quadrant of the node.
+		 * @param categoryGroup The category group of the elements.
 		 */
-		InnerNode(final int quadrantSideLength) {
-			super(quadrantSideLength);
+		InnerNode(final int quadrantSideLength, final CategoryGroup categoryGroup) {
+			super(quadrantSideLength, categoryGroup);
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength) {
-			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
+		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
+			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, categoryGroup);
 			transformToSubNodeSpace(location);
-			return subNode.getOrCreateLeaf(location, minQuadrantSideLength);
+			return subNode.getOrCreateLeaf(location, minQuadrantSideLength, categoryGroup);
 		}
 
 		@Override
 		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
-			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength);
+			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategorySet().getCategoryGroup());
 			transformToSubNodeSpace(location);
 			T result = subNode.insert(location, element, minQuadrantSideLength);
 
@@ -387,17 +392,17 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The sub node that handles the given location.
 		 */
-		private AbstractNode<T> getOrCreateSubNode(final Point.Builder location, final int minQuadrantSideLength) {
+		private AbstractNode<T> getOrCreateSubNode(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
 			if (location.getY() < 0) {
 				if (location.getX() < 0) {
 					if (_lowerLeft == null) {
-						_lowerLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
+						_lowerLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength, categoryGroup);
 					}
 
 					return _lowerLeft;
 				} else {
 					if (_lowerRight == null) {
-						_lowerRight = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
+						_lowerRight = createNode(_quadrantSideLength / 2, minQuadrantSideLength, categoryGroup);
 					}
 
 					return _lowerRight;
@@ -405,13 +410,13 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			} else {
 				if (location.getX() < 0) {
 					if (_upperLeft == null) {
-						_upperLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
+						_upperLeft = createNode(_quadrantSideLength / 2, minQuadrantSideLength, categoryGroup);
 					}
 
 					return _upperLeft;
 				} else {
 					if (_upperRight == null) {
-						_upperRight = createNode(_quadrantSideLength / 2, minQuadrantSideLength);
+						_upperRight = createNode(_quadrantSideLength / 2, minQuadrantSideLength, categoryGroup);
 					}
 
 					return _upperRight;
@@ -460,26 +465,39 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 				_upperRight = null;
 			}
 		}
+
+		@Override
+		public CategoryMultiset getCategorySet() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getPriority() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	}
 
-	private static final class Leaf<T> extends AbstractNode<T> {
+	private static final class Leaf<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
 		private final T[] _elements;
 
 		/**
 		 * Creates a new empty node.
 		 * 
 		 * @param quadrantSideLength The side length of a quadrant of the node.
+		 * @param categoryGroup The category group of the elements.
 		 */
 		@SuppressWarnings("unchecked")
-		Leaf(final int quadrantSideLength) {
-			super(quadrantSideLength);
+		Leaf(final int quadrantSideLength, final CategoryGroup categoryGroup) {
+			super(quadrantSideLength, categoryGroup);
 
 			final int sideLength = quadrantSideLength * 2;
 			_elements = (T[]) new Object[sideLength * sideLength];
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength) {
+		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
 			return this;
 		}
 
@@ -595,10 +613,23 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 			return result;
 		}
+
+		@Override
+		public CategoryMultiset getCategorySet() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getPriority() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	}
 
 	private final int _sideLength;
 	private final int _minQuadrantSideLength;
+	private final CategoryGroup _categoryGroup;
 	private final Node<T> _root;
 
 	/**
@@ -613,10 +644,12 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * @param sideLength The side length of the tree. Ceiled to power of two.
 	 * @param minNodeSize The minimum size of a node. Below, content will be represented as arrays. Ceiled to power of two.
 	 * @param rootLocation The location of the tree root.
+	 * @param categoryGroup The category group of the elements.
 	 */
-	public QuadTree(final int sideLength, final int minNodeSize, final Point rootLocation) {
+	public QuadTree(final int sideLength, final int minNodeSize, final Point rootLocation, final CategoryGroup categoryGroup) {
 		_sideLength = ceilToPowerOfTwo(sideLength);
 		_minQuadrantSideLength = ceilToPowerOfTwo(minNodeSize * 2);
+		_categoryGroup = categoryGroup;
 		_root = createNode(_sideLength / 2);
 		_rootLocationTransformation = new Point(-rootLocation.getX() - _sideLength / 2, -rootLocation.getY() - _sideLength / 2);
 	}
@@ -732,7 +765,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * @return A node.
 	 */
 	protected Leaf<T> getOrCreateLeaf(final Point.Builder location) {
-		return _root.getOrCreateLeaf(location, _minQuadrantSideLength);
+		return _root.getOrCreateLeaf(location, _minQuadrantSideLength, _categoryGroup);
 	}
 
 	/**
@@ -743,7 +776,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * @return A new node.
 	 */
 	private AbstractNode<T> createNode(final int quadrantSideLength) {
-		return createNode(quadrantSideLength, _minQuadrantSideLength);
+		return createNode(quadrantSideLength, _minQuadrantSideLength, _categoryGroup);
 	}
 
 	/**
@@ -752,14 +785,16 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 	 * 
 	 * @param quadrantSideLength The side length of a quadrant of the node.
 	 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
+	 * @param categoryGroup The category group of the elements.
 	 * @param <T> The element type.
 	 * @return A new node.
 	 */
-	private static <T> AbstractNode<T> createNode(final int quadrantSideLength, final int minQuadrantSideLength) {
+	private static <T extends Categorized & Prioritized & TemporalVariant> AbstractNode<T> createNode(final int quadrantSideLength, final int minQuadrantSideLength,
+			final CategoryGroup categoryGroup) {
 		if (quadrantSideLength >= minQuadrantSideLength) {
-			return new InnerNode<T>(quadrantSideLength);
+			return new InnerNode<T>(quadrantSideLength, categoryGroup);
 		} else {
-			return new Leaf<T>(quadrantSideLength);
+			return new Leaf<T>(quadrantSideLength, categoryGroup);
 		}
 	}
 

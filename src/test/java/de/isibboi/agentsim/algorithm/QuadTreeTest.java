@@ -77,7 +77,7 @@ public class QuadTreeTest {
 	 */
 	@Before
 	public void setUp() {
-		_tree = new QuadTree<>(1 << 5, 1 << 2, new Point(0, 0));
+		_tree = new QuadTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup());
 		_referenceMap = new HashMap<>();
 
 		_r = new Random(0x7367de42);
