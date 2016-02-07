@@ -136,6 +136,7 @@ public class GameUIView extends UIView {
 		if (e.getSource() == _settingsButton && _settingsFrame == null) {
 			_settingsFrame = new UISettingsFrame(_settings, this);
 		} else if (e.getSource() == _settingsFrame) {
+			_settingsFrame.dispose();
 			_settingsFrame = null;
 		} else if (e.getSource() == _renderEntitiesButton) {
 			_renderEntities = !_renderEntities;

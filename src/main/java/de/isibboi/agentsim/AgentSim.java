@@ -91,14 +91,8 @@ public class AgentSim implements Runnable, WindowListener {
 			}
 		}
 
-		System.gc();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 		for (Window w : Window.getWindows()) {
+			System.out.println("w is displayable = " + w.isDisplayable());
 			System.out.println(w);
 		}
 	}
