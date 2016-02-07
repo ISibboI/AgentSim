@@ -144,7 +144,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> imp
 		 */
 		AbstractNode(final int quadrantSideLength, final CategoryGroup categoryGroup) {
 			_quadrantSideLength = quadrantSideLength;
-			_categories = new CategoryMultiset(categoryGroup);
+			_categories = new ArrayCategoryMultiset(categoryGroup);
 		}
 
 		@Override
@@ -865,6 +865,6 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> imp
 
 	@Override
 	public CategoryMultiset getCategorySet() {
-		return _root.getCategorySet();
+		return new ImmutableCategoryMultiSet(_root.getCategorySet());
 	}
 }

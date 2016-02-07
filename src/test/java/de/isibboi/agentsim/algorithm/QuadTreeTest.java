@@ -42,7 +42,7 @@ public class QuadTreeTest {
 
 		@Override
 		public CategorySet getCategorySet() {
-			return new CategorySet();
+			return new BitMapCategorySet();
 		}
 
 		@Override
