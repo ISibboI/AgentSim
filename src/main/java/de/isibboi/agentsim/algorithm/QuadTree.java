@@ -134,6 +134,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		protected final int _quadrantSideLength;
 		protected int _size = 0;
 		protected final CategoryMultiset _categories;
+		protected int _priority = 0;
 
 		/**
 		 * Creates a new abstract node.
@@ -158,8 +159,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 
 		@Override
 		public int getPriority() {
-			// TODO Auto-generated method stub
-			return 0;
+			return _priority;
 		}
 	}
 
@@ -202,6 +202,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			if (result == null) {
 				_size++;
 				_categories.addAll(element.getCategoryMultiset());
+				_priority += element.getPriority();
 			}
 
 			return result;
@@ -228,16 +229,17 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			}
 
 			transformToSubNodeSpace(location);
-			T result = subNode.delete(location);
+			T deleted = subNode.delete(location);
 
-			if (result != null) {
+			if (deleted != null) {
 				_size--;
-				_categories.removeAll(result.getCategoryMultiset());
+				_categories.removeAll(deleted.getCategoryMultiset());
+				_priority -= deleted.getPriority();
 			}
 
 			clearEmptySubNodes();
 
-			return result;
+			return deleted;
 		}
 
 		@Override
@@ -403,6 +405,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		 * Gets or creates the sub node that handles the given location.
 		 * @param location The location.
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
+		 * @param categoryGroup The category group of the elements.
 		 * @return The sub node that handles the given location.
 		 */
 		private AbstractNode<T> getOrCreateSubNode(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
@@ -511,6 +514,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 			if (before == null) {
 				_size++;
 				_categories.addAll(element.getCategoryMultiset());
+				_priority += element.getPriority();
 			}
 
 			return before;
@@ -530,15 +534,16 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> {
 		@Override
 		public T delete(final Point.Builder location) {
 			final int index = locationToIndex(location);
-			final T before = (T) _elements[index];
+			final T deleted = (T) _elements[index];
 			_elements[index] = null;
 
-			if (before != null) {
+			if (deleted != null) {
 				_size--;
-				_categories.removeAll(before.getCategoryMultiset());
+				_categories.removeAll(deleted.getCategoryMultiset());
+				_priority -= deleted.getPriority();
 			}
 
-			return before;
+			return deleted;
 		}
 
 		@Override
