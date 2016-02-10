@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.SortedSet;
 
-import de.isibboi.agentsim.algorithm.ImmutableCategoryMultiSet;
 import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.util.Util;
