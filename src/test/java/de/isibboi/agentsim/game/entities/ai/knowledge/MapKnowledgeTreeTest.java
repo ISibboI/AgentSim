@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.algorithm;
+package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -16,13 +16,8 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.isibboi.agentsim.game.entities.ai.knowledge.BitMapCategorySet;
-import de.isibboi.agentsim.game.entities.ai.knowledge.Categorized;
-import de.isibboi.agentsim.game.entities.ai.knowledge.Category;
-import de.isibboi.agentsim.game.entities.ai.knowledge.CategoryGroup;
-import de.isibboi.agentsim.game.entities.ai.knowledge.CategorySet;
-import de.isibboi.agentsim.game.entities.ai.knowledge.Prioritized;
-import de.isibboi.agentsim.game.entities.ai.knowledge.MapKnowledgeTree;
+import de.isibboi.agentsim.algorithm.DeterministicRandom;
+import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -30,7 +25,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @since 0.3.0
  *
  */
-public class QuadTreeTest {
+public class MapKnowledgeTreeTest {
 	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
 		int _value;
 
