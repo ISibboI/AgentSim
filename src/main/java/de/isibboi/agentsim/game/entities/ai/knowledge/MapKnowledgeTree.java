@@ -866,6 +866,6 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 
 	@Override
 	public CategoryMultiset getCategorySet() {
-		return new ImmutableCategoryMultiSet(_root.getCategorySet());
+		return new ImmutableCategoryMultiset(_root.getCategorySet());
 	}
 }

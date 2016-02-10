@@ -13,15 +13,15 @@ import de.isibboi.agentsim.algorithm.ImmutableIterator;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class ImmutableCategoryMultiSet implements CategoryMultiset {
+public class ImmutableCategoryMultiset implements CategoryMultiset {
 	private final CategoryMultiset _decorated;
 
 	/**
-	 * Creates a new {@link ImmutableCategoryMultiSet} that provides read access to the given {@link CategoryMultiset}.
+	 * Creates a new {@link ImmutableCategoryMultiset} that provides read access to the given {@link CategoryMultiset}.
 	 * 
 	 * @param categoryMultiset The decorated {@link CategoryMultiset}.
 	 */
-	public ImmutableCategoryMultiSet(final CategoryMultiset categoryMultiset) {
+	public ImmutableCategoryMultiset(final CategoryMultiset categoryMultiset) {
 		_decorated = categoryMultiset;
 	}
 
