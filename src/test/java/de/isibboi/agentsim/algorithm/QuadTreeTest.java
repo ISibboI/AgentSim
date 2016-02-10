@@ -16,6 +16,13 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.isibboi.agentsim.game.entities.ai.knowledge.BitMapCategorySet;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Categorized;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Category;
+import de.isibboi.agentsim.game.entities.ai.knowledge.CategoryGroup;
+import de.isibboi.agentsim.game.entities.ai.knowledge.CategorySet;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Prioritized;
+import de.isibboi.agentsim.game.entities.ai.knowledge.MapKnowledgeTree;
 import de.isibboi.agentsim.game.map.Point;
 
 /**
@@ -67,7 +74,7 @@ public class QuadTreeTest {
 		}
 	}
 
-	private QuadTree<IntTreeValue> _tree;
+	private MapKnowledgeTree<IntTreeValue> _tree;
 	private Map<Point, IntTreeValue> _referenceMap;
 	private Random _r;
 	private List<Point> _points;
@@ -77,7 +84,7 @@ public class QuadTreeTest {
 	 */
 	@Before
 	public void setUp() {
-		_tree = new QuadTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup(new Category[0]));
+		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup(new Category[0]));
 		_referenceMap = new HashMap<>();
 
 		_r = new Random(0x7367de42);
@@ -136,7 +143,7 @@ public class QuadTreeTest {
 	}
 
 	/**
-	 * Tests if the {@link QuadTree#selectRandomElement(Random)} method works.
+	 * Tests if the {@link MapKnowledgeTree#selectRandomElement(Random)} method works.
 	 */
 	@Test
 	public void testSelectRandomElement() {
@@ -157,7 +164,7 @@ public class QuadTreeTest {
 	}
 
 	/**
-	 * Tests if the {@link QuadTree#selectDistinctRandomElements(int, Random)} method works.
+	 * Tests if the {@link MapKnowledgeTree#selectDistinctRandomElements(int, Random)} method works.
 	 */
 	@Test
 	public void testSelectDistinctRandomElements() {
@@ -179,12 +186,12 @@ public class QuadTreeTest {
 		Map<Point, IntTreeValue> map = new HashMap<>();
 		map.putAll(_referenceMap);
 
-		Collection<QuadTree.Entry<IntTreeValue>> selected = _tree.selectDistinctRandomElements(100, deterministicRandom);
+		Collection<MapKnowledgeTree.Entry<IntTreeValue>> selected = _tree.selectDistinctRandomElements(100, deterministicRandom);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());
 
-		for (QuadTree.Entry<IntTreeValue> entry : selected) {
+		for (MapKnowledgeTree.Entry<IntTreeValue> entry : selected) {
 			assertNotNull(map.remove(entry.getLocation()));
 		}
 
@@ -204,7 +211,7 @@ public class QuadTreeTest {
 	@Test
 	public void testLocationToIndexAndReverse() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
-		final Class<?> leafClass = Class.forName(QuadTree.class.getCanonicalName() + "$Leaf");
+		final Class<?> leafClass = Class.forName(MapKnowledgeTree.class.getCanonicalName() + "$Leaf");
 
 		// side length of 16, half side length of 8
 		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup(new Category[0]));

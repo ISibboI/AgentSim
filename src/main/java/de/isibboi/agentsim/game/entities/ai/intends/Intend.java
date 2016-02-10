@@ -1,8 +1,8 @@
 package de.isibboi.agentsim.game.entities.ai.intends;
 
-import de.isibboi.agentsim.algorithm.Prioritized;
 import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.entities.Goblin;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Prioritized;
 
 /**
  * Intends are the layer above the tasks.

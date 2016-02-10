@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import de.isibboi.agentsim.game.entities.ai.knowledge.ArrayCategoryMultiset;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Category;
+import de.isibboi.agentsim.game.entities.ai.knowledge.CategoryGroup;
+import de.isibboi.agentsim.game.entities.ai.knowledge.CategoryMultiset;
+
 /**
  * An immutable {@link ArrayCategoryMultiset} that throws an {@link UnsupportedOperationException} for every modification attempt.
  * Read queries work as normal.

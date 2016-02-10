@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-import de.isibboi.agentsim.algorithm.Prioritized;
 import de.isibboi.agentsim.algorithm.Selector;
 import de.isibboi.agentsim.algorithm.TemporalVariant;
+import de.isibboi.agentsim.game.entities.ai.knowledge.Prioritized;
 
 /**
  * A priority based random selector.

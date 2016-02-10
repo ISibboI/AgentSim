@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.algorithm;
+package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.Comparator;
 

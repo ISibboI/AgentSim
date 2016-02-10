@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.algorithm;
+package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.SortedSet;
 
+import de.isibboi.agentsim.algorithm.ImmutableCategoryMultiSet;
+import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.util.Util;
 
@@ -25,9 +27,9 @@ import de.isibboi.agentsim.util.Util;
 // Ideas for optimisation:
 //  * Replace recursion with loops. Dirty, but causes less stack operations.
 //  * Implement the data structure in C and use JNI. Probably a big bunch of work.
-public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> implements Prioritized, MultiCategorized {
+public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVariant> implements Prioritized, MultiCategorized {
 	/**
-	 * An entry of a {@link QuadTree}.
+	 * An entry of a {@link MapKnowledgeTree}.
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 *
@@ -642,7 +644,7 @@ public class QuadTree<T extends Categorized & Prioritized & TemporalVariant> imp
 	 * @param rootLocation The location of the tree root.
 	 * @param categoryGroup The category group of the elements.
 	 */
-	public QuadTree(final int sideLength, final int minNodeSize, final Point rootLocation, final CategoryGroup categoryGroup) {
+	public MapKnowledgeTree(final int sideLength, final int minNodeSize, final Point rootLocation, final CategoryGroup categoryGroup) {
 		_sideLength = ceilToPowerOfTwo(sideLength);
 		_minQuadrantSideLength = ceilToPowerOfTwo(minNodeSize * 2);
 		_categoryGroup = categoryGroup;
