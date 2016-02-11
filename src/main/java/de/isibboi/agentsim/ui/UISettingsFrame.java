@@ -42,7 +42,7 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 		 * @param width the width of the display.
 		 * @param height the height of the display.
 		 */
-		public DisplaySize(final int width, final int height) {
+		DisplaySize(final int width, final int height) {
 			_width = width;
 			_height = height;
 		}

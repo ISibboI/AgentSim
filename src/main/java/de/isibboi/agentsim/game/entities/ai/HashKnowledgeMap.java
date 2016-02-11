@@ -25,7 +25,7 @@ public class HashKnowledgeMap<Knowledge> extends AbstractKnowledgeMap<Knowledge>
 		 * @param knowledge The knowledge.
 		 * @param lastUpdate The last time this knowledge was updated.
 		 */
-		public KnowledgeBucket(final Knowledge knowledge, final long lastUpdate) {
+		KnowledgeBucket(final Knowledge knowledge, final long lastUpdate) {
 			_knowledge = knowledge;
 			_lastUpdate = lastUpdate;
 		}

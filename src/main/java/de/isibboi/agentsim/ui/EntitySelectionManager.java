@@ -34,7 +34,7 @@ public class EntitySelectionManager implements UIMouseInputListener, Drawable {
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	public static enum SelectionMode {
+	public enum SelectionMode {
 		/**
 		 * Every entity that is touched by the selection area is selected.
 		 */
