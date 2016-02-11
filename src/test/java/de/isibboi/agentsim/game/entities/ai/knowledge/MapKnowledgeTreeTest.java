@@ -79,7 +79,7 @@ public class MapKnowledgeTreeTest {
 	 */
 	@Before
 	public void setUp() {
-		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup(new Category[0]));
+		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup.Builder().build());
 		_referenceMap = new HashMap<>();
 
 		_r = new Random(0x7367de42);
@@ -209,7 +209,7 @@ public class MapKnowledgeTreeTest {
 		final Class<?> leafClass = Class.forName(MapKnowledgeTree.class.getCanonicalName() + "$Leaf");
 
 		// side length of 16, half side length of 8
-		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup(new Category[0]));
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup.Builder().build());
 
 		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
 		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
