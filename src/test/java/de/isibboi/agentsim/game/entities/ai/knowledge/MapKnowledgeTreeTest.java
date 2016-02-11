@@ -26,6 +26,8 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public class MapKnowledgeTreeTest {
+	private static final CategoryGroup EMPTY_CATEGORY_GROUP = new CategoryGroup.Builder().build();
+
 	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
 		int _value;
 
@@ -44,7 +46,7 @@ public class MapKnowledgeTreeTest {
 
 		@Override
 		public CategorySet getCategorySet() {
-			return new BitMapCategorySet();
+			return new BitMapCategorySet(EMPTY_CATEGORY_GROUP);
 		}
 
 		@Override
@@ -79,7 +81,7 @@ public class MapKnowledgeTreeTest {
 	 */
 	@Before
 	public void setUp() {
-		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup.Builder().build());
+		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), EMPTY_CATEGORY_GROUP);
 		_referenceMap = new HashMap<>();
 
 		_r = new Random(0x7367de42);
@@ -209,7 +211,7 @@ public class MapKnowledgeTreeTest {
 		final Class<?> leafClass = Class.forName(MapKnowledgeTree.class.getCanonicalName() + "$Leaf");
 
 		// side length of 16, half side length of 8
-		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup.Builder().build());
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, EMPTY_CATEGORY_GROUP);
 
 		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
 		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);

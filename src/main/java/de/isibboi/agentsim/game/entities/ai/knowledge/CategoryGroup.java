@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -66,5 +67,44 @@ public final class CategoryGroup {
 			_categories[i] = category.build(i, this);
 			i++;
 		}
+	}
+
+	/**
+	 * Returns the amount of categories in this group.
+	 * @return The amount of categories in this group.
+	 */
+	public int size() {
+		return _categories.length;
+	}
+
+	/**
+	 * Returns the category with the given index.
+	 * @param index The index.
+	 * @return The category with the given index.
+	 */
+	public Category getCategory(final int index) {
+		return _categories[index];
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof CategoryGroup) {
+			CategoryGroup c = (CategoryGroup) o;
+
+			for (int i = 0; i < _categories.length; i++) {
+				if (!_categories[i].equals(c._categories[i])) {
+					return false;
+				}
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(_categories);
 	}
 }

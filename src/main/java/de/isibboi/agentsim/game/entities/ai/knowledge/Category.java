@@ -98,4 +98,28 @@ public final class Category {
 	public int hashCode() {
 		return _name.hashCode() ^ _id ^ _categoryGroup.hashCode();
 	}
+
+	/**
+	 * Returns the id of this category in the category group it belongs to.
+	 * @return The id of this category.
+	 */
+	public int getId() {
+		return _id;
+	}
+
+	/**
+	 * Returns the name of this category.
+	 * @return The name of this category.
+	 */
+	public String getName() {
+		return _name;
+	}
+
+	/**
+	 * Returns the category group this category belongs to.
+	 * @return The category group this category belongs to.
+	 */
+	public CategoryGroup getCategoryGroup() {
+		return _categoryGroup;
+	}
 }

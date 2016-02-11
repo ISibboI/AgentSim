@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
-import java.util.Collection;
+import java.util.AbstractSet;
+import java.util.BitSet;
 import java.util.Iterator;
 
 /**
@@ -11,87 +12,105 @@ import java.util.Iterator;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class BitMapCategorySet implements CategorySet {
+public class BitMapCategorySet extends AbstractSet<Category> implements CategorySet {
+	private final CategoryGroup _categoryGroup;
+	private final BitSet _set;
+
+	/**
+	 * Creates a new empty {@link BitMapCategorySet} backed by the given {@link CategoryGroup}.
+	 * @param categoryGroup The category group.
+	 */
+	public BitMapCategorySet(final CategoryGroup categoryGroup) {
+		_categoryGroup = categoryGroup;
+		_set = new BitSet(categoryGroup.size());
+	}
+
 	@Override
 	public CategoryGroup getCategoryGroup() {
-		// TODO Auto-generated method stub
-		return null;
+		return _categoryGroup;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
-		return false;
+		return _set.cardinality();
 	}
 
 	@Override
 	public Iterator<Category> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Category>() {
+			private int _current = 0;
+
+			@Override
+			public boolean hasNext() {
+				if (!_set.get(_current)) {
+					searchNext();
+				}
+
+				return _current != size();
+			}
+
+			@Override
+			public Category next() {
+				searchNext();
+
+				return _categoryGroup.getCategory(_current);
+			}
+
+			private void searchNext() {
+				do {
+					_current++;
+				} while (_current < size() && !_set.get(_current));
+			}
+		};
 	}
 
 	@Override
-	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean equals(final Object o) {
+		if (o instanceof BitMapCategorySet) {
+			BitMapCategorySet b = (BitMapCategorySet) o;
+
+			return _categoryGroup.equals(b._categoryGroup) && _set.equals(b._set);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
-		// TODO Auto-generated method stub
-		return null;
+	public int hashCode() {
+		return _categoryGroup.hashCode() ^ _set.hashCode();
 	}
 
 	@Override
-	public boolean add(Category e) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean contains(final Object o) {
+		if (o instanceof Category) {
+			return _set.get(((Category) o).getId());
+		} else {
+			return false;
+		}
 	}
 
 	@Override
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean add(final Category e) {
+		final int index = e.getId();
+		final boolean result = !_set.get(index);
+		_set.set(index);
+		return result;
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends Category> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean remove(final Object o) {
+		if (o instanceof Category) {
+			final int index = ((Category) o).getId();
+			final boolean result = _set.get(index);
+			_set.clear(index);
+			return result;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		_set.clear();
 	}
 }
