@@ -1,7 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.AbstractSet;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -44,43 +43,51 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 
 	@Override
 	public int count(final Object element) {
-		if (element instanceof Category) {
-			return _count[((Category) element).getId()];
-		} else {
-			return 0;
-		}
+		ensureCategoryGroupContains(element);
+		return _count[((Category) element).getId()];
 	}
 
 	@Override
 	public int add(final Category element, final int occurrences) {
+		ensureCategoryGroupContains(element);
+
 		final int index = element.getId();
 		final int result = _count[index];
 		_count[index] += occurrences;
+		_size += occurrences;
 		return result;
 	}
 
 	@Override
 	public int remove(final Object element, final int occurrences) {
+		ensureCategoryGroupContains(element);
+
 		final int index = ((Category) element).getId();
 		final int result = _count[index];
 		_count[index] -= Math.min(occurrences, result);
+		_size -= Math.min(occurrences, result);
 		return result;
 	}
 
 	@Override
 	public int setCount(final Category element, final int count) {
+		ensureCategoryGroupContains(element);
+
 		final int index = element.getId();
 		final int result = _count[index];
 		_count[index] = count;
+		_size += count - result;
 		return result;
 	}
 
 	@Override
 	public boolean setCount(final Category element, final int oldCount, final int newCount) {
+		ensureCategoryGroupContains(element);
 		final int index = element.getId();
 
 		if (_count[index] == oldCount) {
 			_count[index] = newCount;
+			_size += newCount - oldCount;
 			return true;
 		} else {
 			return false;
@@ -134,42 +141,48 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 
 	@Override
 	public boolean contains(final Object element) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		ensureCategoryGroupContains(element);
 
-	@Override
-	public boolean containsAll(final Collection<?> elements) {
-		// TODO Auto-generated method stub
-		return false;
+		return _count[((Category) element).getId()] > 0;
 	}
 
 	@Override
 	public boolean add(final Category element) {
-		// TODO Auto-generated method stub
-		return false;
+		add(element, 1);
+		return true;
 	}
 
 	@Override
 	public boolean remove(final Object element) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean retainAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return remove(element, 1) != 0;
 	}
 
 	@Override
 	public CategoryGroup getCategoryGroup() {
 		return _categoryGroup;
+	}
+
+	/**
+	 * Checks if the given element is in the given category group.
+	 * 
+	 * @param element The element.
+	 * @throws IllegalArgumentException If the given object is not a category.
+	 */
+	private void ensureCategoryGroupContains(final Object element) {
+		if (element instanceof Category) {
+			ensureCategoryGroupContains((Category) element);
+		} else {
+			throw new IllegalArgumentException("Object is not a category!");
+		}
+	}
+
+	/**
+	 * Checks if the given element is in the given category group.
+	 * @param element The element.
+	 */
+	private void ensureCategoryGroupContains(final Category element) {
+		if (!element.getCategoryGroup().equals(_categoryGroup)) {
+			throw new IllegalArgumentException("Category does not belong to the category group that backs this set!");
+		}
 	}
 }

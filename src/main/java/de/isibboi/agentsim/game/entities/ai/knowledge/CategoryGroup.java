@@ -88,6 +88,10 @@ public final class CategoryGroup {
 
 	@Override
 	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
+
 		if (o instanceof CategoryGroup) {
 			CategoryGroup c = (CategoryGroup) o;
 
