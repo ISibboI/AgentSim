@@ -46,7 +46,7 @@ public class BitMapCategorySet extends AbstractSet<Category> implements Category
 					searchNext();
 				}
 
-				return _current != size();
+				return _current < _set.size();
 			}
 
 			@Override

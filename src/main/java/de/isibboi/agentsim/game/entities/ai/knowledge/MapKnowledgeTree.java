@@ -202,9 +202,13 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 
 			if (result == null) {
 				_size++;
-				_categories.addAll(element.getCategorySet());
-				_priority += element.getPriority();
+			} else {
+				_categories.removeAll(result.getCategorySet());
+				_priority -= result.getPriority();
 			}
+
+			_categories.addAll(element.getCategorySet());
+			_priority += element.getPriority();
 
 			return result;
 		}
@@ -514,9 +518,13 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 
 			if (before == null) {
 				_size++;
-				_categories.addAll(element.getCategorySet());
-				_priority += element.getPriority();
+			} else {
+				_categories.removeAll(before.getCategorySet());
+				_priority -= before.getPriority();
 			}
+
+			_categories.addAll(element.getCategorySet());
+			_priority += element.getPriority();
 
 			return before;
 		}
