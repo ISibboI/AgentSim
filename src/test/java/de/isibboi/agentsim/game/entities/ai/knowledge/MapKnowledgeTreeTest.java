@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,11 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public class MapKnowledgeTreeTest {
+	private static final CategoryGroup EMPTY_CATEGORY_GROUP = new CategoryGroup.Builder().build();
+
 	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
 		int _value;
+		int _priority;
 
 		/**
 		 * Creates a new object.
@@ -44,12 +48,12 @@ public class MapKnowledgeTreeTest {
 
 		@Override
 		public CategorySet getCategorySet() {
-			return new BitMapCategorySet();
+			return new BitMapCategorySet(EMPTY_CATEGORY_GROUP);
 		}
 
 		@Override
 		public int getPriority() {
-			return 0;
+			return _priority;
 		}
 
 		@Override
@@ -79,7 +83,7 @@ public class MapKnowledgeTreeTest {
 	 */
 	@Before
 	public void setUp() {
-		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), new CategoryGroup(new Category[0]));
+		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), EMPTY_CATEGORY_GROUP);
 		_referenceMap = new HashMap<>();
 
 		_r = new Random(0x7367de42);
@@ -209,7 +213,7 @@ public class MapKnowledgeTreeTest {
 		final Class<?> leafClass = Class.forName(MapKnowledgeTree.class.getCanonicalName() + "$Leaf");
 
 		// side length of 16, half side length of 8
-		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, new CategoryGroup(new Category[0]));
+		final Object leafObject = leafClass.getDeclaredConstructor(Integer.TYPE, CategoryGroup.class).newInstance(8, EMPTY_CATEGORY_GROUP);
 
 		final Method locationToIndex = leafClass.getDeclaredMethod("locationToIndex", Point.Builder.class);
 		final Method indexToLocation = leafClass.getDeclaredMethod("indexToLocation", Integer.TYPE);
@@ -221,6 +225,39 @@ public class MapKnowledgeTreeTest {
 		for (int i = 0; i < 256; i++) {
 			Object result = indexToLocation.invoke(leafObject, i);
 			assertEquals(i, locationToIndex.invoke(leafObject, result));
+		}
+	}
+
+	/**
+	 * Tests if the priority is correctly handled when inserting and deleting elements.
+	 */
+	@Test
+	public void testPrioritySummation() {
+		int priority = 0;
+
+		for (Point p : _points) {
+			IntTreeValue value = new IntTreeValue(_r.nextInt(100));
+			value._priority = _r.nextInt(100);
+			priority += value._priority;
+			value = _tree.insert(p, value);
+
+			if (value != null) {
+				priority -= value._priority;
+			}
+
+			assertEquals(priority, _tree.getPriority());
+		}
+
+		Collections.shuffle(_points, _r);
+
+		for (Point p : _points) {
+			IntTreeValue value = _tree.delete(p);
+
+			if (value != null) {
+				priority -= value._priority;
+			}
+
+			assertEquals(priority, _tree.getPriority());
 		}
 	}
 

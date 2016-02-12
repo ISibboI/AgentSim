@@ -1,6 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
-import java.util.Collection;
+import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,8 +12,10 @@ import java.util.Set;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class ArrayCategoryMultiset implements CategoryMultiset {
+public class ArrayCategoryMultiset extends AbstractSet<Category> implements CategoryMultiset {
 	private final CategoryGroup _categoryGroup;
+	private final int[] _count;
+	private int _size = 0;
 
 	/**
 	 * Creates a new object backed by the given category group.
@@ -22,130 +24,165 @@ public class ArrayCategoryMultiset implements CategoryMultiset {
 	 */
 	public ArrayCategoryMultiset(final CategoryGroup categoryGroup) {
 		_categoryGroup = categoryGroup;
+		_count = new int[categoryGroup.size()];
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> T[] toArray(final T[] a) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean addAll(final Collection<? extends Category> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return _size;
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		for (int i = 0; i < _count.length; i++) {
+			_count[i] = 0;
+		}
 
+		_size = 0;
 	}
 
 	@Override
 	public int count(final Object element) {
-		// TODO Auto-generated method stub
-		return 0;
+		ensureCategoryGroupContains(element);
+		return _count[((Category) element).getId()];
 	}
 
 	@Override
 	public int add(final Category element, final int occurrences) {
-		// TODO Auto-generated method stub
-		return 0;
+		ensureCategoryGroupContains(element);
+
+		final int index = element.getId();
+		final int result = _count[index];
+		_count[index] += occurrences;
+		_size += occurrences;
+		return result;
 	}
 
 	@Override
 	public int remove(final Object element, final int occurrences) {
-		// TODO Auto-generated method stub
-		return 0;
+		ensureCategoryGroupContains(element);
+
+		final int index = ((Category) element).getId();
+		final int result = _count[index];
+		_count[index] -= Math.min(occurrences, result);
+		_size -= Math.min(occurrences, result);
+		return result;
 	}
 
 	@Override
 	public int setCount(final Category element, final int count) {
-		// TODO Auto-generated method stub
-		return 0;
+		ensureCategoryGroupContains(element);
+
+		final int index = element.getId();
+		final int result = _count[index];
+		_count[index] = count;
+		_size += count - result;
+		return result;
 	}
 
 	@Override
 	public boolean setCount(final Category element, final int oldCount, final int newCount) {
-		// TODO Auto-generated method stub
-		return false;
+		ensureCategoryGroupContains(element);
+		final int index = element.getId();
+
+		if (_count[index] == oldCount) {
+			_count[index] = newCount;
+			_size += newCount - oldCount;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public Set<Category> elementSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
 	public Set<com.google.common.collect.Multiset.Entry<Category>> entrySet() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Category> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Category>() {
+			private int _currentIndex;
+			private int _currentCount;
+
+			@Override
+			public boolean hasNext() {
+				if (_currentIndex == 0 && _currentCount == 0 && _currentIndex < _count.length && _currentCount < _count[_currentIndex]) {
+					searchNext();
+				}
+
+				return _currentIndex < _count.length && _currentCount < _count[_currentIndex];
+			}
+
+			@Override
+			public Category next() {
+				if (hasNext()) {
+					return _categoryGroup.getCategory(_currentIndex);
+				} else {
+					return null;
+				}
+			}
+
+			public void searchNext() {
+				_currentCount++;
+
+				while (_currentIndex < _count.length && _currentCount >= _count[_currentIndex]) {
+					_currentCount = 0;
+					_currentIndex++;
+				}
+			}
+		};
 	}
 
 	@Override
 	public boolean contains(final Object element) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		ensureCategoryGroupContains(element);
 
-	@Override
-	public boolean containsAll(final Collection<?> elements) {
-		// TODO Auto-generated method stub
-		return false;
+		return _count[((Category) element).getId()] > 0;
 	}
 
 	@Override
 	public boolean add(final Category element) {
-		// TODO Auto-generated method stub
-		return false;
+		add(element, 1);
+		return true;
 	}
 
 	@Override
 	public boolean remove(final Object element) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean retainAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return remove(element, 1) != 0;
 	}
 
 	@Override
 	public CategoryGroup getCategoryGroup() {
 		return _categoryGroup;
+	}
+
+	/**
+	 * Checks if the given element is in the given category group.
+	 * 
+	 * @param element The element.
+	 * @throws IllegalArgumentException If the given object is not a category.
+	 */
+	private void ensureCategoryGroupContains(final Object element) {
+		if (element instanceof Category) {
+			ensureCategoryGroupContains((Category) element);
+		} else {
+			throw new IllegalArgumentException("Object is not a category!");
+		}
+	}
+
+	/**
+	 * Checks if the given element is in the given category group.
+	 * @param element The element.
+	 */
+	private void ensureCategoryGroupContains(final Category element) {
+		if (!element.getCategoryGroup().equals(_categoryGroup)) {
+			throw new IllegalArgumentException("Category does not belong to the category group that backs this set!");
+		}
 	}
 }
