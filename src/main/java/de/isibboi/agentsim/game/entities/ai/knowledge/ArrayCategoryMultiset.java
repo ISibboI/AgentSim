@@ -105,32 +105,29 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 
 			@Override
 			public boolean hasNext() {
-				// TODO Auto-generated method stub
-				return false;
+				if (_currentIndex == 0 && _currentCount == 0 && _currentIndex < _count.length && _currentCount < _count[_currentIndex]) {
+					searchNext();
+				}
+
+				return _currentIndex < _count.length && _currentCount < _count[_currentIndex];
 			}
 
 			@Override
 			public Category next() {
-				// TODO Auto-generated method stub
-				return null;
+				if (hasNext()) {
+					return _categoryGroup.getCategory(_currentIndex);
+				} else {
+					return null;
+				}
 			}
 
 			public void searchNext() {
 				_currentCount++;
-				
-				if (_currentCount >= _count[_currentIndex]) {
+
+				while (_currentIndex < _count.length && _currentCount >= _count[_currentIndex]) {
 					_currentCount = 0;
 					_currentIndex++;
 				}
-				do {
-
-					if () {
-						_currentCount = 0;
-						_currentIndex++;
-					} else {
-						break;
-					}
-				} while (_currentIndex < _count.length);
 			}
 		};
 	}
