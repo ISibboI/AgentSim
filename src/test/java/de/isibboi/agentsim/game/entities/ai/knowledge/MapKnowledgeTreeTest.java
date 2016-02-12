@@ -32,6 +32,7 @@ public class MapKnowledgeTreeTest {
 	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
 		int _value;
 		int _priority;
+		CategorySet _categorySet = new BitMapCategorySet(EMPTY_CATEGORY_GROUP);
 
 		/**
 		 * Creates a new object.
@@ -48,7 +49,7 @@ public class MapKnowledgeTreeTest {
 
 		@Override
 		public CategorySet getCategorySet() {
-			return new BitMapCategorySet(EMPTY_CATEGORY_GROUP);
+			return _categorySet;
 		}
 
 		@Override
@@ -259,6 +260,52 @@ public class MapKnowledgeTreeTest {
 
 			assertEquals(priority, _tree.getPriority());
 		}
+	}
+
+	/**
+	 * Tests if the categories are summarized correctly.
+	 */
+	@Test
+	public void testCategorySummation() {
+		Point pa = new Point(0, 2);
+		Point pb = new Point(17, 4);
+		Point pc = new Point(17, 5);
+		IntTreeValue va = new IntTreeValue(4);
+		IntTreeValue vb = new IntTreeValue(5);
+		IntTreeValue vc = new IntTreeValue(6);
+
+		CategoryGroup.Builder builder = new CategoryGroup.Builder();
+		builder.add("x");
+		builder.add("y");
+		builder.add("z");
+		CategoryGroup categoryGroup = builder.build();
+		_tree = new MapKnowledgeTree<>(1 << 5, 1 << 2, new Point(0, 0), categoryGroup);
+
+		va._categorySet = new BitMapCategorySet(categoryGroup);
+		vb._categorySet = new BitMapCategorySet(categoryGroup);
+		vc._categorySet = new BitMapCategorySet(categoryGroup);
+
+		va._categorySet.add(categoryGroup.getCategory(0));
+		va._categorySet.add(categoryGroup.getCategory(1));
+		va._categorySet.add(categoryGroup.getCategory(2));
+		vb._categorySet.add(categoryGroup.getCategory(1));
+
+		_tree.insert(pa, va);
+		_tree.insert(pb, vb);
+		_tree.insert(pc, vc);
+
+		CategoryMultiset referenceSet = new ArrayCategoryMultiset(categoryGroup);
+		referenceSet.setCount(categoryGroup.getCategory(0), 1);
+		referenceSet.setCount(categoryGroup.getCategory(1), 2);
+		referenceSet.setCount(categoryGroup.getCategory(2), 1);
+
+		assertEquals(referenceSet, _tree.getCategorySet());
+
+		_tree.delete(pa);
+		_tree.delete(pb);
+		_tree.delete(pc);
+
+		assertEquals(new ArrayCategoryMultiset(categoryGroup), _tree.getCategorySet());
 	}
 
 	/**

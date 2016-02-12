@@ -2,6 +2,7 @@ package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import de.isibboi.agentsim.algorithm.ImmutableIterator;
@@ -22,6 +23,7 @@ public class ImmutableCategoryMultiset implements CategoryMultiset {
 	 * @param categoryMultiset The decorated {@link CategoryMultiset}.
 	 */
 	public ImmutableCategoryMultiset(final CategoryMultiset categoryMultiset) {
+		Objects.requireNonNull(categoryMultiset);
 		_decorated = categoryMultiset;
 	}
 
@@ -128,5 +130,24 @@ public class ImmutableCategoryMultiset implements CategoryMultiset {
 	@Override
 	public CategoryGroup getCategoryGroup() {
 		return _decorated.getCategoryGroup();
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof CategoryMultiset) {
+			return _decorated.equals(o);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return _decorated.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return _decorated.toString();
 	}
 }

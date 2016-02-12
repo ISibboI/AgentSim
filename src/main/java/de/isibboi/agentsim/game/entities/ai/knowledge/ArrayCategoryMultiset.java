@@ -1,8 +1,15 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.AbstractIterator;
 
 /**
  * A multiset of categories this object belongs to.
@@ -13,6 +20,8 @@ import java.util.Set;
  * @since 0.3.0
  */
 public class ArrayCategoryMultiset extends AbstractSet<Category> implements CategoryMultiset {
+	private static final Logger LOG = LogManager.getLogger(ArrayCategoryMultiset.class);
+
 	private final CategoryGroup _categoryGroup;
 	private final int[] _count;
 	private int _size = 0;
@@ -106,34 +115,22 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 
 	@Override
 	public Iterator<Category> iterator() {
-		return new Iterator<Category>() {
-			private int _currentIndex;
-			private int _currentCount;
+		return new AbstractIterator<Category>() {
+			private int _currentIndex = 0;
+			private int _currentCount = -1;
 
-			@Override
-			public boolean hasNext() {
-				if (_currentIndex == 0 && _currentCount == 0 && _currentIndex < _count.length && _currentCount < _count[_currentIndex]) {
-					searchNext();
-				}
-
-				return _currentIndex < _count.length && _currentCount < _count[_currentIndex];
-			}
-
-			@Override
-			public Category next() {
-				if (hasNext()) {
-					return _categoryGroup.getCategory(_currentIndex);
-				} else {
-					return null;
-				}
-			}
-
-			public void searchNext() {
+			protected Category computeNext() {
 				_currentCount++;
 
 				while (_currentIndex < _count.length && _currentCount >= _count[_currentIndex]) {
 					_currentCount = 0;
 					_currentIndex++;
+				}
+
+				if (_currentIndex < _count.length && _currentCount < _count[_currentIndex]) {
+					return _categoryGroup.getCategory(_currentIndex);
+				} else {
+					return endOfData();
 				}
 			}
 		};
@@ -155,6 +152,36 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 	@Override
 	public boolean remove(final Object element) {
 		return remove(element, 1) != 0;
+	}
+
+	@Override
+	public boolean removeAll(final Collection<?> c) {
+		boolean modified = false;
+
+		for (Object o : c) {
+			modified |= remove(o);
+		}
+
+		return modified;
+	}
+
+	/**
+	 * An optimized version of {@link #removeAll(Collection)} for {@link CategoryMultiset}s.
+	 * @param toRemove The elements to remove.
+	 * @return True if the collection changed as an result of this operation.
+	 */
+	public boolean removeAll(final CategoryMultiset toRemove) {
+		if (!_categoryGroup.equals(toRemove.getCategoryGroup())) {
+			throw new IllegalArgumentException("Given CategoryMultiset is not backed by the same category group!");
+		}
+
+		final int oldSize = _size;
+
+		for (int i = 0; i < _count.length; i++) {
+			remove(_categoryGroup.getCategory(i), toRemove.count(_categoryGroup.getCategory(i)));
+		}
+
+		return oldSize != _size;
 	}
 
 	@Override
@@ -181,8 +208,36 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 	 * @param element The element.
 	 */
 	private void ensureCategoryGroupContains(final Category element) {
+		Objects.requireNonNull(element);
+
 		if (!element.getCategoryGroup().equals(_categoryGroup)) {
 			throw new IllegalArgumentException("Category does not belong to the category group that backs this set!");
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+
+		str.append(getClass().getSimpleName());
+		str.append('[');
+		boolean appendedComma = false;
+
+		for (int i = 0; i < _count.length; i++) {
+			if (_count[i] > 0) {
+				str.append(_categoryGroup.getCategory(i).getName());
+				str.append(':');
+				str.append(_count[i]);
+				str.append(", ");
+				appendedComma = true;
+			}
+		}
+
+		if (appendedComma) {
+			str.delete(str.length() - 2, str.length());
+		}
+
+		str.append(']');
+		return str.toString();
 	}
 }

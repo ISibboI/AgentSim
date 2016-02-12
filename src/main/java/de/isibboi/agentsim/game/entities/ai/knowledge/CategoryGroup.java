@@ -1,8 +1,11 @@
 package de.isibboi.agentsim.game.entities.ai.knowledge;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A group of categories that backs a {@link CategorySet}.
@@ -11,6 +14,8 @@ import java.util.Collection;
  * @since 0.3.0
  */
 public final class CategoryGroup {
+	private static final Logger LOG = LogManager.getLogger(CategoryGroup.class);
+
 	/**
 	 * Builds a new category group.
 	 * 
@@ -18,7 +23,7 @@ public final class CategoryGroup {
 	 * @since 0.3.0
 	 */
 	public static class Builder {
-		private final Collection<Category.Builder> _categories = new ArrayList<>();
+		private final Collection<Category.Builder> _categories = new HashSet<>();
 
 		/**
 		 * Creates a new empty builder.
@@ -95,12 +100,17 @@ public final class CategoryGroup {
 		if (o instanceof CategoryGroup) {
 			CategoryGroup c = (CategoryGroup) o;
 
+			if (c._categories.length != _categories.length) {
+				return false;
+			}
+
 			for (int i = 0; i < _categories.length; i++) {
 				if (!_categories[i].equals(c._categories[i])) {
 					return false;
 				}
 			}
 
+			LOG.warn("There exist two category groups with the same content.");
 			return true;
 		} else {
 			return false;

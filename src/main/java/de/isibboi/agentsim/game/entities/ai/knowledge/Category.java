@@ -96,7 +96,7 @@ public final class Category {
 
 	@Override
 	public int hashCode() {
-		return _name.hashCode() ^ _id ^ _categoryGroup.hashCode();
+		return _name.hashCode() ^ _id ^ _categoryGroup.size();
 	}
 
 	/**
@@ -122,4 +122,9 @@ public final class Category {
 	public CategoryGroup getCategoryGroup() {
 		return _categoryGroup;
 	}
+
+	//	@Override
+	//	public String toString() {
+	//		return "Category[" + _name + ", " + _id + "]";
+	//	}
 }
