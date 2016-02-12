@@ -107,6 +107,4 @@ public final class CategoryGroup {
 	public int hashCode() {
 		return Arrays.hashCode(_categories);
 	}
-
-	public Set<Category> asSet
 }
