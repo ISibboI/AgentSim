@@ -240,4 +240,35 @@ public class ArrayCategoryMultiset extends AbstractSet<Category> implements Cate
 		str.append(']');
 		return str.toString();
 	}
+
+	@Override
+	public boolean isSuperSetOf(final CategorySet other) {
+		// Here, dynamic binding of parameter types would be great.
+		if (other instanceof CategoryMultiset) {
+			return isSuperSetOf((CategoryMultiset) other);
+		}
+
+		for (Category category : other) {
+			if (!contains(category)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * The same as {@link #isSuperSetOf(CategorySet)}, but for multisets.
+	 * @param other The other category set.
+	 * @return True if this is a super set of other.
+	 */
+	public boolean isSuperSetOf(final CategoryMultiset other) {
+		for (Category category : other) {
+			if (other.count(category) > 1 || !contains(category)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

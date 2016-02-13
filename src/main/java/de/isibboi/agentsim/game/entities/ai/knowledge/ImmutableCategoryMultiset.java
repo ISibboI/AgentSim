@@ -150,4 +150,9 @@ public class ImmutableCategoryMultiset implements CategoryMultiset {
 	public String toString() {
 		return _decorated.toString();
 	}
+
+	@Override
+	public boolean isSuperSetOf(final CategorySet other) {
+		return _decorated.isSuperSetOf(other);
+	}
 }

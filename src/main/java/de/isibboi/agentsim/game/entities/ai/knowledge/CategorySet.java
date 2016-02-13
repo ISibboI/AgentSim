@@ -14,4 +14,11 @@ public interface CategorySet extends Set<Category> {
 	 * @return The {@link CategoryGroup} that backs this {@code CategorySet}.
 	 */
 	CategoryGroup getCategoryGroup();
+
+	/**
+	 * Checks if this category set is a super set of the given one. 
+	 * @param other The other category set.
+	 * @return True if this is a super set of other.
+	 */
+	boolean isSuperSetOf(CategorySet other);
 }
