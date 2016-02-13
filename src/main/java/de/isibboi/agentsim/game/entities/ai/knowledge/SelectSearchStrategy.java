@@ -17,7 +17,7 @@ public class SelectSearchStrategy<T extends Categorized & Prioritized & Temporal
 	private int _n;
 
 	/**
-	 * Creates a new search visitor selecting the n-th element.
+	 * Creates a new search strategy selecting the n-th element.
 	 * @param n The element number.
 	 */
 	public SelectSearchStrategy(final int n) {

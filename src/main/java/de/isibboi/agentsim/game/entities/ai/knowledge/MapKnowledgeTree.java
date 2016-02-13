@@ -119,11 +119,19 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		List<Entry<T>> select(SortedSet<Integer> indices, int offset, List<Entry<T>> result);
 
 		/**
-		 * Searches the tree with the given search visitor.
-		 * @param searcher The search visitor.
-		 * @return The entry found by the visitor.
+		 * Searches the tree with the given search strategy.
+		 * @param searcher The search strategy.
+		 * @return The entry found by the search strategy.
 		 */
 		Entry<T> search(SearchStrategy<T> searcher);
+
+		/**
+		 * Searches the tree with the given multi search strategy.
+		 * @param searcher The multi search strategy.
+		 * @param result All results.
+		 * @return The entries found by the multi search strategy within this call.
+		 */
+		List<Entry<T>> search(MultiSearchStrategy<T> searcher, List<Entry<T>> result);
 
 		/**
 		 * Returns the amount of elements in this subtree.
@@ -312,6 +320,60 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 			} else {
 				throw new RuntimeException("SearchVisitor denied all possible branches.");
 			}
+		}
+
+		@Override
+		public List<Entry<T>> search(final MultiSearchStrategy<T> searcher, final List<Entry<T>> result) {
+			searcher.handleInnerNode(this);
+
+			final int subQuadrantSideLength = _quadrantSideLength / 2;
+			final int firstAddedElement = result.size();
+
+			if (_upperLeft != null) {
+				if (searcher.condition(_upperLeft)) {
+					List<Entry<T>> addedElements = _upperLeft.search(searcher, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+			}
+
+			if (_upperRight != null) {
+				if (searcher.condition(_upperRight)) {
+					List<Entry<T>> addedElements = _upperRight.search(searcher, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
+					}
+				}
+			}
+
+			if (_lowerLeft != null) {
+				if (searcher.condition(_lowerLeft)) {
+					List<Entry<T>> addedElements = _lowerLeft.search(searcher, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
+					}
+				}
+			}
+
+			if (_lowerRight != null) {
+				if (searcher.condition(_lowerRight)) {
+					List<Entry<T>> addedElements = _lowerRight.search(searcher, result);
+
+					for (Entry<T> entry : addedElements) {
+						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
+						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
+					}
+				}
+			}
+
+			return result.subList(firstAddedElement, result.size());
 		}
 
 		@Override
@@ -567,6 +629,11 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 			return searcher.handleLeaf(this);
 		}
 
+		@Override
+		public List<Entry<T>> search(final MultiSearchStrategy<T> searcher, final List<Entry<T>> result) {
+			return searcher.handleLeaf(this, result);
+		}
+
 		/**
 		 * Selects the element number n from this tree.
 		 * @param n The element number.
@@ -762,7 +829,8 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		List<Entry<T>> result = new ArrayList<>(n);
-		_root.select(Util.getSortedDistinctRandomNumbers(n, size()), 0, result);
+		SelectMultiSearchStrategy<T> searcher = new SelectMultiSearchStrategy<>(Util.getSortedDistinctRandomNumbers(n, size()));
+		_root.search(searcher, result);
 
 		for (Entry<T> entry : result) {
 			entry._location.sub(_rootLocationTransformation);
