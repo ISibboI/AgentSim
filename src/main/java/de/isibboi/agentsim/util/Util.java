@@ -56,16 +56,27 @@ public final class Util {
 	 * @return A sorted set of {@code amount} distinct equally distributed random numbers from [0, amount).
 	 */
 	public static SortedSet<Integer> getSortedDistinctRandomNumbers(final int amount, final int max) {
+		return getSortedDistinctRandomNumbers(amount, max, new Random(seedCount++ + (amount << 20) + (max << 30)));
+	}
+
+	/**
+	 * Generate {@code amount} distinct random numbers.
+	 * The resulting set is sorted.
+	 * 
+	 * @param amount The amount of numbers to generate.
+	 * @param max The exclusive maximum of the number range.
+	 * @param random The random object used for randomness.
+	 * @return A sorted set of {@code amount} distinct equally distributed random numbers from [0, amount).
+	 */
+	public static SortedSet<Integer> getSortedDistinctRandomNumbers(final int amount, final int max, final Random random) {
 		if (amount > max) {
 			throw new IllegalArgumentException("amount must be lower than or equal to max!");
 		}
 
 		SortedSet<Integer> result = new TreeSet<>();
-		Random r = new Random();
-		r.setSeed(seedCount++ + (amount << 20) + (max << 30));
 
 		while (result.size() < amount) {
-			result.add(r.nextInt(max));
+			result.add(random.nextInt(max));
 		}
 
 		return result;

@@ -599,8 +599,28 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 					}
 				}
 
-				if (currentArrayIndex == _elements.length) {
+				if (currentArrayIndex >= _elements.length && result.size() - firstAddedElement < indices.size()) {
 					throw new IndexOutOfBoundsException(searchIndex + " is out of bounds!");
+				}
+			}
+
+			return result.subList(firstAddedElement, result.size());
+		}
+
+		/**
+		 * Selects all elements with the given categories.
+		 * @param categorySet The category set the elements need to have as sub set.
+		 * @param result The entries with the given categories. Output parameter.
+		 * @return A sublist view of result containing the added elements.
+		 */
+		public List<Entry<T>> select(final CategorySet categorySet, final List<Entry<T>> result) {
+			final int firstAddedElement = result.size();
+
+			for (int i = 0; i < _elements.length; i++) {
+				if (_elements[i] != null) {
+					if (categorySet.isSuperSetOf(((T) _elements[i]).getCategorySet())) {
+						result.add(new Entry<>(indexToLocation(i), (T) _elements[i]));
+					}
 				}
 			}
 
@@ -745,11 +765,33 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 */
 	public Collection<Entry<T>> selectDistinctRandomElements(final int n, final Random random) {
 		if (n > size()) {
-			throw new IllegalArgumentException("Cannot return more values than those that exist.");
+			throw new IllegalArgumentException("Cannot return more values than those that exist!");
 		}
 
 		List<Entry<T>> result = new ArrayList<>(n);
-		SelectMultiSearchStrategy<T> searcher = new SelectMultiSearchStrategy<>(Util.getSortedDistinctRandomNumbers(n, size()));
+		SelectMultiSearchStrategy<T> searcher = new SelectMultiSearchStrategy<>(Util.getSortedDistinctRandomNumbers(n, size(), random));
+		_root.search(searcher, result);
+
+		for (Entry<T> entry : result) {
+			entry._location.sub(_rootLocationTransformation);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Returns all elements that have the given categories.
+	 * 
+	 * @param categorySet The category set.
+	 * @return The elements whose category set is a subset of the given one.
+	 */
+	public Collection<Entry<T>> select(final CategorySet categorySet) {
+		if (!categorySet.getCategoryGroup().equals(_categoryGroup)) {
+			throw new IllegalArgumentException("Given category set is not backed by the same category group as our elements!");
+		}
+
+		List<Entry<T>> result = new ArrayList<>();
+		CategoryMultiSearchStrategy<T> searcher = new CategoryMultiSearchStrategy<>(categorySet);
 		_root.search(searcher, result);
 
 		for (Entry<T> entry : result) {
