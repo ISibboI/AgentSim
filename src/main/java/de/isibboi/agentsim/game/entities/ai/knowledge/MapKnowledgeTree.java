@@ -109,16 +109,6 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		T delete(Builder location);
 
 		/**
-		 * Selects the elements with the given indices from this tree.
-		 * 
-		 * @param indices The element indices.
-		 * @param offset The offset of the indices.
-		 * @param result The entries with the given indices. Output parameter.
-		 * @return A sublist view of result containing the added elements.
-		 */
-		List<Entry<T>> select(SortedSet<Integer> indices, int offset, List<Entry<T>> result);
-
-		/**
 		 * Searches the tree with the given search strategy.
 		 * @param searcher The search strategy.
 		 * @return The entry found by the search strategy.
@@ -376,83 +366,6 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 			return result.subList(firstAddedElement, result.size());
 		}
 
-		@Override
-		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
-			if (indices.isEmpty()) {
-				return Collections.emptyList();
-			}
-
-			final int subQuadrantSideLength = _quadrantSideLength / 2;
-			int modifiedOffset = offset;
-			final int firstAddedElement = result.size();
-
-			if (_upperLeft != null) {
-				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperLeft.size());
-
-				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = _upperLeft.select(subSet, modifiedOffset, result);
-
-					for (Entry<T> entry : addedElements) {
-						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
-						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
-					}
-				}
-
-				modifiedOffset += _upperLeft.size();
-			}
-
-			if (_upperRight != null) {
-				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _upperRight.size());
-
-				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = _upperRight.select(subSet, modifiedOffset, result);
-
-					for (Entry<T> entry : addedElements) {
-						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
-						entry._location.setY(entry._location.getY() + subQuadrantSideLength);
-					}
-				}
-
-				modifiedOffset += _upperRight.size();
-			}
-
-			if (_lowerLeft != null) {
-				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerLeft.size());
-
-				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = _lowerLeft.select(subSet, modifiedOffset, result);
-
-					for (Entry<T> entry : addedElements) {
-						entry._location.setX(entry._location.getX() - subQuadrantSideLength);
-						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
-					}
-				}
-
-				modifiedOffset += _lowerLeft.size();
-			}
-
-			if (_lowerRight != null) {
-				SortedSet<Integer> subSet = indices.subSet(modifiedOffset, modifiedOffset + _lowerRight.size());
-
-				if (subSet.size() > 0) {
-					List<Entry<T>> addedElements = _lowerRight.select(subSet, modifiedOffset, result);
-
-					for (Entry<T> entry : addedElements) {
-						entry._location.setX(entry._location.getX() + subQuadrantSideLength);
-						entry._location.setY(entry._location.getY() - subQuadrantSideLength);
-					}
-				}
-
-				modifiedOffset += _lowerRight.size();
-			}
-
-			if (indices.last() > modifiedOffset) {
-				throw new IndexOutOfBoundsException(indices.last() + " is out of bounds.");
-			}
-
-			return result.subList(firstAddedElement, result.size());
-		}
-
 		/**
 		 * Transforms the given mutable point to the space of its respective sub node.
 		 * The transformation is made in place, no new objects are created, and the former state of location is lost.
@@ -655,7 +568,14 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 			throw new IndexOutOfBoundsException(n + " is out of bounds!");
 		}
 
-		@Override
+		/**
+		 * Selects the elements with the given indices from this tree.
+		 * 
+		 * @param indices The element indices.
+		 * @param offset The offset of the indices.
+		 * @param result The entries with the given indices. Output parameter.
+		 * @return A sublist view of result containing the added elements.
+		 */
 		public List<Entry<T>> select(final SortedSet<Integer> indices, final int offset, final List<Entry<T>> result) {
 			if (indices.isEmpty()) {
 				return Collections.emptyList();
