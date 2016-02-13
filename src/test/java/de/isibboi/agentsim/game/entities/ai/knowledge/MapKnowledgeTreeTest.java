@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.isibboi.agentsim.algorithm.DeterministicRandom;
@@ -27,7 +28,8 @@ import de.isibboi.agentsim.game.map.Point;
  *
  */
 public class MapKnowledgeTreeTest {
-	private static final CategoryGroup EMPTY_CATEGORY_GROUP = new CategoryGroup.Builder().build();
+	private static CategoryGroup EMPTY_CATEGORY_GROUP;
+	private static CategoryGroup CATEGORY_GROUP;
 
 	private static final class IntTreeValue implements Prioritized, Categorized, TemporalVariant {
 		int _value;
@@ -72,6 +74,24 @@ public class MapKnowledgeTreeTest {
 		public int hashCode() {
 			return _value;
 		}
+	}
+
+	/**
+	 * Sets up the static variables.
+	 */
+	@BeforeClass
+	public void setUpBeforeClass() {
+		CategoryGroup.Builder builder = new CategoryGroup.Builder();
+
+		builder.add("a");
+		builder.add("b");
+		builder.add("c");
+		builder.add("d");
+		builder.add("e");
+		builder.add("f");
+
+		CATEGORY_GROUP = builder.build();
+		EMPTY_CATEGORY_GROUP = new CategoryGroup.Builder().build();
 	}
 
 	private MapKnowledgeTree<IntTreeValue> _tree;
@@ -306,6 +326,14 @@ public class MapKnowledgeTreeTest {
 		_tree.delete(pc);
 
 		assertEquals(new ArrayCategoryMultiset(categoryGroup), _tree.getCategorySet());
+	}
+
+	/**
+	 * Tests if selecting objects by category works.
+	 */
+	@Test
+	public void testCategorySelection() {
+		// TODO implement
 	}
 
 	/**
