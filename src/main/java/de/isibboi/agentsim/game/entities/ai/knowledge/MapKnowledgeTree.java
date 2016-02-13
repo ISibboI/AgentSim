@@ -10,6 +10,7 @@ import java.util.SortedSet;
 
 import de.isibboi.agentsim.algorithm.TemporalVariant;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.game.map.Point.Builder;
 import de.isibboi.agentsim.util.Util;
 
 /**
@@ -35,7 +36,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @param <T> The element type.
 	 */
 	public static final class Entry<T> {
-		private Point.Builder _location;
+		private Builder _location;
 		private final T _element;
 
 		/**
@@ -43,7 +44,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param location The location.
 		 * @param element The element.
 		 */
-		public Entry(final Point.Builder location, final T element) {
+		public Entry(final Builder location, final T element) {
 			_location = location;
 			_element = element;
 		}
@@ -70,7 +71,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	private interface Node<T extends Categorized & Prioritized & TemporalVariant> extends MultiCategorized, Prioritized {
+	interface Node<T extends Categorized & Prioritized & TemporalVariant> extends MultiCategorized, Prioritized {
 		/**
 		 * Returns the node that stores the data for the given location.
 		 * If the node doesn't exist, a new one is created.
@@ -80,7 +81,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param categoryGroup The category group of the elements.
 		 * @return A node.
 		 */
-		Leaf<T> getOrCreateLeaf(Point.Builder location, int minQuadrantSideLength, CategoryGroup categoryGroup);
+		Leaf<T> getOrCreateLeaf(Builder location, int minQuadrantSideLength, CategoryGroup categoryGroup);
 
 		/**
 		 * Inserts the given element at the given location.
@@ -90,14 +91,14 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param minQuadrantSideLength The minimum quadrant side length of an inner node.
 		 * @return The element that was at the given position before, or null.
 		 */
-		T insert(Point.Builder location, T element, int minQuadrantSideLength);
+		T insert(Builder location, T element, int minQuadrantSideLength);
 
 		/**
 		 * Returns the element at the given location
 		 * @param location The location.
 		 * @return The element at the given location, or null, if no such element exists.
 		 */
-		T get(Point.Builder location);
+		T get(Builder location);
 
 		/**
 		 * Removes the element at the given location.
@@ -105,14 +106,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param location The location.
 		 * @return The element that was at the given location, or null, if no such element exists.
 		 */
-		T delete(Point.Builder location);
-
-		/**
-		 * Selects the element number n from this tree.
-		 * @param n The element number.
-		 * @return The element number n.
-		 */
-		Entry<T> select(int n);
+		T delete(Builder location);
 
 		/**
 		 * Selects the elements with the given indices from this tree.
@@ -125,13 +119,20 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		List<Entry<T>> select(SortedSet<Integer> indices, int offset, List<Entry<T>> result);
 
 		/**
+		 * Searches the tree with the given search visitor.
+		 * @param searcher The search visitor.
+		 * @return The entry found by the visitor.
+		 */
+		Entry<T> search(SearchStrategy<T> searcher);
+
+		/**
 		 * Returns the amount of elements in this subtree.
 		 * @return The size.
 		 */
 		int size();
 	}
 
-	private abstract static class AbstractNode<T extends Categorized & Prioritized & TemporalVariant> implements Node<T> {
+	abstract static class AbstractNode<T extends Categorized & Prioritized & TemporalVariant> implements Node<T> {
 		protected final int _quadrantSideLength;
 		protected int _size = 0;
 		protected final CategoryMultiset _categories;
@@ -171,7 +172,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @author Sebastian Schmidt
 	 * @since 0.3.0
 	 */
-	private static final class InnerNode<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
+	static final class InnerNode<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
 		private AbstractNode<T> _upperLeft;
 		private AbstractNode<T> _upperRight;
 		private AbstractNode<T> _lowerLeft;
@@ -188,14 +189,14 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
+		public Leaf<T> getOrCreateLeaf(final Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
 			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, categoryGroup);
 			transformToSubNodeSpace(location);
 			return subNode.getOrCreateLeaf(location, minQuadrantSideLength, categoryGroup);
 		}
 
 		@Override
-		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
+		public T insert(final Builder location, final T element, final int minQuadrantSideLength) {
 			AbstractNode<T> subNode = getOrCreateSubNode(location, minQuadrantSideLength, element.getCategorySet().getCategoryGroup());
 			transformToSubNodeSpace(location);
 			T result = subNode.insert(location, element, minQuadrantSideLength);
@@ -214,7 +215,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
-		public T get(final Point.Builder location) {
+		public T get(final Builder location) {
 			AbstractNode<T> subNode = getSubNode(location);
 
 			if (subNode == null) {
@@ -226,7 +227,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
-		public T delete(final Point.Builder location) {
+		public T delete(final Builder location) {
 			AbstractNode<T> subNode = getSubNode(location);
 
 			if (subNode == null) {
@@ -248,63 +249,69 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
-		public Entry<T> select(final int n) {
-			int index = n;
+		public Entry<T> search(final SearchStrategy<T> searcher) {
+			searcher.handleInnerNode(this);
+
 			final int subQuadrantSideLength = _quadrantSideLength / 2;
+			boolean allNull = true;
 
 			if (_upperLeft != null) {
-				if (index < _upperLeft.size()) {
-					Entry<T> result = _upperLeft.select(index);
+				allNull = false;
+
+				if (searcher.condition(_upperLeft)) {
+					Entry<T> result = _upperLeft.search(searcher);
 
 					result._location.setX(result._location.getX() - subQuadrantSideLength);
 					result._location.setY(result._location.getY() + subQuadrantSideLength);
 
 					return result;
-				} else {
-					index -= _upperLeft.size();
 				}
 			}
 
 			if (_upperRight != null) {
-				if (index < _upperRight.size()) {
-					Entry<T> result = _upperRight.select(index);
+				allNull = false;
+
+				if (searcher.condition(_upperRight)) {
+					Entry<T> result = _upperRight.search(searcher);
 
 					result._location.setX(result._location.getX() + subQuadrantSideLength);
 					result._location.setY(result._location.getY() + subQuadrantSideLength);
 
 					return result;
-				} else {
-					index -= _upperRight.size();
 				}
 			}
 
 			if (_lowerLeft != null) {
-				if (index < _lowerLeft.size()) {
-					Entry<T> result = _lowerLeft.select(index);
+				allNull = false;
+
+				if (searcher.condition(_lowerLeft)) {
+					Entry<T> result = _lowerLeft.search(searcher);
 
 					result._location.setX(result._location.getX() - subQuadrantSideLength);
 					result._location.setY(result._location.getY() - subQuadrantSideLength);
 
 					return result;
-				} else {
-					index -= _lowerLeft.size();
 				}
 			}
 
 			if (_lowerRight != null) {
-				if (index < _lowerRight.size()) {
-					Entry<T> result = _lowerRight.select(index);
+				allNull = false;
+
+				if (searcher.condition(_lowerRight)) {
+					Entry<T> result = _lowerRight.search(searcher);
 
 					result._location.setX(result._location.getX() + subQuadrantSideLength);
 					result._location.setY(result._location.getY() - subQuadrantSideLength);
 
 					return result;
-				} else {
-					index -= _lowerRight.size();
 				}
 			}
 
-			throw new IndexOutOfBoundsException(n + " is out of bounds.");
+			if (allNull) {
+				return null;
+			} else {
+				throw new RuntimeException("SearchVisitor denied all possible branches.");
+			}
 		}
 
 		@Override
@@ -390,7 +397,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * 
 		 * @param location The location to transform.
 		 */
-		private void transformToSubNodeSpace(final Point.Builder location) {
+		private void transformToSubNodeSpace(final Builder location) {
 			final int subQuadrantSideLength = _quadrantSideLength / 2;
 
 			if (location.getX() >= 0) {
@@ -413,7 +420,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param categoryGroup The category group of the elements.
 		 * @return The sub node that handles the given location.
 		 */
-		private AbstractNode<T> getOrCreateSubNode(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
+		private AbstractNode<T> getOrCreateSubNode(final Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
 			if (location.getY() < 0) {
 				if (location.getX() < 0) {
 					if (_lowerLeft == null) {
@@ -450,7 +457,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param location The location.
 		 * @return The sub node that handles the given location.
 		 */
-		private AbstractNode<T> getSubNode(final Point.Builder location) {
+		private AbstractNode<T> getSubNode(final Builder location) {
 			if (location.getY() < 0) {
 				if (location.getX() < 0) {
 					return _lowerLeft;
@@ -489,7 +496,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	}
 
 	@SuppressWarnings("unchecked")
-	private static final class Leaf<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
+	static final class Leaf<T extends Categorized & Prioritized & TemporalVariant> extends AbstractNode<T> {
 		private final Object[] _elements;
 
 		/**
@@ -506,12 +513,12 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
-		public Leaf<T> getOrCreateLeaf(final Point.Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
+		public Leaf<T> getOrCreateLeaf(final Builder location, final int minQuadrantSideLength, final CategoryGroup categoryGroup) {
 			return this;
 		}
 
 		@Override
-		public T insert(final Point.Builder location, final T element, final int minQuadrantSideLength) {
+		public T insert(final Builder location, final T element, final int minQuadrantSideLength) {
 			final int index = locationToIndex(location);
 			final T before = (T) _elements[index];
 			_elements[index] = element;
@@ -536,12 +543,12 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @return The element at the given location.
 		 */
 		@Override
-		public T get(final Point.Builder location) {
+		public T get(final Builder location) {
 			return (T) _elements[locationToIndex(location)];
 		}
 
 		@Override
-		public T delete(final Point.Builder location) {
+		public T delete(final Builder location) {
 			final int index = locationToIndex(location);
 			final T deleted = (T) _elements[index];
 			_elements[index] = null;
@@ -556,6 +563,15 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		}
 
 		@Override
+		public Entry<T> search(final SearchStrategy<T> searcher) {
+			return searcher.handleLeaf(this);
+		}
+
+		/**
+		 * Selects the element number n from this tree.
+		 * @param n The element number.
+		 * @return The element number n.
+		 */
 		public Entry<T> select(final int n) {
 			int index = 0;
 
@@ -609,7 +625,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param location The location.
 		 * @return The array index that stores the data of the given location.
 		 */
-		private int locationToIndex(final Point.Builder location) {
+		private int locationToIndex(final Builder location) {
 			int index = location.getX() + _quadrantSideLength;
 			index += (location.getY() + _quadrantSideLength) * 2 * _quadrantSideLength;
 
@@ -621,9 +637,9 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 		 * @param index The array index.
 		 * @return The location that points to the given array index.
 		 */
-		private Point.Builder indexToLocation(final int index) {
+		private Builder indexToLocation(final int index) {
 			final int doubleQuadrantSideLength = _quadrantSideLength * 2;
-			final Point.Builder result = new Point.Builder();
+			final Builder result = new Builder();
 
 			result.setX(index % doubleQuadrantSideLength - _quadrantSideLength);
 			result.setY(index / doubleQuadrantSideLength - _quadrantSideLength);
@@ -668,7 +684,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	public T insert(final Point location, final T element) {
 		Objects.requireNonNull(element);
 
-		final Point.Builder transformedLocation = getTransformedLocation(location);
+		final Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
 		return _root.insert(transformedLocation, element, _minQuadrantSideLength);
@@ -680,7 +696,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @return The element at the given location.
 	 */
 	public T get(final Point location) {
-		final Point.Builder transformedLocation = getTransformedLocation(location);
+		final Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
 		return _root.get(transformedLocation);
@@ -692,7 +708,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @return The deleted element, or null, if no such element exists.
 	 */
 	public T delete(final Point location) {
-		final Point.Builder transformedLocation = getTransformedLocation(location);
+		final Builder transformedLocation = getTransformedLocation(location);
 		checkLocation(transformedLocation);
 
 		return _root.delete(transformedLocation);
@@ -715,7 +731,8 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @return A random entry.
 	 */
 	public Entry<T> selectRandomElement(final Random random) {
-		Entry<T> result = _root.select(random.nextInt(size()));
+		SelectSearchStrategy<T> searcher = new SelectSearchStrategy<>(random.nextInt(size()));
+		Entry<T> result = _root.search(searcher);
 		result._location.sub(_rootLocationTransformation);
 		return result;
 	}
@@ -769,7 +786,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @param location The location of the data.
 	 * @return A node.
 	 */
-	protected Leaf<T> getOrCreateLeaf(final Point.Builder location) {
+	protected Leaf<T> getOrCreateLeaf(final Builder location) {
 		return _root.getOrCreateLeaf(location, _minQuadrantSideLength, _categoryGroup);
 	}
 
@@ -808,7 +825,7 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @param location The location.
 	 * @throws IllegalArgumentException If the location is out of bounds.
 	 */
-	private void checkLocation(final Point.Builder location) {
+	private void checkLocation(final Builder location) {
 		final int sideLengthHalf = _sideLength / 2;
 
 		if (location.getX() < -sideLengthHalf || location.getY() < -sideLengthHalf || location.getX() >= sideLengthHalf || location.getY() >= sideLengthHalf) {
@@ -821,8 +838,8 @@ public class MapKnowledgeTree<T extends Categorized & Prioritized & TemporalVari
 	 * @param location The location.
 	 * @return The location transformed to the root nodes coordinate space.
 	 */
-	private Point.Builder getTransformedLocation(final Point location) {
-		Point.Builder result = new Point.Builder(location);
+	private Builder getTransformedLocation(final Point location) {
+		Builder result = new Builder(location);
 		result.add(_rootLocationTransformation);
 		return result;
 	}
