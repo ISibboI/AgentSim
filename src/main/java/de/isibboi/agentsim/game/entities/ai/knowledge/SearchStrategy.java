@@ -3,7 +3,7 @@ package de.isibboi.agentsim.game.entities.ai.knowledge;
 import de.isibboi.agentsim.algorithm.TemporalVariant;
 
 /**
- * A visitor that searches the {@link MapKnowledgeTree}.
+ * A strategy for searching the {@link MapKnowledgeTree}.
  * It visits exactly one node per layer.
  * 
  * @author Sebastian Schmidt
