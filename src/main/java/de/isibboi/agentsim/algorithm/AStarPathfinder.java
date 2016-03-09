@@ -1,10 +1,13 @@
 package de.isibboi.agentsim.algorithm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
@@ -76,6 +79,7 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 
 	private GridGraph<AStarNode> _graph;
 	private PriorityQueue<AStarNode> _openList; // Represents a min-heap.
+	private final Random _random = new Random();
 
 	/**
 	 * Creates a new object.
@@ -135,6 +139,19 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 	*/
 	private void updateNode() {
 		AStarNode node = _openList.poll();
+		List<AStarNode> toChooseFrom = new ArrayList<>();
+		toChooseFrom.add(node);
+
+		while (!_openList.isEmpty() && _openList.peek()._costs == node._costs) {
+			toChooseFrom.add(_openList.poll());
+		}
+
+		node = toChooseFrom.remove(_random.nextInt(toChooseFrom.size()));
+
+		for (AStarNode n : toChooseFrom) {
+			_openList.add(n);
+		}
+
 		Collection<AStarNode> neighbours = _graph.getNeighbours(node._location);
 
 		for (AStarNode neighbour : neighbours) {
