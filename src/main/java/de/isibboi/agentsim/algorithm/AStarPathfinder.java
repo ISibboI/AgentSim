@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
@@ -82,6 +84,7 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 
 	private GridGraph<AStarNode> _graph;
 	private PriorityQueue<AStarNode> _openList; // Represents a min-heap.
+	private final Random _random = new Random();
 
 	/**
 	 * Creates a new object.
@@ -154,9 +157,46 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 	}
 
 	@Override
-	public Queue<Movement> findPath(Point start, Iterable<Point> target, BlockadeMap map, int max, double maxDistanceFactor) {
-		// TODO Auto-generated method stub
-		return null;
+	public Queue<Movement> findPath(final Point start, final Iterable<Point> targets, final BlockadeMap map, final int max, final double maxDistanceFactor) {
+		// 11 is taken from the OpenJDK implementation.
+		_openList = new PriorityQueue<AStarNode>(11, new AStarNodeComparator());
+		_graph = new GridGraph<>(map, new VertexDataFactory<AStarNode>() {
+			@Override
+			public AStarNode createVertexData(final Point location) {
+				return new AStarNode(location, minimalManhattanDistance(location, targets), -1, null);
+			}
+		});
+
+		final AStarNode startNode = new AStarNode(start, minimalManhattanDistance(start, targets), 0, null);
+		startNode._closed = true;
+		_openList.add(startNode);
+
+		for (Point target : targets) {
+			_graph.getData(target)._target = true;
+		}
+
+		List<AStarNode> targetsReached = new LinkedList<>();
+		int maxCosts = -1;
+
+		while (!_openList.isEmpty() && targetsReached.size() < max && (maxCosts == -1 || _openList.peek()._costs <= maxCosts)) {
+			AStarNode node = updateNode();
+
+			if (node._target) {
+				targetsReached.add(node);
+
+				if (maxCosts == -1) {
+					maxCosts = (int) (node._distanceFromStart * maxDistanceFactor);
+				}
+			}
+		}
+
+		if (!targetsReached.isEmpty()) {
+			LinkedList<Movement> result = getPath(targetsReached.get(_random.nextInt(targetsReached.size()))._location);
+			Collections.reverse(result);
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	/**
