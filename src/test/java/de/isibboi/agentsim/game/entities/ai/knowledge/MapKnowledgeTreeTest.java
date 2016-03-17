@@ -80,7 +80,7 @@ public class MapKnowledgeTreeTest {
 	 * Sets up the static variables.
 	 */
 	@BeforeClass
-	public void setUpBeforeClass() {
+	public static void setUpBeforeClass() {
 		CategoryGroup.Builder builder = new CategoryGroup.Builder();
 
 		builder.add("a");
