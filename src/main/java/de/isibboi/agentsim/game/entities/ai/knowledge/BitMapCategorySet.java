@@ -4,6 +4,8 @@ import java.util.AbstractSet;
 import java.util.BitSet;
 import java.util.Iterator;
 
+import com.google.common.collect.AbstractIterator;
+
 /**
  * A set of categories this object belongs to.
  * Is backed by a {@link CategoryGroup} object, which contains all possible categories this object may belong to.
@@ -37,29 +39,20 @@ public class BitMapCategorySet extends AbstractSet<Category> implements Category
 
 	@Override
 	public Iterator<Category> iterator() {
-		return new Iterator<Category>() {
-			private int _current = 0;
+		return new AbstractIterator<Category>() {
+			private int _current = -1;
 
 			@Override
-			public boolean hasNext() {
-				if (!_set.get(_current)) {
-					searchNext();
-				}
-
-				return _current < _set.size();
-			}
-
-			@Override
-			public Category next() {
-				searchNext();
-
-				return _categoryGroup.getCategory(_current);
-			}
-
-			private void searchNext() {
+			protected Category computeNext() {
 				do {
 					_current++;
-				} while (_current < _set.size() && !_set.get(_current));
+				} while (_current < _set.length() && !_set.get(_current));
+
+				if (_current < _set.length() && _set.get(_current)) {
+					return _categoryGroup.getCategory(_current);
+				} else {
+					return endOfData();
+				}
 			}
 		};
 	}
@@ -112,5 +105,27 @@ public class BitMapCategorySet extends AbstractSet<Category> implements Category
 	@Override
 	public void clear() {
 		_set.clear();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+
+		str.append(getClass().getSimpleName());
+		str.append('[');
+		boolean appendedComma = false;
+
+		for (Category c : this) {
+			str.append(c.getName());
+			str.append(", ");
+			appendedComma = true;
+		}
+
+		if (appendedComma) {
+			str.delete(str.length() - 2, str.length());
+		}
+
+		str.append(']');
+		return str.toString();
 	}
 }
