@@ -3,6 +3,7 @@ package de.isibboi.agentsim.algorithm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -107,6 +108,58 @@ public class AStarPathfinderTest {
 			List<Point> sublist = points.subList(i, points.size());
 
 			assertEquals(_pathfinder.findPath(start, sublist.get(0), _bigMap).size(), _pathfinder.findPath(start, sublist, _bigMap).size());
+		}
+	}
+
+	/** 
+	 * Checks if the random multi target algorithm finds paths.
+	 * This test might fail on very rare cases, since it is randomized.
+	 */
+	@Test
+	public void testRandomMultiTargetAStar() {
+		Point start = new Point(40, 30);
+		List<Point> points = new LinkedList<>();
+		points.add(new Point(0, 0));
+		points.add(new Point(41, 35));
+		points.add(new Point(40, 60));
+		points.add(new Point(20, 40));
+		points.add(new Point(36, 88));
+		points.add(new Point(79, 81));
+
+		// Sort points by distance
+		for (int i = 0; i < points.size() - 1; i++) {
+			List<Point> sublist = points.subList(i, points.size());
+			int minValue = _pathfinder.findPath(start, sublist.get(0), _bigMap).size();
+			int minIndex = 0;
+
+			for (int j = 1; j < sublist.size(); j++) {
+				int value = _pathfinder.findPath(start, sublist.get(j), _bigMap).size();
+
+				if (value < minValue) {
+					minValue = value;
+					minIndex = j;
+				}
+			}
+
+			Point tmp = sublist.get(0);
+			sublist.set(0, sublist.get(minIndex));
+			sublist.set(minIndex, tmp);
+		}
+
+		for (int i = 0; i < points.size(); i++) {
+			final int maxChecks = 1000 * (i + 1);
+			boolean pathFound = false;
+			final int targetLength = _pathfinder.findPath(start, points.get(i), _bigMap).size();
+
+			for (int j = 0; j < maxChecks && !pathFound; j++) {
+				int length = _pathfinder.findPath(start, points, _bigMap, i + 1, 1000).size();
+
+				if (length == targetLength) {
+					pathFound = true;
+				}
+			}
+
+			assertTrue(pathFound);
 		}
 	}
 }
