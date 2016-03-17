@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.algorithm;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -28,6 +29,11 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 		private int _costs;
 		private boolean _closed = false;
 		private AStarNode _predecessor;
+
+		/**
+		 * True if this node is a target.
+		 */
+		private boolean _target;
 
 		/**
 		 * Creates a new graph node.
@@ -109,6 +115,50 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 		}
 	}
 
+	@Override
+	public Queue<Movement> findPath(final Point start, final Iterable<Point> targets, final BlockadeMap map) {
+		// 11 is taken from the OpenJDK implementation.
+		_openList = new PriorityQueue<AStarNode>(11, new AStarNodeComparator());
+		_graph = new GridGraph<>(map, new VertexDataFactory<AStarNode>() {
+			@Override
+			public AStarNode createVertexData(final Point location) {
+				return new AStarNode(location, minimalManhattanDistance(location, targets), -1, null);
+			}
+		});
+
+		final AStarNode startNode = new AStarNode(start, minimalManhattanDistance(start, targets), 0, null);
+		startNode._closed = true;
+		_openList.add(startNode);
+
+		for (Point target : targets) {
+			_graph.getData(target)._target = true;
+		}
+
+		AStarNode firstNodeReached = null;
+
+		while (!_openList.isEmpty() && firstNodeReached == null) {
+			AStarNode node = updateNode();
+
+			if (node._target) {
+				firstNodeReached = node;
+			}
+		}
+
+		if (firstNodeReached != null) {
+			LinkedList<Movement> result = getPath(firstNodeReached._location);
+			Collections.reverse(result);
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Queue<Movement> findPath(Point start, Iterable<Point> target, BlockadeMap map, int max, double maxDistanceFactor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * Traverses the graph starting with the start vertex following the predecessor-pointers.
 	 * Stores all traversed vertices as movements.
@@ -116,10 +166,21 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 	 * @param start The start vertex location.
 	 * @return The path from start to target.
 	 */
-	private Queue<Movement> getPath(final Point start) {
-		Queue<Movement> path = new LinkedList<>();
+	private LinkedList<Movement> getPath(final Point start) {
+		return getPath(_graph.getData(start));
+	}
 
-		AStarNode last = _graph.getData(start);
+	/**
+	 * Traverses the graph starting with the start vertex following the predecessor-pointers.
+	 * Stores all traversed vertices as movements.
+	 * 
+	 * @param start The start node.
+	 * @return The path from start to target.
+	 */
+	private LinkedList<Movement> getPath(final AStarNode start) {
+		LinkedList<Movement> path = new LinkedList<>();
+
+		AStarNode last = start;
 
 		while (last._predecessor != null) {
 			AStarNode current = last._predecessor;
@@ -132,13 +193,14 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 
 	/**
 	 * Updates the first node in the openList.
+	 * @return The node that was updated.
 	*/
-	private void updateNode() {
+	private AStarNode updateNode() {
 		AStarNode node = _openList.poll();
 		Collection<AStarNode> neighbours = _graph.getNeighbours(node._location);
 
 		for (AStarNode neighbour : neighbours) {
-			if (neighbour._predecessor == null || !neighbour._closed && neighbour._distanceFromStart > node._distanceFromStart + 1) {
+			if (neighbour._predecessor == null || (!neighbour._closed && neighbour._distanceFromStart > node._distanceFromStart + 1)) {
 				neighbour._distanceFromStart = node._distanceFromStart + 1;
 				neighbour._predecessor = node;
 				neighbour.updateCosts();
@@ -149,5 +211,33 @@ public class AStarPathfinder implements PathfindingAlgorithm {
 		}
 
 		node._closed = true;
+		return node;
+	}
+
+	/**
+	 * Calculates the distance from the given location to the closest given target.
+	 * 
+	 * @param location The location.
+	 * @param targets The targets to check.
+	 * @return The distance to the closest target.
+	 */
+	private static int minimalManhattanDistance(final Point location, final Iterable<Point> targets) {
+		int minDistance = Integer.MAX_VALUE;
+		boolean error = true;
+
+		for (Point target : targets) {
+			int distance = location.manhattanDistance(target);
+			error = false;
+
+			if (distance < minDistance) {
+				minDistance = distance;
+			}
+		}
+
+		if (error) {
+			throw new RuntimeException("targets must not be empty!");
+		}
+
+		return minDistance;
 	}
 }
