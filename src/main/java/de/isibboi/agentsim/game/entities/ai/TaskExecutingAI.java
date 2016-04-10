@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.game.entities.ai;
 
+import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -13,6 +14,7 @@ import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 
 /**
  * An AI with a task queue. If the first task is finished, it is disposed and the next task is executed.
@@ -21,6 +23,8 @@ import de.isibboi.agentsim.game.entities.ai.tasks.Task;
  */
 public abstract class TaskExecutingAI implements AI {
 	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
+
+	private final TaskDrawingVisitor _taskDrawingVisitor = new TaskDrawingVisitor();
 
 	private final Queue<Task> _taskQueue = new LinkedList<>();
 	private Task _currentTask;
@@ -253,5 +257,17 @@ public abstract class TaskExecutingAI implements AI {
 		if (abort) {
 			eventExecutionAborted();
 		}
+	}
+
+	@Override
+	public void draw(final Graphics2D g, final double transition) {
+		if (_currentTask != null) {
+			_currentTask.getVisited(_taskDrawingVisitor);
+		}
+	}
+
+	@Override
+	public int getDrawPriority() {
+		return 20;
 	}
 }

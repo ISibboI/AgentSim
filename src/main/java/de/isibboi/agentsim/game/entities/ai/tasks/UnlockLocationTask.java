@@ -3,6 +3,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.drawers.Visitor;
 
 /**
  * A task that unlocks a location on the map.
@@ -30,5 +31,10 @@ public class UnlockLocationTask extends ZeroTimeTask {
 	public void zeroTimeAction() {
 		_map.unlockLocation(_location, _entity);
 		setSuccessful(true);
+	}
+
+	@Override
+	public void getVisited(final Visitor<Task> visitor) {
+		visitor.visit(this);
 	}
 }

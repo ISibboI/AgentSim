@@ -2,6 +2,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.Updateable;
+import de.isibboi.agentsim.ui.drawers.Visitable;
 
 /**
  * A task that can be executed by an entity.
@@ -15,7 +16,7 @@ import de.isibboi.agentsim.game.entities.Updateable;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public interface Task extends Updateable {
+public interface Task extends Updateable, Visitable<Task> {
 	/**
 	 * Returns true if the task is finished.
 	 * @return True if the task is finished.

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Attributes;
+import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
@@ -14,7 +15,7 @@ import de.isibboi.agentsim.game.map.Point;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public interface AI {
+public interface AI extends Drawable {
 	/**
 	 * If the entity tries to walk into a certain direction, but there is a wall, then this event is fired.
 	 * The point is the point of the wall that the entity tried to walk on.

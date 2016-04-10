@@ -48,6 +48,15 @@ public class Goblin extends MapEntity {
 	}
 
 	@Override
+	public void draw(final Graphics2D g, final double transition) {
+		super.draw(g, transition);
+
+		if (isSelected()) {
+			_ai.draw(g, transition);
+		}
+	}
+
+	@Override
 	public void draw(final Graphics2D g) {
 		if (isSelected()) {
 			g.setColor(_selectedColor);
