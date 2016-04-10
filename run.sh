@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "$(tput setaf 2)Updating application...$(tput sgr 0)"
-git pull
+git pull -q
 echo "$(tput setaf 2)Done.$(tput sgr 0)"
 echo "$(tput setaf 2)Building application...$(tput sgr 0)"
 mvn -q -DskipTests package
