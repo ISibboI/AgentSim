@@ -2,6 +2,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.Updateable;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 import de.isibboi.agentsim.ui.drawers.Visitable;
 
 /**
@@ -16,7 +17,7 @@ import de.isibboi.agentsim.ui.drawers.Visitable;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public interface Task extends Updateable, Visitable<Task> {
+public interface Task extends Updateable, Visitable<Task, TaskDrawingVisitor> {
 	/**
 	 * Returns true if the task is finished.
 	 * @return True if the task is finished.

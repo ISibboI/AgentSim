@@ -261,7 +261,11 @@ public abstract class TaskExecutingAI implements AI {
 
 	@Override
 	public void draw(final Graphics2D g, final double transition) {
+		LOG.trace("Drawing AI details");
+
 		if (_currentTask != null) {
+			_taskDrawingVisitor.setGraphics(g);
+			_taskDrawingVisitor.setTransition(transition);
 			_currentTask.getVisited(_taskDrawingVisitor);
 		}
 	}

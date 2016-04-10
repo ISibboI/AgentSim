@@ -4,7 +4,7 @@ import java.util.Random;
 
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.Movement;
-import de.isibboi.agentsim.ui.drawers.Visitor;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 
 /**
  * Makes the entity move around randomly.
@@ -44,7 +44,7 @@ public class RandomMovementTask extends InfiniteTask {
 	}
 
 	@Override
-	public void getVisited(final Visitor<Task> visitor) {
+	public void getVisited(final TaskDrawingVisitor visitor) {
 		visitor.visit(this);
 	}
 }

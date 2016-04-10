@@ -13,7 +13,7 @@ import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.MapEntity;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.drawers.Visitor;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 
 /**
  * A task that makes an entity move to a specific point.
@@ -135,8 +135,24 @@ public class MoveToTask extends AbstractTask {
 		return _start;
 	}
 
+	/**
+	 * Returns the movement queue. Do not change!
+	 * @return The movement queue.
+	 */
+	public Queue<Movement> getMovementQueue() {
+		return _movementQueue;
+	}
+
+	/**
+	 * Returns the entity that is moved by this task.
+	 * @return The entity.
+	 */
+	public MapEntity getEntity() {
+		return _entity;
+	}
+
 	@Override
-	public void getVisited(final Visitor<Task> visitor) {
+	public void getVisited(final TaskDrawingVisitor visitor) {
 		visitor.visit(this);
 	}
 }

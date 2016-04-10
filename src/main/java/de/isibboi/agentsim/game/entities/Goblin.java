@@ -49,6 +49,8 @@ public class Goblin extends MapEntity {
 
 	@Override
 	public void draw(final Graphics2D g, final double transition) {
+		LOG.trace("Drawing goblin");
+
 		super.draw(g, transition);
 
 		if (isSelected()) {

@@ -8,7 +8,7 @@ import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.entities.Goblin;
 import de.isibboi.agentsim.game.map.Material;
 import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.drawers.Visitor;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 
 /**
  * A task that mines a block.
@@ -70,7 +70,7 @@ public class MiningTask extends MotionlessTimedTask {
 	}
 
 	@Override
-	public void getVisited(final Visitor<Task> visitor) {
+	public void getVisited(final TaskDrawingVisitor visitor) {
 		visitor.visit(this);
 	}
 }

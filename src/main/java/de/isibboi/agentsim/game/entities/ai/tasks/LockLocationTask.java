@@ -3,7 +3,7 @@ package de.isibboi.agentsim.game.entities.ai.tasks;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.map.GameMap;
 import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.drawers.Visitor;
+import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
 
 /**
  * A task that locks a location on the map.
@@ -59,7 +59,7 @@ public class LockLocationTask extends ZeroTimeTask {
 	}
 
 	@Override
-	public void getVisited(final Visitor<Task> visitor) {
+	public void getVisited(final TaskDrawingVisitor visitor) {
 		visitor.visit(this);
 	}
 }

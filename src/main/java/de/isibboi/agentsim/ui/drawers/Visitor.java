@@ -13,5 +13,5 @@ public interface Visitor<T> {
 	 * Visits the given object.
 	 * @param object The object.
 	 */
-	void visit(Visitable<T> object);
+	void visit(Visitable<T, ? extends Visitor<T>> object);
 }

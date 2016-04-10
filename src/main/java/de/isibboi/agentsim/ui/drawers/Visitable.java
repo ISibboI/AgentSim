@@ -8,11 +8,12 @@ package de.isibboi.agentsim.ui.drawers;
  * @since 0.3.0
  * 
  * @param <T> The most general type of this visitable hierarchy.
+ * @param <V> The type of the visitor.
  */
-public interface Visitable<T> {
+public interface Visitable<T, V extends Visitor<T>> {
 	/**
 	 * Calls the {@link Visitor#visit(Visitable)} method of the given visitor.
 	 * @param visitor The visitor that visits this object.
 	 */
-	void getVisited(Visitor<T> visitor);
+	void getVisited(V visitor);
 }
