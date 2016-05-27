@@ -14,11 +14,13 @@ import de.isibboi.agentsim.game.map.GameMap;
 public class DrawAllMapRenderMode implements MapRenderMode {
 	@Override
 	public void drawMap(final Graphics2D g, final double transition, final GameMap map) {
-		map.draw(g, transition);
+		// TODO
+		//		map.draw(g, transition);
 	}
 
 	@Override
 	public void drawEntities(final Graphics2D g, final double transition, final Entities entities) {
-		entities.draw(g, transition);
+		// TODO
+		//		entities.draw(g, transition);
 	}
 }

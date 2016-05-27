@@ -13,7 +13,7 @@ import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.MapEntity;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * A task that makes an entity move to a specific point.
@@ -152,7 +152,7 @@ public class MoveToTask extends AbstractTask {
 	}
 
 	@Override
-	public void getVisited(final TaskDrawingVisitor visitor) {
-		visitor.visit(this);
+	public void accept(Renderer renderer) {
+		renderer.visit(this);
 	}
 }

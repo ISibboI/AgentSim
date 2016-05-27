@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.game.entities;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.game.GameUpdateException;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Contains all the entities that are alive. Entities can be added or removed, but the operations are only applied when update is called.
@@ -130,14 +130,9 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 	}
 
 	@Override
-	public void draw(final Graphics2D g, final double transition) {
+	public void accept(Renderer renderer) {
 		for (Entity entity : _entities) {
-			entity.draw(g, transition);
+			entity.accept(renderer);
 		}
-	}
-
-	@Override
-	public int getDrawPriority() {
-		return Integer.MAX_VALUE;
 	}
 }

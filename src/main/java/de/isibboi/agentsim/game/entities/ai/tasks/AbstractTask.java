@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
 import de.isibboi.agentsim.game.entities.Movement;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Handles priorities.
@@ -27,5 +28,10 @@ public abstract class AbstractTask implements Task {
 	 */
 	protected void setMovement(final Movement movement) {
 		_movement = movement;
+	}
+
+	@Override
+	public void accept(Renderer renderer) {
+		renderer.visit(this);
 	}
 }

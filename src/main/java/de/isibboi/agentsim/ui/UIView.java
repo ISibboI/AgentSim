@@ -8,6 +8,7 @@ import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.event.MouseButton;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * An abstract UI that handles mouse events and drawing of static content like UI components.

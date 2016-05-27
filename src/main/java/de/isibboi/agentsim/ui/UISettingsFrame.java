@@ -21,8 +21,6 @@ import javax.swing.event.ChangeListener;
 
 import de.isibboi.agentsim.Messages;
 import de.isibboi.agentsim.Settings;
-import de.isibboi.agentsim.ui.event.UIActionListener;
-import de.isibboi.agentsim.ui.event.UserActionEvent;
 
 /**
  * A frame for editing the game settings.
@@ -83,7 +81,7 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 	}
 
 	private final Settings _settings;
-	private final UIActionListener _listener;
+	private final ActionListener _listener;
 
 	private final JLabel _restartLabel;
 	private final JTabbedPane _sectionsPane;
@@ -104,7 +102,7 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 	 * @param settings the settings to edit.
 	 * @param listener a listener to listen for the closing of this window.
 	 */
-	public UISettingsFrame(final Settings settings, final UIActionListener listener) {
+	public UISettingsFrame(final Settings settings, final ActionListener listener) {
 		_settings = settings;
 		_listener = listener;
 
@@ -210,7 +208,7 @@ public class UISettingsFrame extends JFrame implements WindowListener, ActionLis
 
 	@Override
 	public void windowClosing(final WindowEvent e) {
-		_listener.userAction(new UserActionEvent(this));
+		_listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "settingsWindowClosed"));
 	}
 
 	@Override

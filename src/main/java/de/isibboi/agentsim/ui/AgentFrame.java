@@ -16,6 +16,7 @@ import de.isibboi.agentsim.game.DefaultGameInitializer;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.ui.event.MouseEventTranslator;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Contains all the game data. Creates and manages the views.
@@ -25,7 +26,7 @@ import de.isibboi.agentsim.ui.event.MouseEventTranslator;
 public class AgentFrame implements GameStatusMessageListener {
 	private static final int START_TICK = 0;
 
-	private final Logger _log = LogManager.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(AgentFrame.class);
 
 	private final JFrame _frame;
 	private final Settings _settings;
@@ -56,13 +57,10 @@ public class AgentFrame implements GameStatusMessageListener {
 		contentPane.setPreferredSize(new Dimension(settings.getInt(Settings.UI_WIDTH),
 				settings.getInt(Settings.UI_HEIGHT)));
 		_frame.add(contentPane);
-		_frame.pack();
-		_frame.setVisible(true);
-		_frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
 
-		Renderer renderer = new DefaultRenderer(_frame, _settings);
+		Renderer renderer = new DefaultRenderer();
 		_mouseEventTranslator = new MouseEventTranslator();
 
 		_gameUIView = new GameUIView(renderer, _settings, _game, this);
@@ -73,6 +71,10 @@ public class AgentFrame implements GameStatusMessageListener {
 		_frame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
 
 		_transitionFactor = 1 / settings.getDouble(Settings.CORE_RENDER_TRANSITION_AMOUNT);
+
+		_frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		_frame.pack();
+		_frame.setVisible(true);
 
 		start();
 	}
@@ -95,6 +97,8 @@ public class AgentFrame implements GameStatusMessageListener {
 
 		_frame.getContentPane().removeAll();
 		_frame.getContentPane().add(view.getJPanel());
+
+		LOG.debug("Switched view to: " + view);
 	}
 
 	/**
@@ -122,7 +126,7 @@ public class AgentFrame implements GameStatusMessageListener {
 			_view.update(_random, _tick);
 			_tick++;
 		} catch (GameUpdateException e) {
-			_log.error("Could not update game!", e);
+			LOG.error("Could not update game!", e);
 		}
 	}
 
@@ -163,7 +167,7 @@ public class AgentFrame implements GameStatusMessageListener {
 		_game.stop();
 
 		_frame.dispose();
-		_log.debug("Frame disposed");
+		LOG.debug("Frame disposed");
 	}
 
 	@Override

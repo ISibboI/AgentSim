@@ -25,11 +25,6 @@ public abstract class Building extends MapEntity {
 	}
 
 	@Override
-	public int getDrawPriority() {
-		return 0;
-	}
-
-	@Override
 	public void collideWith(final Entity entity, final int tick) {
 		// Let other entities handle the collision.
 		entity.collideWith(this, tick);

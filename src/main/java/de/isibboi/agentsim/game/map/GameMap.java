@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.game.map;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +11,7 @@ import de.isibboi.agentsim.algorithm.LockManager;
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.game.entities.ai.KnowledgeProvider;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Represents the game map.
@@ -43,11 +43,6 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	public GameMap(final BufferedImage image, final Point spawnPoint, final Settings settings) {
 		_map = image;
 		_spawnPoint = spawnPoint;
-	}
-
-	@Override
-	public void draw(final Graphics2D g, final double transition) {
-		g.drawImage(_map, 0, 0, null);
 	}
 
 	/**
@@ -177,7 +172,7 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	}
 
 	@Override
-	public int getDrawPriority() {
-		return -10;
+	public void accept(Renderer renderer) {
+		renderer.visit(this);
 	}
 }

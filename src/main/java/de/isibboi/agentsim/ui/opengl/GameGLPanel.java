@@ -2,6 +2,9 @@ package de.isibboi.agentsim.ui.opengl;
 
 import javax.swing.JPanel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -15,6 +18,8 @@ import com.jogamp.opengl.awt.GLJPanel;
  *
  */
 public class GameGLPanel {
+	private static final Logger LOG = LogManager.getLogger(GameGLPanel.class);
+
 	private final GLJPanel _panel;
 
 	public GameGLPanel() {

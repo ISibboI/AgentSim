@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.ui.drawers;
+package de.isibboi.agentsim.ui.renderer;
 
 /**
  * A visitor.

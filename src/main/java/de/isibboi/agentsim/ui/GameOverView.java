@@ -1,15 +1,16 @@
 package de.isibboi.agentsim.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.component.UIButton;
-import de.isibboi.agentsim.ui.event.UserActionEvent;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * The view that is displayed when the game was lost.
@@ -17,11 +18,13 @@ import de.isibboi.agentsim.ui.event.UserActionEvent;
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
-public class GameOverView extends UIView {
+public class GameOverView extends UIView implements ActionListener {
 	private final AgentFrame _agentFrame;
 
-	private UIButton _restartButton;
-	private UIButton _quitButton;
+	private JButton _restartButton;
+	private JButton _quitButton;
+
+	private final JPanel _contentPane;
 
 	/**
 	 * Creates a new game over view for the given agent frame.
@@ -34,6 +37,7 @@ public class GameOverView extends UIView {
 		super(renderer, settings);
 
 		_agentFrame = agentFrame;
+		_contentPane = new JPanel();
 
 		initUI();
 	}
@@ -42,15 +46,13 @@ public class GameOverView extends UIView {
 	 * Creates the UI.
 	 */
 	private void initUI() {
-		Point center = new Point(getWidth() / 2, getHeight() / 2);
+		_restartButton = new JButton("Restart");
+		_restartButton.addActionListener(this);
+		_contentPane.add(_restartButton);
 
-		_restartButton = new UIButton(getRenderer(), center.add(new Point(-105, -20)), 100, "Restart", this);
-		add(_restartButton);
-		addMouseListener(_restartButton);
-
-		_quitButton = new UIButton(getRenderer(), center.add(new Point(5, -20)), 100, "Quit", this);
-		add(_quitButton);
-		addMouseListener(_quitButton);
+		_quitButton = new JButton("Quit");
+		_quitButton.addActionListener(this);
+		_contentPane.add(_quitButton);
 	}
 
 	@Override
@@ -64,7 +66,7 @@ public class GameOverView extends UIView {
 	}
 
 	@Override
-	public void userAction(final UserActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (e.getSource() == _restartButton) {
 			_agentFrame.receiveRestartGameMessage();
 		} else if (e.getSource() == _quitButton) {
@@ -79,7 +81,6 @@ public class GameOverView extends UIView {
 
 	@Override
 	public JPanel getJPanel() {
-		// TODO Auto-generated method stub
-		return null;
+		return _contentPane;
 	}
 }

@@ -1,7 +1,6 @@
 package de.isibboi.agentsim.game.entities;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +10,7 @@ import de.isibboi.agentsim.game.EntityLocationManager;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.game.entities.ai.GoblinSwarmAI;
 import de.isibboi.agentsim.game.map.Point;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * A goblin that digs dirt.
@@ -48,25 +48,8 @@ public class Goblin extends MapEntity {
 	}
 
 	@Override
-	public void draw(final Graphics2D g, final double transition) {
-		LOG.trace("Drawing goblin");
-
-		super.draw(g, transition);
-
-		if (isSelected()) {
-			_ai.draw(g, transition);
-		}
-	}
-
-	@Override
-	public void draw(final Graphics2D g) {
-		if (isSelected()) {
-			g.setColor(_selectedColor);
-		} else {
-			g.setColor(_color);
-		}
-
-		g.fillRect(0, 0, 1, 1);
+	public void accept(final Renderer renderer) {
+		renderer.visit(this);
 	}
 
 	@Override

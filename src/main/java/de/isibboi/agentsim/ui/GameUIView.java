@@ -1,8 +1,13 @@
 package de.isibboi.agentsim.ui;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,12 +16,10 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.map.Point;
-import de.isibboi.agentsim.ui.component.UIButton;
-import de.isibboi.agentsim.ui.component.UINumberLabel;
-import de.isibboi.agentsim.ui.event.UserActionEvent;
+import de.isibboi.agentsim.ui.components.NumberLabel;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
 import de.isibboi.agentsim.ui.opengl.GameGLPanel;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Represents the game ui.
@@ -24,7 +27,7 @@ import de.isibboi.agentsim.ui.opengl.GameGLPanel;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public class GameUIView extends UIView {
+public class GameUIView extends UIView implements ActionListener {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private final Settings _settings;
@@ -34,14 +37,14 @@ public class GameUIView extends UIView {
 	private final FrequencyMeter _frameRateMeter;
 	private final FrequencyMeter _updateRateMeter;
 
-	private UINumberLabel _frameRateLabel;
-	private UINumberLabel _updateRateLabel;
-	private UINumberLabel _entityCountLabel;
+	private NumberLabel _frameRateLabel;
+	private NumberLabel _updateRateLabel;
+	private NumberLabel _entityCountLabel;
 
-	private UIButton _settingsButton;
-	private UIButton _renderEntitiesButton;
-	private UIButton _restartButton;
-	private UIButton _pauseButton;
+	private JButton _settingsButton;
+	private JButton _renderEntitiesButton;
+	private JButton _restartButton;
+	private JButton _pauseButton;
 
 	private UISettingsFrame _settingsFrame;
 
@@ -83,37 +86,50 @@ public class GameUIView extends UIView {
 	 * Creates the UI.
 	 */
 	private void initUI() {
-		_frameRateLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 10), 250, "Framerate: ", "", 0, 0);
-		add(_frameRateLabel);
-
-		_updateRateLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 50), 250, "Update rate: ", "", 0, 0);
-		add(_updateRateLabel);
-
-		_entityCountLabel = new UINumberLabel(getRenderer(), new Point(getWidth() - 260, 90), 250, "Entity count: ", "", 0,
-				_settings.getInt(Settings.GAME_INITIAL_GOBLIN_COUNT));
-		add(_entityCountLabel);
-
-		_settingsButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 130), 250, "Settings", this);
-		add(_settingsButton);
-		addMouseListener(_settingsButton);
-
-		_renderEntitiesButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 170), 250, "Toggle entities", this);
-		add(_renderEntitiesButton);
-		addMouseListener(_renderEntitiesButton);
-
-		_restartButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 210), 250, "Restart", this);
-		add(_restartButton);
-		addMouseListener(_restartButton);
-
-		_pauseButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 250), 250, "Pause", this);
-		add(_pauseButton);
-		addMouseListener(_pauseButton);
-
 		GameGLPanel glPanel = new GameGLPanel();
 		JPanel uiPanel = new JPanel();
 
-		_contentPane.add(glPanel.getJPanel(), BorderLayout.WEST);
-		_contentPane.add(uiPanel, BorderLayout.EAST);
+		_contentPane.setLayout(new GridBagLayout());
+		final GridBagConstraints gbc = new GridBagConstraints();
+
+		gbc.fill = GridBagConstraints.VERTICAL;
+		_contentPane.add(glPanel.getJPanel(), gbc);
+		gbc.fill = GridBagConstraints.BOTH;
+		_contentPane.add(uiPanel, gbc);
+
+		uiPanel.setLayout(new GridBagLayout());
+
+		_frameRateLabel = new NumberLabel("Framerate: ", new DecimalFormat("###,###"), "/s");
+		gbc.gridy = 0;
+		uiPanel.add(_frameRateLabel, gbc);
+
+		_updateRateLabel = new NumberLabel("Update rate: ", new DecimalFormat("###,###"), "/s");
+		gbc.gridy = 1;
+		uiPanel.add(_updateRateLabel, gbc);
+
+		_entityCountLabel = new NumberLabel("Entity count: ", new DecimalFormat("###,###"));
+		gbc.gridy = 2;
+		uiPanel.add(_entityCountLabel, gbc);
+
+		_settingsButton = new JButton("Settings");
+		_settingsButton.addActionListener(this);
+		gbc.gridy = 3;
+		uiPanel.add(_settingsButton, gbc);
+
+		_renderEntitiesButton = new JButton("Toggle entities");
+		_renderEntitiesButton.addActionListener(this);
+		gbc.gridy = 4;
+		uiPanel.add(_renderEntitiesButton, gbc);
+
+		_restartButton = new JButton("Restart");
+		_restartButton.addActionListener(this);
+		gbc.gridy = 5;
+		uiPanel.add(_restartButton, gbc);
+
+		_pauseButton = new JButton("Pause");
+		_pauseButton.addActionListener(this);
+		gbc.gridy = 6;
+		uiPanel.add(_pauseButton, gbc);
 	}
 
 	//	@Override
@@ -128,11 +144,12 @@ public class GameUIView extends UIView {
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
 		_updateRateMeter.update();
+		_updateRateLabel.setNumber(_updateRateMeter.getValue());
 	}
 
 	@Override
-	public void userAction(final UserActionEvent e) {
-		_log.debug("Received UserActionEvent");
+	public void actionPerformed(final ActionEvent e) {
+		_log.debug("Received ActionEvent: " + e);
 
 		if (e.getSource() == _settingsButton && _settingsFrame == null) {
 			_settingsFrame = new UISettingsFrame(_settings, this);

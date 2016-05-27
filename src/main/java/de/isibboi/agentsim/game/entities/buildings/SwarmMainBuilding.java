@@ -1,7 +1,6 @@
 package de.isibboi.agentsim.game.entities.buildings;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Collections;
 
 import de.isibboi.agentsim.Environment;
@@ -27,17 +26,6 @@ public class SwarmMainBuilding extends Building {
 	 */
 	public SwarmMainBuilding(final EntityLocationManager entityLocationManager) {
 		super(entityLocationManager);
-	}
-
-	@Override
-	public void draw(final Graphics2D g) {
-		if (isSelected()) {
-			g.setColor(_selectedColor);
-		} else {
-			g.setColor(_color);
-		}
-
-		g.fillRect(0, 0, 1, 1);
 	}
 
 	@Override

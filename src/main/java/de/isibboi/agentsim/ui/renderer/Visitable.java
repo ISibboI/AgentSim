@@ -1,4 +1,4 @@
-package de.isibboi.agentsim.ui.drawers;
+package de.isibboi.agentsim.ui.renderer;
 
 /**
  * A type that supports visitors.
@@ -15,5 +15,5 @@ public interface Visitable<T, V extends Visitor<T>> {
 	 * Calls the {@link Visitor#visit(Visitable)} method of the given visitor.
 	 * @param visitor The visitor that visits this object.
 	 */
-	void getVisited(V visitor);
+	void accept(V visitor);
 }

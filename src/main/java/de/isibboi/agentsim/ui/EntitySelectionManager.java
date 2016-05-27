@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.ui;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import de.isibboi.agentsim.game.entities.MapEntity;
 import de.isibboi.agentsim.game.map.Point;
 import de.isibboi.agentsim.ui.event.MouseButton;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
-import de.isibboi.agentsim.util.Util;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * Manages the selection of entities by the user.
@@ -259,14 +258,7 @@ public class EntitySelectionManager implements UIMouseInputListener, Drawable {
 	}
 
 	@Override
-	public void draw(final Graphics2D g, final double transition) {
-		if (_startingPoint != null) {
-			_renderer.drawEntitySelectionRectangle(Util.createRectangle(_startingPoint, _currentPoint));
-		}
-	}
-
-	@Override
-	public int getDrawPriority() {
-		return 100;
+	public void accept(Renderer renderer) {
+		renderer.visit(this);
 	}
 }

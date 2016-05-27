@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.game.entities.ai;
 
-import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -14,7 +13,7 @@ import de.isibboi.agentsim.game.entities.Attributes;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.ai.intends.CompositeTask;
 import de.isibboi.agentsim.game.entities.ai.tasks.Task;
-import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * An AI with a task queue. If the first task is finished, it is disposed and the next task is executed.
@@ -23,8 +22,6 @@ import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
  */
 public abstract class TaskExecutingAI implements AI {
 	private static final Logger LOG = LogManager.getLogger(TaskExecutingAI.class);
-
-	private final TaskDrawingVisitor _taskDrawingVisitor = new TaskDrawingVisitor();
 
 	private final Queue<Task> _taskQueue = new LinkedList<>();
 	private Task _currentTask;
@@ -260,18 +257,11 @@ public abstract class TaskExecutingAI implements AI {
 	}
 
 	@Override
-	public void draw(final Graphics2D g, final double transition) {
+	public void accept(final Renderer renderer) {
 		LOG.trace("Drawing AI details");
 
 		if (_currentTask != null) {
-			_taskDrawingVisitor.setGraphics(g);
-			_taskDrawingVisitor.setTransition(transition);
-			_currentTask.getVisited(_taskDrawingVisitor);
+			_currentTask.accept(renderer);
 		}
-	}
-
-	@Override
-	public int getDrawPriority() {
-		return 20;
 	}
 }

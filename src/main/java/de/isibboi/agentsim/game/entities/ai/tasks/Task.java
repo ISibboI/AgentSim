@@ -1,9 +1,9 @@
 package de.isibboi.agentsim.game.entities.ai.tasks;
 
+import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.Movement;
 import de.isibboi.agentsim.game.entities.Updateable;
-import de.isibboi.agentsim.ui.drawers.TaskDrawingVisitor;
-import de.isibboi.agentsim.ui.drawers.Visitable;
+import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
  * A task that can be executed by an entity.
@@ -17,7 +17,7 @@ import de.isibboi.agentsim.ui.drawers.Visitable;
  * @author Sebastian Schmidt
  * @since 0.2.0
  */
-public interface Task extends Updateable, Visitable<Task, TaskDrawingVisitor> {
+public interface Task extends Updateable, Drawable {
 	/**
 	 * Returns true if the task is finished.
 	 * @return True if the task is finished.
@@ -64,4 +64,6 @@ public interface Task extends Updateable, Visitable<Task, TaskDrawingVisitor> {
 	 * @return The progress of the task.
 	 */
 	double getProgress();
+
+	void accept(Renderer renderer);
 }
