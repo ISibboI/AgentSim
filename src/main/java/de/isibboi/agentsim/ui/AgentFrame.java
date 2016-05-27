@@ -56,7 +56,7 @@ public class AgentFrame implements GameStatusMessageListener {
 		JPanel contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(settings.getInt(Settings.UI_WIDTH),
 				settings.getInt(Settings.UI_HEIGHT)));
-		_frame.add(contentPane);
+		_frame.setContentPane(contentPane);
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
 

@@ -2,6 +2,7 @@ package de.isibboi.agentsim.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -98,6 +99,9 @@ public class GameUIView extends UIView implements ActionListener {
 		_contentPane.add(uiPanel, gbc);
 
 		uiPanel.setLayout(new GridBagLayout());
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.NORTH;
+		gbc.insets = new Insets(4, 4, 4, 4);
 
 		_frameRateLabel = new NumberLabel("Framerate: ", new DecimalFormat("###,###"), "/s");
 		gbc.gridy = 0;

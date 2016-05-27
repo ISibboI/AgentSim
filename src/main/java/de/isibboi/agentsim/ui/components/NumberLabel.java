@@ -25,6 +25,8 @@ public class NumberLabel extends JLabel {
 	 * @param postText The string that should be put after the number.
 	 */
 	public NumberLabel(final String preText, final DecimalFormat numberFormat, final String postText) {
+		super(preText + postText);
+
 		_preText = preText;
 		_numberFormat = numberFormat;
 		_postText = postText;
