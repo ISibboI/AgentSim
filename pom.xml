@@ -34,7 +34,7 @@
 		<dependency>
 			<!-- Needed for jogl. Seems to have broken dependencies. -->
 			<groupId>org.jogamp.gluegen</groupId>
-			<artifactId>gluegen</artifactId>
+			<artifactId>gluegen-rt-main</artifactId>
 			<version>2.3.2</version>
 		</dependency>
 	</dependencies>

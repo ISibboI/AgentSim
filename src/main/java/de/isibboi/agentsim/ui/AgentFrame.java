@@ -56,6 +56,9 @@ public class AgentFrame implements GameStatusMessageListener {
 		contentPane.setPreferredSize(new Dimension(settings.getInt(Settings.UI_WIDTH),
 				settings.getInt(Settings.UI_HEIGHT)));
 		_frame.add(contentPane);
+		_frame.pack();
+		_frame.setVisible(true);
+		_frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
 

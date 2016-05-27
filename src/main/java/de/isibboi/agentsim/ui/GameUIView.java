@@ -50,7 +50,7 @@ public class GameUIView extends UIView {
 
 	private boolean _renderEntities = true;
 
-	private JPanel _contentPane;
+	private final JPanel _contentPane;
 
 	/**
 	 * Creates a new ui with the given settings.
@@ -73,6 +73,8 @@ public class GameUIView extends UIView {
 		_mapRenderMode = new DrawAllMapRenderMode();
 		_entitySelectionManager = new EntitySelectionManager(_game, _settings, getRenderer());
 		addMouseListener(_entitySelectionManager);
+
+		_contentPane = new JPanel();
 
 		initUI();
 	}
