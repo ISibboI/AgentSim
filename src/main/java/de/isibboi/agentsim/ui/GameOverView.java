@@ -2,6 +2,8 @@ package de.isibboi.agentsim.ui;
 
 import java.util.Random;
 
+import javax.swing.JPanel;
+
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
@@ -73,5 +75,11 @@ public class GameOverView extends UIView {
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
 		// Ignore
+	}
+
+	@Override
+	public JPanel getJPanel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

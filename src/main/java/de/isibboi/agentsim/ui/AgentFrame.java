@@ -1,8 +1,11 @@
 package de.isibboi.agentsim.ui;
 
-import java.awt.Graphics2D;
+import java.awt.Dimension;
 import java.awt.event.WindowListener;
 import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +27,7 @@ public class AgentFrame implements GameStatusMessageListener {
 
 	private final Logger _log = LogManager.getLogger(getClass());
 
-	private final DrawFrame _drawFrame;
+	private final JFrame _frame;
 	private final Settings _settings;
 
 	private Game _game;
@@ -44,25 +47,27 @@ public class AgentFrame implements GameStatusMessageListener {
 	public AgentFrame(final Settings settings) {
 		this._settings = settings;
 
-		_drawFrame = new DrawFrame(
-				"Agent Sim version " + Environment.VERSION,
-				settings.getInt(Settings.UI_WIDTH),
-				settings.getInt(Settings.UI_HEIGHT),
-				settings.getInt(Settings.UI_X_POS),
-				settings.getInt(Settings.UI_Y_POS),
-				settings.getInt(Settings.GAME_SCALE));
+		_frame = new JFrame(
+				"Agent Sim version " + Environment.VERSION);
+		_frame.setLocation(settings.getInt(Settings.UI_X_POS),
+				settings.getInt(Settings.UI_Y_POS));
+
+		JPanel contentPane = new JPanel();
+		contentPane.setPreferredSize(new Dimension(settings.getInt(Settings.UI_WIDTH),
+				settings.getInt(Settings.UI_HEIGHT)));
+		_frame.add(contentPane);
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
 
-		Renderer renderer = new DefaultRenderer(_drawFrame, _settings);
+		Renderer renderer = new DefaultRenderer(_frame, _settings);
 		_mouseEventTranslator = new MouseEventTranslator();
 
 		_gameUIView = new GameUIView(renderer, _settings, _game, this);
 		_gameOverView = new GameOverView(renderer, _settings, _game, this);
 		switchView(_gameUIView);
 		_view = _gameUIView;
-		_drawFrame.getContentPane().addMouseListener(_mouseEventTranslator);
-		_drawFrame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
+		_frame.getContentPane().addMouseListener(_mouseEventTranslator);
+		_frame.getContentPane().addMouseMotionListener(_mouseEventTranslator);
 
 		_transitionFactor = 1 / settings.getDouble(Settings.CORE_RENDER_TRANSITION_AMOUNT);
 
@@ -84,6 +89,9 @@ public class AgentFrame implements GameStatusMessageListener {
 		_view = view;
 		_view.activate();
 		_mouseEventTranslator.addUIMouseInputListener(_view);
+
+		_frame.getContentPane().removeAll();
+		_frame.getContentPane().add(view.getJPanel());
 	}
 
 	/**
@@ -123,7 +131,7 @@ public class AgentFrame implements GameStatusMessageListener {
 	 * @param transition A value between zero and one.
 	 */
 	public void render(final double transition) {
-		if (!_drawFrame.isVisible()) {
+		if (!_frame.isVisible()) {
 			return;
 		}
 
@@ -132,14 +140,6 @@ public class AgentFrame implements GameStatusMessageListener {
 		if (shortenedTransition > 1) {
 			shortenedTransition = 1;
 		}
-
-		Graphics2D g = _drawFrame.startRender();
-
-		_view.drawScaledContent(g, shortenedTransition);
-		_drawFrame.switchToUIRender();
-		_view.drawUnscaledContent(g, shortenedTransition);
-
-		_drawFrame.finishRender();
 	}
 
 	/**
@@ -147,19 +147,19 @@ public class AgentFrame implements GameStatusMessageListener {
 	 * @param listener The listener.
 	 */
 	public void addWindowListener(final WindowListener listener) {
-		_drawFrame.addWindowListener(listener);
+		_frame.addWindowListener(listener);
 	}
 
 	/**
 	 * Disposes the underlying {@link DrawFrame}.
 	 */
 	public void dispose() {
-		_settings.set(Settings.UI_X_POS, _drawFrame.getLocationOnScreen().x);
-		_settings.set(Settings.UI_Y_POS, _drawFrame.getLocationOnScreen().y);
+		_settings.set(Settings.UI_X_POS, _frame.getLocationOnScreen().x);
+		_settings.set(Settings.UI_Y_POS, _frame.getLocationOnScreen().y);
 
 		_game.stop();
 
-		_drawFrame.dispose();
+		_frame.dispose();
 		_log.debug("Frame disposed");
 	}
 

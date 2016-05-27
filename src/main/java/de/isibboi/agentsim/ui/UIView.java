@@ -1,6 +1,5 @@
 package de.isibboi.agentsim.ui;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -52,14 +51,6 @@ public abstract class UIView implements View {
 		}
 	}
 
-	@Override
-	public void drawUnscaledContent(final Graphics2D g, final double transition) {
-		_renderer.setGraphics(g);
-		for (Drawable d : _drawables) {
-			d.draw(g, transition);
-		}
-	}
-
 	/**
 	 * Returns the renderer used to render this view.
 	 * @return The renderer.
@@ -82,14 +73,6 @@ public abstract class UIView implements View {
 	 */
 	protected void addMouseListener(final UIMouseInputListener listener) {
 		_mouseListeners.add(listener);
-	}
-
-	/**
-	 * Does nothing. Override to use.
-	 */
-	@Override
-	public void drawScaledContent(final Graphics2D g, final double transition) {
-		// Ignore
 	}
 
 	/**

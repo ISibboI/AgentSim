@@ -1,7 +1,9 @@
 package de.isibboi.agentsim.ui;
 
-import java.awt.Graphics2D;
+import java.awt.BorderLayout;
 import java.util.Random;
+
+import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import de.isibboi.agentsim.ui.component.UIButton;
 import de.isibboi.agentsim.ui.component.UINumberLabel;
 import de.isibboi.agentsim.ui.event.UserActionEvent;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
+import de.isibboi.agentsim.ui.opengl.GameGLPanel;
 
 /**
  * Represents the game ui.
@@ -46,6 +49,8 @@ public class GameUIView extends UIView {
 	private EntitySelectionManager _entitySelectionManager;
 
 	private boolean _renderEntities = true;
+
+	private JPanel _contentPane;
 
 	/**
 	 * Creates a new ui with the given settings.
@@ -101,33 +106,22 @@ public class GameUIView extends UIView {
 		_pauseButton = new UIButton(getRenderer(), new Point(getWidth() - 260, 250), 250, "Pause", this);
 		add(_pauseButton);
 		addMouseListener(_pauseButton);
+
+		GameGLPanel glPanel = new GameGLPanel();
+		JPanel uiPanel = new JPanel();
+
+		_contentPane.add(glPanel.getJPanel(), BorderLayout.WEST);
+		_contentPane.add(uiPanel, BorderLayout.EAST);
 	}
 
-	@Override
-	public void drawScaledContent(final Graphics2D g, final double transition) {
-		_mapRenderMode.drawMap(g, transition, _game.getMap());
-
-		if (_renderEntities) {
-			_mapRenderMode.drawEntities(g, transition, _game.getEntities());
-		}
-	};
-
-	@Override
-	public void drawUnscaledContent(final Graphics2D g, final double transition) {
-		super.drawUnscaledContent(g, transition);
-
-		// Measure frame rate.
-		_frameRateMeter.update();
-		_frameRateLabel.setValue(_frameRateMeter.getValue());
-
-		// Measure update rate.
-		_updateRateLabel.setValue(_updateRateMeter.getValue());
-
-		// Measure entity count.
-		_entityCountLabel.setValue(_game.getEntities().size());
-
-		_entitySelectionManager.draw(g, transition);
-	}
+	//	@Override
+	//	public void drawScaledContent(final Graphics2D g, final double transition) {
+	//		_mapRenderMode.drawMap(g, transition, _game.getMap());
+	//
+	//		if (_renderEntities) {
+	//			_mapRenderMode.drawEntities(g, transition, _game.getEntities());
+	//		}
+	//	}
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {
@@ -161,5 +155,10 @@ public class GameUIView extends UIView {
 	@Override
 	public void deactivate() {
 		// Ignore
+	}
+
+	@Override
+	public JPanel getJPanel() {
+		return _contentPane;
 	}
 }

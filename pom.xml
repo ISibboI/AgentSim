@@ -26,6 +26,17 @@
 			<artifactId>guava</artifactId>
 			<version>17.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl-all-main</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+		<dependency>
+			<!-- Needed for jogl. Seems to have broken dependencies. -->
+			<groupId>org.jogamp.gluegen</groupId>
+			<artifactId>gluegen</artifactId>
+			<version>2.3.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -61,19 +72,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>cobertura</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
+				<version>2.6</version> <executions> <execution> <phase>test</phase> <goals> 
+				<goal>cobertura</goal> </goals> </execution> </executions> </plugin> -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>

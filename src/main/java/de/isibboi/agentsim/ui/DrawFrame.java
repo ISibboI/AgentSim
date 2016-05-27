@@ -14,6 +14,7 @@ import javax.swing.WindowConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO Comment is wrong
 /**
  * A JPanel implementation that supports drawing on it's background.
  * @author Sebastian Schmidt
@@ -138,5 +139,10 @@ public class DrawFrame extends JFrame {
 	 */
 	public Graphics2D getRenderGraphics() {
 		return _renderGraphics;
+	}
+
+	public void setView(final JPanel view) {
+		getContentPane().removeAll();
+		getContentPane().add(view);
 	}
 }
