@@ -8,7 +8,7 @@ package de.isibboi.agentsim;
  *
  */
 public class SlowFrameRateStabilizer extends SimpleFrameRateStabilizer {
-	private double _transition;
+	private float _transition;
 	private boolean _isGamePaused;
 	private boolean _isStabilizationPaused;
 
@@ -48,7 +48,7 @@ public class SlowFrameRateStabilizer extends SimpleFrameRateStabilizer {
 	}
 
 	@Override
-	public double getTransition() {
+	public float getTransition() {
 		return _transition;
 	}
 

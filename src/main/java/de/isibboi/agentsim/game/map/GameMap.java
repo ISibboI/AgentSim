@@ -172,7 +172,7 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 	}
 
 	@Override
-	public void accept(Renderer renderer) {
+	public void accept(final Renderer renderer) {
 		renderer.visit(this);
 	}
 }

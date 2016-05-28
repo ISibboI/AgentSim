@@ -83,4 +83,9 @@ public class GameOverView extends UIView implements ActionListener {
 	public JPanel getJPanel() {
 		return _contentPane;
 	}
+
+	@Override
+	public void render(final int tick, final float transition) {
+		// Ignored for now. There is no OpenGL content.
+	}
 }

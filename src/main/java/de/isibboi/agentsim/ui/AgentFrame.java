@@ -19,6 +19,7 @@ import de.isibboi.agentsim.game.DefaultGameInitializer;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.ui.event.MouseEventTranslator;
+import de.isibboi.agentsim.ui.renderer.DefaultRenderer;
 import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
@@ -140,10 +141,11 @@ public class AgentFrame implements GameStatusMessageListener {
 	 * Renders the map and all entities.
 	 * The transition parameter determines where the entity is exactly drawn.
 	 * For zero, the entity should be drawn at the location from the last update, for one, it should be drawn at the current location.
-	 * Values between zero and one should be used for linear interpolation between old and new location.
+	 * Values between zero and one should be used for interpolation between old and new location.
+	 * 
 	 * @param transition A value between zero and one.
 	 */
-	public void render(final double transition) {
+	public void render(final float transition) {
 		if (!_frame.isVisible()) {
 			return;
 		}
@@ -153,6 +155,8 @@ public class AgentFrame implements GameStatusMessageListener {
 		if (shortenedTransition > 1) {
 			shortenedTransition = 1;
 		}
+
+		_view.render(_tick, transition);
 	}
 
 	/**

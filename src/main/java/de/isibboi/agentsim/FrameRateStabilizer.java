@@ -14,7 +14,7 @@ public interface FrameRateStabilizer {
 	 * 
 	 * @return Returns the transition value for the current update.
 	 */
-	double getTransition();
+	float getTransition();
 
 	/**
 	 * Decides if the next step should be an update or a render step. Waits if necessary to keep the desired frame and update rate.

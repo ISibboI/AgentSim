@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
+import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.ui.components.NumberLabel;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
 import de.isibboi.agentsim.ui.opengl.GameGLPanel;
@@ -146,14 +147,19 @@ public class GameUIView extends UIView implements ActionListener {
 		uiPanel.add(_pauseButton, gbc);
 	}
 
-	//	@Override
-	//	public void drawScaledContent(final Graphics2D g, final double transition) {
-	//		_mapRenderMode.drawMap(g, transition, _game.getMap());
-	//
-	//		if (_renderEntities) {
-	//			_mapRenderMode.drawEntities(g, transition, _game.getEntities());
-	//		}
-	//	}
+	@Override
+	public void render(final int tick, final float transition) {
+		_frameRateMeter.update();
+		_frameRateLabel.setNumber(_frameRateMeter.getValue());
+
+		getRenderer().setCurrentTick(tick, transition);
+
+		_game.getMap().accept(getRenderer());
+
+		for (Entity entity : _game.getEntities()) {
+			entity.accept(getRenderer());
+		}
+	}
 
 	@Override
 	public void update(final Random random, final int tick) throws GameUpdateException {

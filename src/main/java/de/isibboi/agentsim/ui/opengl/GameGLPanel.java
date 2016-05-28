@@ -28,8 +28,6 @@ public class GameGLPanel implements GLEventListener {
 		GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 		_panel = new GLJPanel(glCapabilities);
 		_panel.addGLEventListener(this);
-
-		//		_panel.setMinimumSize(new Dimension(300, 300));
 	}
 
 	public JPanel getJPanel() {

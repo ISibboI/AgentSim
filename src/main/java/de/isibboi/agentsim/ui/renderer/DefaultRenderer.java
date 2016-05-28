@@ -1,12 +1,9 @@
-package de.isibboi.agentsim.ui;
+package de.isibboi.agentsim.ui.renderer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.isibboi.agentsim.game.entities.Drawable;
-import de.isibboi.agentsim.ui.renderer.Renderer;
-import de.isibboi.agentsim.ui.renderer.Visitable;
-import de.isibboi.agentsim.ui.renderer.Visitor;
 
 /**
  * Renders the default look of the game.
@@ -21,13 +18,13 @@ public class DefaultRenderer implements Renderer {
 	private float _transition;
 
 	@Override
-	public void setCurrentTick(int tick, float transition) {
+	public void setCurrentTick(final int tick, final float transition) {
 		_tick = tick;
 		_transition = transition;
 	}
 
 	@Override
-	public void visit(Visitable<Drawable, ? extends Visitor<Drawable>> object) {
+	public void visit(final Visitable<Drawable, ? extends Visitor<Drawable>> object) {
 		LOG.warn("Cannot render object: " + object);
 	}
 }

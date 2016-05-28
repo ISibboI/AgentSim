@@ -6,7 +6,9 @@ import de.isibboi.agentsim.game.entities.Updateable;
 import de.isibboi.agentsim.ui.event.UIMouseInputListener;
 
 /**
- * A certain view on the game. Every view defines a UI. The views can be exchanged to show different UI elements, like a main menu.
+ * A certain view on the game. Every view defines a UI.
+ * The views can be exchanged to show different UI elements, like a main menu.
+ * 
  * @author Sebastian Schmidt
  * @since 0.3.0
  */
@@ -26,4 +28,11 @@ public interface View extends UIMouseInputListener, Updateable {
 	 * @return The JPanel that contains this view.
 	 */
 	JPanel getJPanel();
+
+	/**
+	 * Renders the OpenGL content of the game.
+	 * @param tick The current tick.
+	 * @param transition The current transition value.
+	 */
+	void render(int tick, float transition);
 }

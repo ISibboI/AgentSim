@@ -15,7 +15,7 @@ public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
 	private final Logger _log = LogManager.getLogger(getClass());
 
 	private long _lastFrameTime;
-	private double _updatesBeforeNextFrame;
+	private float _updatesBeforeNextFrame;
 	private final long _targetFrameTime;
 	private final double _targetUpdatesPerFrame;
 	private final int _maxUpdatesPerFrame;
@@ -92,7 +92,7 @@ public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
 	}
 
 	@Override
-	public double getTransition() {
+	public float getTransition() {
 		return 1; // No transition when using fast updates.
 	}
 
@@ -101,7 +101,7 @@ public class SimpleFrameRateStabilizer implements FrameRateStabilizer {
 	 * This can be lower than one, if there are more than one renders per update.
 	 * @return The amount of updates before the next frame is rendered.
 	 */
-	protected double getUpdatesBeforeNextFrame() {
+	protected float getUpdatesBeforeNextFrame() {
 		return _updatesBeforeNextFrame;
 	}
 
