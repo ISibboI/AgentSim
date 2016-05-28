@@ -1,6 +1,9 @@
 package de.isibboi.agentsim.ui;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.WindowListener;
 import java.util.Random;
 
@@ -56,6 +59,7 @@ public class AgentFrame implements GameStatusMessageListener {
 		JPanel contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(settings.getInt(Settings.UI_WIDTH),
 				settings.getInt(Settings.UI_HEIGHT)));
+		contentPane.setLayout(new GridBagLayout());
 		_frame.setContentPane(contentPane);
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
@@ -95,8 +99,10 @@ public class AgentFrame implements GameStatusMessageListener {
 		_view.activate();
 		_mouseEventTranslator.addUIMouseInputListener(_view);
 
+		GridBagConstraints gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
+
 		_frame.getContentPane().removeAll();
-		_frame.getContentPane().add(view.getJPanel());
+		_frame.getContentPane().add(view.getJPanel(), gbc);
 
 		LOG.debug("Switched view to: " + view);
 	}

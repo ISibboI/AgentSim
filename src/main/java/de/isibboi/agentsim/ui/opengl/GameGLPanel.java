@@ -1,7 +1,5 @@
 package de.isibboi.agentsim.ui.opengl;
 
-import java.awt.Dimension;
-
 import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +11,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 
-// TODO This comment is bad
 /**
- * The JPanel that draws the OpenGL stuff.
+ * The JPanel that draws the game content using OpenGL.
  * 
  * @author Sebastian Schmidt
  * @since 0.3.0
@@ -32,7 +29,7 @@ public class GameGLPanel implements GLEventListener {
 		_panel = new GLJPanel(glCapabilities);
 		_panel.addGLEventListener(this);
 
-		_panel.setPreferredSize(new Dimension(300, 300));
+		//		_panel.setMinimumSize(new Dimension(300, 300));
 	}
 
 	public JPanel getJPanel() {
@@ -40,24 +37,23 @@ public class GameGLPanel implements GLEventListener {
 	}
 
 	@Override
-	public synchronized void init(GLAutoDrawable drawable) {
+	public synchronized void init(final GLAutoDrawable drawable) {
 		LOG.info("Initialized GLJPanel");
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable drawable) {
+	public void dispose(final GLAutoDrawable drawable) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
+	public void display(final GLAutoDrawable drawable) {
 		LOG.info("Displayed GLJPanel");
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-
+	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
+		LOG.info("Reshaped GLJPanel: x = " + x + ", y = " + y + ", width = " + width + ", height = " + height);
 	}
 }

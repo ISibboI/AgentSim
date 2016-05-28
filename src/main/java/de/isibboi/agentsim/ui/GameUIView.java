@@ -93,14 +93,24 @@ public class GameUIView extends UIView implements ActionListener {
 		_contentPane.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 
-		gbc.fill = GridBagConstraints.VERTICAL;
-		_contentPane.add(glPanel.getJPanel(), gbc);
 		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		_contentPane.add(glPanel.getJPanel(), gbc);
+		gbc.fill = GridBagConstraints.VERTICAL;
+		gbc.gridx = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		gbc.anchor = GridBagConstraints.NORTH;
 		_contentPane.add(uiPanel, gbc);
 
 		uiPanel.setLayout(new GridBagLayout());
+		gbc.gridx = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.NORTH;
+		gbc.weighty = 0;
 		gbc.insets = new Insets(4, 4, 4, 4);
 
 		_frameRateLabel = new NumberLabel("Framerate: ", new DecimalFormat("###,###"), "/s");
