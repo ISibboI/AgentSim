@@ -1,7 +1,9 @@
 package de.isibboi.agentsim.game.map;
 
 /**
- * The generation parameters for a material. They are a set of parameters that decide where a block with a certain material should be generated.
+ * The generation parameters for a material.
+ * They are a set of parameters that decide where a block with a certain material should be generated.
+ * 
  * @author Sebastian Schmidt
  * @since 0.0.0
  */
@@ -12,11 +14,11 @@ public class GenerationParameters {
 	public enum GenerationType {
 		DENSITY_MAP
 	}
-	
+
 	private final GenerationType _generationType;
 	private final double _min;
 	private final double _max;
-	
+
 	/**
 	 * Creates new single range generation parameters.
 	 * @param generationType The step in the generation process the material is added.

@@ -17,10 +17,9 @@ import org.apache.logging.log4j.Logger;
 import de.isibboi.agentsim.Settings;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
-import de.isibboi.agentsim.game.entities.Entity;
 import de.isibboi.agentsim.ui.components.NumberLabel;
 import de.isibboi.agentsim.ui.meter.FrequencyMeter;
-import de.isibboi.agentsim.ui.opengl.GameGLPanel;
+import de.isibboi.agentsim.ui.opengl.GameGLJPanel;
 import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
@@ -56,6 +55,7 @@ public class GameUIView extends UIView implements ActionListener {
 	private boolean _renderEntities = true;
 
 	private final JPanel _contentPane;
+	private GameGLJPanel _glJPanel;
 
 	/**
 	 * Creates a new ui with the given settings.
@@ -88,7 +88,8 @@ public class GameUIView extends UIView implements ActionListener {
 	 * Creates the UI.
 	 */
 	private void initUI() {
-		GameGLPanel glPanel = new GameGLPanel();
+		_glJPanel = new GameGLJPanel();
+
 		JPanel uiPanel = new JPanel();
 
 		_contentPane.setLayout(new GridBagLayout());
@@ -99,7 +100,7 @@ public class GameUIView extends UIView implements ActionListener {
 		gbc.gridy = 0;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		_contentPane.add(glPanel.getJPanel(), gbc);
+		_contentPane.add(_glJPanel.getJPanel(), gbc);
 		gbc.fill = GridBagConstraints.VERTICAL;
 		gbc.gridx = 1;
 		gbc.weightx = 0;
@@ -145,6 +146,7 @@ public class GameUIView extends UIView implements ActionListener {
 		_pauseButton.addActionListener(this);
 		gbc.gridy = 6;
 		uiPanel.add(_pauseButton, gbc);
+
 	}
 
 	@Override
@@ -153,12 +155,12 @@ public class GameUIView extends UIView implements ActionListener {
 		_frameRateLabel.setNumber(_frameRateMeter.getValue());
 
 		getRenderer().setCurrentTick(tick, transition);
+		_glJPanel.setRenderer(getRenderer());
+		_glJPanel.getDrawablesContainer().clear();
+		_glJPanel.getDrawablesContainer().add(_game.getMap());
+		_glJPanel.getDrawablesContainer().add(_game.getEntities());
 
-		_game.getMap().accept(getRenderer());
-
-		for (Entity entity : _game.getEntities()) {
-			entity.accept(getRenderer());
-		}
+		_glJPanel.getJPanel().display();
 	}
 
 	@Override

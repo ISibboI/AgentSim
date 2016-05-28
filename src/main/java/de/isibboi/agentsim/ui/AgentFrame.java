@@ -19,7 +19,7 @@ import de.isibboi.agentsim.game.DefaultGameInitializer;
 import de.isibboi.agentsim.game.Game;
 import de.isibboi.agentsim.game.GameUpdateException;
 import de.isibboi.agentsim.ui.event.MouseEventTranslator;
-import de.isibboi.agentsim.ui.renderer.DefaultRenderer;
+import de.isibboi.agentsim.ui.renderer.QuadRenderer;
 import de.isibboi.agentsim.ui.renderer.Renderer;
 
 /**
@@ -65,7 +65,7 @@ public class AgentFrame implements GameStatusMessageListener {
 
 		_game = new Game(new DefaultGameInitializer(), settings, this);
 
-		Renderer renderer = new DefaultRenderer();
+		Renderer renderer = new QuadRenderer();
 		_mouseEventTranslator = new MouseEventTranslator();
 
 		_gameUIView = new GameUIView(renderer, _settings, _game, this);

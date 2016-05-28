@@ -130,7 +130,7 @@ public class Entities implements Collection<Entity>, Updateable, Drawable {
 	}
 
 	@Override
-	public void accept(Renderer renderer) {
+	public void accept(final Renderer renderer) {
 		for (Entity entity : _entities) {
 			entity.accept(renderer);
 		}
