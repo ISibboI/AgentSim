@@ -1,20 +1,27 @@
 package de.isibboi.agentsim.ui.opengl;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.util.GLBuffers;
+import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
 
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.ui.renderer.Renderer;
@@ -33,12 +40,51 @@ public class GameGLJPanel implements GLEventListener {
 	private final HashSet<Drawable> _content = new HashSet<>();
 	private Renderer _renderer;
 
+	private float _aspectRatio;
+	private float _scale = 1;
+	private float[] _mvpMatrix;
+
 	// Clear values
 	private FloatBuffer _clearColor = GLBuffers.newDirectFloatBuffer(new float[] { 0, 0, 0, 1 });
 	private FloatBuffer _clearDepth = GLBuffers.newDirectFloatBuffer(new float[] { 1 });
 
+	// Buffers
+	private static class Buffer {
+		public static final int VERTEX = 0;
+		public static final int ELEMENT = 1;
+		public static final int TRANSFORM = 2;
+		public static final int MAX = 3;
+	}
+
+	private IntBuffer _bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
+
+	private float[] _vertexData = new float[] {
+			0, 0,
+			0, +1,
+			+1, +1,
+			+1, 0
+	};
+	private int _vertexCount = _vertexData.length / 2;
+	private int _vertexSize = _vertexData.length * Float.BYTES;
+
+	private short[] _elementData = new short[] {
+			0, 3, 2, 0, 1
+	};
+	private int _elementCount = _elementData.length;
+	private int _elementSize = _elementCount * Short.BYTES;
+
+	// Vertex arrays
+	private IntBuffer _vertexArrayName = GLBuffers.newDirectIntBuffer(1);
+
+	// Shaders
+	private static final String SHADERS_ROOT = "shaders";
+	private int _programName;
+	private int _mvpMatrixUL;
+	private int _colorUL;
+	private int _translationUL;
+
 	public GameGLJPanel() {
-		GLProfile glProfile = GLProfile.getGL4ES3();
+		GLProfile glProfile = GLProfile.get(GLProfile.GL3);
 		GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 		_panel = new GLJPanel(glCapabilities);
 
@@ -57,14 +103,86 @@ public class GameGLJPanel implements GLEventListener {
 	}
 
 	@Override
-	public synchronized void init(final GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
+		LOG.info("Initializing GLJPanel");
+
+		initBuffers(drawable.getGL().getGL3());
+		initVertexArray(drawable.getGL().getGL3());
+		initShaders(drawable.getGL().getGL3());
+
 		LOG.info("Initialized GLJPanel");
+	}
+
+	private void initBuffers(final GL3 gl) {
+		FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(_vertexData);
+		ShortBuffer elementBuffer = GLBuffers.newDirectShortBuffer(_elementData);
+
+		gl.glGenBuffers(Buffer.MAX, _bufferName);
+
+		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, _bufferName.get(Buffer.VERTEX));
+		gl.glBufferData(GL3.GL_ARRAY_BUFFER, _vertexSize, vertexBuffer, GL3.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, _bufferName.get(Buffer.ELEMENT));
+		gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, _elementSize, elementBuffer, GL3.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		checkError(gl, "initBuffers");
+	}
+
+	private void initVertexArray(final GL3 gl) {
+		gl.glGenVertexArrays(1, _vertexArrayName);
+		gl.glBindVertexArray(_vertexArrayName.get(0));
+
+		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, _bufferName.get(Buffer.VERTEX));
+
+		int stride = 2 * Float.BYTES;
+		int offset = 0 * Float.BYTES;
+
+		gl.glEnableVertexAttribArray(Semantic.Attr.POSITION);
+		gl.glVertexAttribPointer(Semantic.Attr.POSITION, 2, GL3.GL_FLOAT, false, stride, offset);
+
+		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
+
+		gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, _bufferName.get(Buffer.ELEMENT));
+
+		gl.glBindVertexArray(0);
+
+		checkError(gl, "initVertexArray");
+	}
+
+	private void initShaders(final GL3 gl) {
+		ShaderCode vertexShader = ShaderCode.create(gl, GL4.GL_VERTEX_SHADER, getClass(), SHADERS_ROOT, null, "default", "vert", null, true);
+		ShaderCode fragmentShader = ShaderCode.create(gl, GL4.GL_FRAGMENT_SHADER, getClass(), SHADERS_ROOT, null, "default", "frag", null, true);
+		ShaderProgram shaderProgram = new ShaderProgram();
+		shaderProgram.add(vertexShader);
+		shaderProgram.add(fragmentShader);
+
+		shaderProgram.init(gl);
+		shaderProgram.link(gl, System.out);
+		_programName = shaderProgram.program();
+
+		gl.glBindAttribLocation(_programName, Semantic.Attr.POSITION, "POSITION");
+		gl.glBindFragDataLocation(_programName, Semantic.Frag.COLOR, "frag_color");
+
+		shaderProgram.link(gl, System.out);
+
+		_mvpMatrixUL = gl.glGetUniformLocation(_programName, "MVP");
+		_colorUL = gl.glGetUniformLocation(_programName, "COLOR");
+		_translationUL = gl.glGetUniformLocation(_programName, "TRANSLATION");
+
+		vertexShader.destroy(gl);
+		fragmentShader.destroy(gl);
+
+		checkError(gl, "initShaders");
 	}
 
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
+		GL3 gl = drawable.getGL().getGL3();
 
+		gl.glDeleteProgram(_programName);
+		gl.glDeleteVertexArrays(1, _vertexArrayName);
+		gl.glDeleteBuffers(Buffer.MAX, _bufferName);
 	}
 
 	@Override
@@ -74,13 +192,24 @@ public class GameGLJPanel implements GLEventListener {
 			return;
 		}
 
-		LOG.info("Displaying GLJPanel");
+		LOG.trace("Displaying GLJPanel");
 
 		// Configure OpenGL
-		GL4 gl = drawable.getGL().getGL4();
+		GL3 gl = drawable.getGL().getGL3();
 
 		gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, _clearColor);
 		gl.glClearBufferfv(GL2ES3.GL_DEPTH, 0, _clearDepth);
+
+		gl.glUseProgram(_programName);
+
+		gl.glBindVertexArray(_vertexArrayName.get(0));
+
+		gl.glUniformMatrix4fv(_mvpMatrixUL, 1, false, _mvpMatrix, 0);
+
+		_renderer.setGL(gl);
+		_renderer.setColorUL(_colorUL);
+		_renderer.setTranslationUL(_translationUL);
+		_renderer.setElementSize(_elementSize);
 
 		for (Drawable d : _content) {
 			if (d == null) {
@@ -90,15 +219,60 @@ public class GameGLJPanel implements GLEventListener {
 			d.accept(_renderer);
 		}
 
-		LOG.info("Displayed GLJPanel");
+		checkError(gl, "display");
+
+		LOG.trace("Displayed GLJPanel");
 	}
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
 		LOG.info("Reshaped GLJPanel: x = " + x + ", y = " + y + ", width = " + width + ", height = " + height);
 
-		GL4 gl = drawable.getGL().getGL4();
+		GL3 gl = drawable.getGL().getGL3();
 		gl.glViewport(x, y, width, height);
+		_aspectRatio = (float) width / height;
+		final int scaleConstant = 6;
+		_scale = (float) scaleConstant / height;
+
+		_mvpMatrix = new float[16];
+		float[] scaleMatrix = new float[16];
+		FloatUtil.makeTranslation(_mvpMatrix, true, -width / scaleConstant, -height / scaleConstant, 0);
+		FloatUtil.makeScale(scaleMatrix, true, _scale / _aspectRatio, _scale, _scale);
+		_mvpMatrix = FloatUtil.multMatrix(scaleMatrix, _mvpMatrix);
+
+		System.out.println(FloatUtil.matrixToString(null, "", "%10.5f", _mvpMatrix, 0, 4, 4, false));
+	}
+
+	private void checkError(GL gl, String location) {
+
+		int error = gl.glGetError();
+
+		if (error != GL3.GL_NO_ERROR) {
+			String errorString;
+
+			switch (error) {
+			case GL3.GL_INVALID_ENUM:
+				errorString = "GL_INVALID_ENUM";
+				break;
+			case GL3.GL_INVALID_VALUE:
+				errorString = "GL_INVALID_VALUE";
+				break;
+			case GL3.GL_INVALID_OPERATION:
+				errorString = "GL_INVALID_OPERATION";
+				break;
+			case GL3.GL_INVALID_FRAMEBUFFER_OPERATION:
+				errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
+				break;
+			case GL3.GL_OUT_OF_MEMORY:
+				errorString = "GL_OUT_OF_MEMORY";
+				break;
+			default:
+				errorString = "UNKNOWN";
+				break;
+			}
+
+			LOG.warn("OpenGL Error(" + errorString + "): " + location);
+		}
 	}
 
 	/**

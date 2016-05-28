@@ -157,8 +157,8 @@ public class GameUIView extends UIView implements ActionListener {
 		getRenderer().setCurrentTick(tick, transition);
 		_glJPanel.setRenderer(getRenderer());
 		_glJPanel.getDrawablesContainer().clear();
-		_glJPanel.getDrawablesContainer().add(_game.getMap());
 		_glJPanel.getDrawablesContainer().add(_game.getEntities());
+		_glJPanel.getDrawablesContainer().add(_game.getMap());
 
 		_glJPanel.getJPanel().display();
 	}
