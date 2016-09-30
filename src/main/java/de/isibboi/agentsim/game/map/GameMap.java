@@ -166,6 +166,16 @@ public class GameMap implements Drawable, KnowledgeProvider<Material> {
 		return _map.getHeight();
 	}
 
+	/**
+	 * Returns the buffered image that represents the map.
+	 * Don't insert random colors here, it will break everything!
+	 * Just use the image as read-only object.
+	 * @return The buffered image representing the map.
+	 */
+	public BufferedImage getMap() {
+		return _map;
+	}
+
 	@Override
 	public Material getKnowledge(final Point location) {
 		return getMaterialAt(location);

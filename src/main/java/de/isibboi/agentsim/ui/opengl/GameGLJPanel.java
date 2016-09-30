@@ -1,5 +1,6 @@
 package de.isibboi.agentsim.ui.opengl;
 
+import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -9,10 +10,7 @@ import java.util.HashSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
@@ -22,6 +20,8 @@ import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.ui.renderer.Renderer;
@@ -58,13 +58,14 @@ public class GameGLJPanel implements GLEventListener {
 
 	private IntBuffer _bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
 
+	// Behind every 2D point are the texture coordinates!
 	private float[] _vertexData = new float[] {
-			0, 0,
-			0, +1,
-			+1, +1,
-			+1, 0
+			0, 0, 0, 0,
+			0, 1, 0, 1,
+			1, 1, 1, 1,
+			1, 0, 1, 0
 	};
-	private int _vertexCount = _vertexData.length / 2;
+	private int _vertexCount = _vertexData.length / 4;
 	private int _vertexSize = _vertexData.length * Float.BYTES;
 
 	private short[] _elementData = new short[] {
@@ -82,6 +83,10 @@ public class GameGLJPanel implements GLEventListener {
 	private int _mvpMatrixUL;
 	private int _colorUL;
 	private int _translationUL;
+	private int _scalingUL;
+
+	// Textures
+	private Texture _whiteTexture;
 
 	public GameGLJPanel() {
 		GLProfile glProfile = GLProfile.get(GLProfile.GL3);
@@ -109,6 +114,7 @@ public class GameGLJPanel implements GLEventListener {
 		initBuffers(drawable.getGL().getGL3());
 		initVertexArray(drawable.getGL().getGL3());
 		initShaders(drawable.getGL().getGL3());
+		initTextures(drawable.getGL().getGL3());
 
 		LOG.info("Initialized GLJPanel");
 	}
@@ -135,11 +141,12 @@ public class GameGLJPanel implements GLEventListener {
 
 		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, _bufferName.get(Buffer.VERTEX));
 
-		int stride = 2 * Float.BYTES;
-		int offset = 0 * Float.BYTES;
+		int stride = 4 * Float.BYTES;
 
 		gl.glEnableVertexAttribArray(Semantic.Attr.POSITION);
-		gl.glVertexAttribPointer(Semantic.Attr.POSITION, 2, GL3.GL_FLOAT, false, stride, offset);
+		gl.glVertexAttribPointer(Semantic.Attr.POSITION, 2, GL3.GL_FLOAT, false, stride, 0);
+		gl.glEnableVertexAttribArray(Semantic.Attr.TEXCOORD);
+		gl.glVertexAttribPointer(Semantic.Attr.TEXCOORD, 2, GL3.GL_FLOAT, false, stride, 2 * Float.BYTES);
 
 		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
 
@@ -151,8 +158,8 @@ public class GameGLJPanel implements GLEventListener {
 	}
 
 	private void initShaders(final GL3 gl) {
-		ShaderCode vertexShader = ShaderCode.create(gl, GL4.GL_VERTEX_SHADER, getClass(), SHADERS_ROOT, null, "default", "vert", null, true);
-		ShaderCode fragmentShader = ShaderCode.create(gl, GL4.GL_FRAGMENT_SHADER, getClass(), SHADERS_ROOT, null, "default", "frag", null, true);
+		ShaderCode vertexShader = ShaderCode.create(gl, GL3.GL_VERTEX_SHADER, getClass(), SHADERS_ROOT, null, "default", "vert", null, true);
+		ShaderCode fragmentShader = ShaderCode.create(gl, GL3.GL_FRAGMENT_SHADER, getClass(), SHADERS_ROOT, null, "default", "frag", null, true);
 		ShaderProgram shaderProgram = new ShaderProgram();
 		shaderProgram.add(vertexShader);
 		shaderProgram.add(fragmentShader);
@@ -169,11 +176,20 @@ public class GameGLJPanel implements GLEventListener {
 		_mvpMatrixUL = gl.glGetUniformLocation(_programName, "MVP");
 		_colorUL = gl.glGetUniformLocation(_programName, "COLOR");
 		_translationUL = gl.glGetUniformLocation(_programName, "TRANSLATION");
+		_scalingUL = gl.glGetUniformLocation(_programName, "SCALE");
 
 		vertexShader.destroy(gl);
 		fragmentShader.destroy(gl);
 
 		checkError(gl, "initShaders");
+	}
+
+	private void initTextures(final GL3 gl) {
+		BufferedImage white = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+		white.setRGB(0, 0, 0xffffffff);
+		_whiteTexture = AWTTextureIO.newTexture(gl.getGLProfile(), white, false);
+
+		checkError(gl, "initTextures");
 	}
 
 	@Override
@@ -197,8 +213,8 @@ public class GameGLJPanel implements GLEventListener {
 		// Configure OpenGL
 		GL3 gl = drawable.getGL().getGL3();
 
-		gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, _clearColor);
-		gl.glClearBufferfv(GL2ES3.GL_DEPTH, 0, _clearDepth);
+		gl.glClearBufferfv(GL3.GL_COLOR, 0, _clearColor);
+		gl.glClearBufferfv(GL3.GL_DEPTH, 0, _clearDepth);
 
 		gl.glUseProgram(_programName);
 
@@ -206,10 +222,12 @@ public class GameGLJPanel implements GLEventListener {
 
 		gl.glUniformMatrix4fv(_mvpMatrixUL, 1, false, _mvpMatrix, 0);
 
-		_renderer.setGL(gl);
 		_renderer.setColorUL(_colorUL);
 		_renderer.setTranslationUL(_translationUL);
+		_renderer.setScalingUL(_scalingUL);
 		_renderer.setElementSize(_elementSize);
+		_renderer.setWhiteTexture(_whiteTexture);
+		_renderer.startRender(gl);
 
 		for (Drawable d : _content) {
 			if (d == null) {
@@ -243,7 +261,7 @@ public class GameGLJPanel implements GLEventListener {
 		System.out.println(FloatUtil.matrixToString(null, "", "%10.5f", _mvpMatrix, 0, 4, 4, false));
 	}
 
-	private void checkError(GL gl, String location) {
+	private void checkError(GL3 gl, String location) {
 
 		int error = gl.glGetError();
 

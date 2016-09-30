@@ -1,6 +1,7 @@
 package de.isibboi.agentsim.ui.renderer;
 
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.util.texture.Texture;
 
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.MapEntity;
@@ -34,10 +35,12 @@ public interface Renderer extends Visitor<Drawable> {
 	void setCurrentTick(int tick, float transition);
 
 	/**
+	 * Starts rendering the image.
 	 * Sets the GL object used for rendering.
+	 * Should only be called after all other parameters have been set.
 	 * @param gl The GL object used for rendering.
 	 */
-	void setGL(GL3 gl);
+	void startRender(GL3 gl);
 
 	/**
 	 * Sets the uniform location of the color variable.
@@ -52,8 +55,20 @@ public interface Renderer extends Visitor<Drawable> {
 	void setTranslationUL(int translationUL);
 
 	/**
+	 * Sets the uniform location of the scaling variable.
+	 * @param translationUL The uniform location of the scaling variable.
+	 */
+	void setScalingUL(int scalingUL);
+
+	/**
 	 * Sets the size of the element array for a quad.
 	 * @param elementSize The size of the element array for a quad.
 	 */
 	void setElementSize(int elementSize);
+
+	/**
+	 * Sets the white texture.
+	 * @param whiteTexture A white pixel.
+	 */
+	void setWhiteTexture(Texture whiteTexture);
 }

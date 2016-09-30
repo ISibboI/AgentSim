@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.util.texture.Texture;
 
 import de.isibboi.agentsim.game.entities.Drawable;
 import de.isibboi.agentsim.game.entities.MapEntity;
@@ -26,11 +27,14 @@ public class QuadRenderer implements Renderer {
 	private float _transition;
 
 	// OpenGL
-	private GL3 _gl;
-	private int _elementSize;
+	protected GL3 _gl;
+	protected int _elementSize;
 
-	private int _colorUL;
-	private int _translationUL;
+	protected int _colorUL;
+	protected int _translationUL;
+	protected int _scalingUL;
+
+	protected Texture _whiteTexture;
 
 	@Override
 	public void setCurrentTick(final int tick, final float transition) {
@@ -52,6 +56,7 @@ public class QuadRenderer implements Renderer {
 
 		_gl.glUniform3f(_colorUL, 0.3f, 0.8f, 0.3f);
 		_gl.glUniform2f(_translationUL, mapEntity.getLocation().getX(), mapEntity.getLocation().getY());
+		_gl.glUniform2f(_scalingUL, 1.0f, 1.0f);
 
 		_gl.glDrawElements(GL3.GL_TRIANGLE_STRIP, _elementSize, GL3.GL_UNSIGNED_SHORT, 0);
 	}
@@ -65,6 +70,7 @@ public class QuadRenderer implements Renderer {
 
 				_gl.glUniform3f(_colorUL, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
 				_gl.glUniform2f(_translationUL, x, y);
+				_gl.glUniform2f(_scalingUL, 1.0f, 1.0f);
 
 				_gl.glDrawElements(GL3.GL_TRIANGLE_STRIP, _elementSize, GL3.GL_UNSIGNED_SHORT, 0);
 			}
@@ -72,8 +78,9 @@ public class QuadRenderer implements Renderer {
 	}
 
 	@Override
-	public void setGL(final GL3 gl) {
+	public void startRender(final GL3 gl) {
 		_gl = gl;
+		_whiteTexture.bind(gl);
 	}
 
 	@Override
@@ -87,7 +94,17 @@ public class QuadRenderer implements Renderer {
 	}
 
 	@Override
+	public void setScalingUL(final int scalingUL) {
+		_scalingUL = scalingUL;
+	}
+
+	@Override
 	public void setElementSize(final int elementSize) {
 		_elementSize = elementSize;
+	}
+
+	@Override
+	public void setWhiteTexture(Texture whiteTexture) {
+		_whiteTexture = whiteTexture;
 	}
 }
