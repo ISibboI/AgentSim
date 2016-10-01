@@ -169,6 +169,7 @@ public class GameGLJPanel implements GLEventListener {
 		_programName = shaderProgram.program();
 
 		gl.glBindAttribLocation(_programName, Semantic.Attr.POSITION, "POSITION");
+		gl.glBindAttribLocation(_programName, Semantic.Attr.TEXCOORD, "TEXCOORD");
 		gl.glBindFragDataLocation(_programName, Semantic.Frag.COLOR, "frag_color");
 
 		shaderProgram.link(gl, System.out);

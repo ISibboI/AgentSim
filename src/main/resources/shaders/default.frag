@@ -12,5 +12,4 @@ uniform sampler2D MAP_TEX; // Texture of the map
 void main (void)
 {
 	frag_color = vec4(color, 1.0) * texture(MAP_TEX, texcoord);
-	frag_color = vec4(texcoord, 1.0, 1.0);
 }
