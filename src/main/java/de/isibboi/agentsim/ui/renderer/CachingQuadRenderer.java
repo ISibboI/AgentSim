@@ -26,8 +26,8 @@ public class CachingQuadRenderer extends QuadRenderer {
 		texture.bind(_gl);
 
 		_gl.glUniform3f(_colorUL, 1.0f, 1.0f, 1.0f);
-		_gl.glUniform2f(_translationUL, 0.0f, 0.0f);
-		_gl.glUniform2f(_scalingUL, map.getWidth(), map.getHeight());
+		_gl.glUniform3f(_translationUL, 0.0f, 0.0f, 0.9f);
+		_gl.glUniform3f(_scalingUL, map.getWidth(), map.getHeight(), 1.0f);
 
 		_gl.glDrawElements(GL3.GL_TRIANGLE_STRIP, _elementSize, GL3.GL_UNSIGNED_SHORT, 0);
 

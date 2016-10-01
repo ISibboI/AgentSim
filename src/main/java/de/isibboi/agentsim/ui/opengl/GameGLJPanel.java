@@ -58,12 +58,12 @@ public class GameGLJPanel implements GLEventListener {
 
 	private IntBuffer _bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
 
-	// Behind every 2D point are the texture coordinates!
+	// Behind every 3D point are the texture coordinates!
 	private float[] _vertexData = new float[] {
-			0, 0, 0, 0,
-			0, 1, 0, 1,
-			1, 1, 1, 1,
-			1, 0, 1, 0
+			0, 0, 0, 0, 0,
+			0, 1, 0, 0, 1,
+			1, 1, 0, 1, 1,
+			1, 0, 0, 1, 0
 	};
 	private int _vertexCount = _vertexData.length / 4;
 	private int _vertexSize = _vertexData.length * Float.BYTES;
@@ -141,12 +141,12 @@ public class GameGLJPanel implements GLEventListener {
 
 		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, _bufferName.get(Buffer.VERTEX));
 
-		int stride = 4 * Float.BYTES;
+		int stride = 5 * Float.BYTES;
 
 		gl.glEnableVertexAttribArray(Semantic.Attr.POSITION);
-		gl.glVertexAttribPointer(Semantic.Attr.POSITION, 2, GL3.GL_FLOAT, false, stride, 0);
+		gl.glVertexAttribPointer(Semantic.Attr.POSITION, 3, GL3.GL_FLOAT, false, stride, 0);
 		gl.glEnableVertexAttribArray(Semantic.Attr.TEXCOORD);
-		gl.glVertexAttribPointer(Semantic.Attr.TEXCOORD, 2, GL3.GL_FLOAT, false, stride, 2 * Float.BYTES);
+		gl.glVertexAttribPointer(Semantic.Attr.TEXCOORD, 2, GL3.GL_FLOAT, false, stride, 3 * Float.BYTES);
 
 		gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
 
@@ -214,14 +214,20 @@ public class GameGLJPanel implements GLEventListener {
 		// Configure OpenGL
 		GL3 gl = drawable.getGL().getGL3();
 
+		gl.glEnable(GL3.GL_DEPTH_TEST);
+
 		gl.glClearBufferfv(GL3.GL_COLOR, 0, _clearColor);
 		gl.glClearBufferfv(GL3.GL_DEPTH, 0, _clearDepth);
+
+		checkError(gl, "display after clearing buffers");
 
 		gl.glUseProgram(_programName);
 
 		gl.glBindVertexArray(_vertexArrayName.get(0));
 
 		gl.glUniformMatrix4fv(_mvpMatrixUL, 1, false, _mvpMatrix, 0);
+
+		checkError(gl, "display before setting parameters by renderer");
 
 		_renderer.setColorUL(_colorUL);
 		_renderer.setTranslationUL(_translationUL);
@@ -230,15 +236,18 @@ public class GameGLJPanel implements GLEventListener {
 		_renderer.setWhiteTexture(_whiteTexture);
 		_renderer.startRender(gl);
 
+		checkError(gl, "display before drawables");
+
 		for (Drawable d : _content) {
 			if (d == null) {
 				LOG.error("Drawables container contains null element!");
 			}
 
 			d.accept(_renderer);
+			checkError(gl, "afer drawing: " + d);
 		}
 
-		checkError(gl, "display");
+		checkError(gl, "display end");
 
 		LOG.trace("Displayed GLJPanel");
 	}
@@ -263,10 +272,9 @@ public class GameGLJPanel implements GLEventListener {
 	}
 
 	private void checkError(GL3 gl, String location) {
-
 		int error = gl.glGetError();
 
-		if (error != GL3.GL_NO_ERROR) {
+		while (error != GL3.GL_NO_ERROR) {
 			String errorString;
 
 			switch (error) {
@@ -291,6 +299,7 @@ public class GameGLJPanel implements GLEventListener {
 			}
 
 			LOG.warn("OpenGL Error(" + errorString + "): " + location);
+			error = gl.glGetError();
 		}
 	}
 

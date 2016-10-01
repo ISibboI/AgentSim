@@ -55,8 +55,8 @@ public class QuadRenderer implements Renderer {
 		LOG.trace("Rendering MapEntity: " + mapEntity);
 
 		_gl.glUniform3f(_colorUL, 0.3f, 0.8f, 0.3f);
-		_gl.glUniform2f(_translationUL, mapEntity.getLocation().getX(), mapEntity.getLocation().getY());
-		_gl.glUniform2f(_scalingUL, 1.0f, 1.0f);
+		_gl.glUniform3f(_translationUL, mapEntity.getLocation().getX(), mapEntity.getLocation().getY(), 0.2f);
+		_gl.glUniform3f(_scalingUL, 1.0f, 1.0f, 1.0f);
 
 		_gl.glDrawElements(GL3.GL_TRIANGLE_STRIP, _elementSize, GL3.GL_UNSIGNED_SHORT, 0);
 	}
@@ -69,8 +69,8 @@ public class QuadRenderer implements Renderer {
 				Color color = new Color(material.getColor());
 
 				_gl.glUniform3f(_colorUL, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
-				_gl.glUniform2f(_translationUL, x, y);
-				_gl.glUniform2f(_scalingUL, 1.0f, 1.0f);
+				_gl.glUniform3f(_translationUL, x, y, 0.9f);
+				_gl.glUniform3f(_scalingUL, 1.0f, 1.0f, 1.0f);
 
 				_gl.glDrawElements(GL3.GL_TRIANGLE_STRIP, _elementSize, GL3.GL_UNSIGNED_SHORT, 0);
 			}
