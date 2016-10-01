@@ -21,6 +21,7 @@ public class CachingQuadRenderer extends QuadRenderer {
 		Texture texture = AWTTextureIO.newTexture(_gl.getGLProfile(), map, false);
 		texture.setTexParameteri(_gl, GL3.GL_TEXTURE_WRAP_S, GL3.GL_REPEAT);
 		texture.setTexParameteri(_gl, GL3.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
+		texture.setTexParameteri(_gl, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_NEAREST);
 
 		texture.bind(_gl);
 
