@@ -268,7 +268,7 @@ public class GameGLJPanel implements GLEventListener {
 		FloatUtil.makeScale(scaleMatrix, true, _scale / _aspectRatio, _scale, _scale);
 		_mvpMatrix = FloatUtil.multMatrix(scaleMatrix, _mvpMatrix);
 
-		System.out.println(FloatUtil.matrixToString(null, "", "%10.5f", _mvpMatrix, 0, 4, 4, false));
+		LOG.trace(FloatUtil.matrixToString(null, "", "%10.5f", _mvpMatrix, 0, 4, 4, false));
 	}
 
 	private void checkError(GL3 gl, String location) {
